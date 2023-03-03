@@ -13,5 +13,5 @@ urlpatterns = [
     re_path(r'^auth/logout/$',
         LogoutUserAPIView.as_view(),
         name='auth_user_logout'),
-    re_path(r'^users$', get_post_list,)
+    re_path(r'^feed/home/$', get_post_list,)
 ]
