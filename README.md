@@ -9,9 +9,9 @@
 
 
 ## Requirements
-In order to run the backend server on your local machine, you need to follow the instructions on [How to Set Up React Native Environment](https://reactnative.dev/docs/environment-setup).
+In order to run the backend server on your local machine, you need Python and its package installer pip installed. Furthermore, you need to be familiar with [Django](https://docs.djangoproject.com/en/4.1/).
 
-Currently (during development phase), we use a local SQLite Database, so you need SQLite installed on your machine.
+Currently (during development phase), the backend uses a local SQLite Database, so you need SQLite installed on your machine.
 
 All libraries needed to build this application can be found in requirements.txt. In order to install them, run `pip install -r requirements.txt`.
 
