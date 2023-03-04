@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Post(models.Model):
-    imageURL = models.URLField()
+    #imageURL = models.URLField()
+    imageURL = models.TextField()
     imageDescription = models.TextField()
     astroNameShort = models.TextField()
     astroName = models.TextField()
