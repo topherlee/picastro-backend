@@ -24,7 +24,7 @@ class Post(models.Model):
 
 class StarCamp(models.Model):
     starCampName = models.TextField()
-    starCamplocation = models.CharField(max_length=100, blank=True)
+    starCampLocation = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return self.starCampName
@@ -56,12 +56,13 @@ class Equipment(models.Model):
         return self.setName
     
 
-class Imageissaved(models.Model):
+class ImageIsSaved(models.Model):
     userId= models.ForeignKey(User, on_delete=models.CASCADE)
     imageIsSaved = models.ForeignKey(Post, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.imageIsSaved
+
 
 class Subscription(models.Model):
     subcriptionsPlan = models.TextField()
@@ -70,3 +71,11 @@ class Subscription(models.Model):
 
     def __str__(self):
         return self.subcriptionsPlan
+
+
+class savedImages(models.Model):
+    userId= models.ForeignKey(User, on_delete=models.CASCADE)
+    imageId = models.ForeignKey(Post, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.imageIsSaved
