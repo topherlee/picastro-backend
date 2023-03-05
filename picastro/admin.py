@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Post, StarCamp, UserProfile, Equipment, Imageissaved, Subscription
+from .models import Post, StarCamp, Equipment, Imageissaved, Subscription, UserProfile
 
 admin.site.register(Post)
 admin.site.register(StarCamp)

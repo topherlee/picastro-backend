@@ -41,7 +41,7 @@ class UserProfile(models.Model):
         return self.user.username
 
 class Equipment(models.Model):
-    setName = models.TextField()
+    setName = models.CharField(max_length=140, default='DEFAULT VALUE')
     telescopeName = models.TextField()
     cameraName = models.TextField()
     guideCameraName = models.TextField()
