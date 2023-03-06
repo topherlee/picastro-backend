@@ -1,8 +1,24 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
+from rest_framework_simplejwt.tokens import RefreshToken
 from .models import Post
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email', 'last_login', 'date_joined']
+
+
+class PosterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email']
+
+
 class PostSerializer(serializers.ModelSerializer):
+    poster = PosterSerializer(many=False, read_only=True)
+
     class Meta:
         model = Post
         fields = ('id', 'imageURL', 'astroNameShort', 'astroName', 'imageIsSaved', 
@@ -10,13 +26,35 @@ class PostSerializer(serializers.ModelSerializer):
                 'starCamp', 'leadingLight', 'pub_date', 'imageDescription', 'poster')
 
 class CreateUserSerializer(serializers.ModelSerializer):
-    username = serializers.CharField()
-    password = serializers.CharField(write_only=True,
-                                     style={'input_type': 'password'})
+    token = serializers.SerializerMethodField()
+
+    email = serializers.EmailField(
+        required=True, 
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
+
+    username = serializers.CharField(
+        required=True,
+        max_length=32,
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
+
+    password = serializers.CharField(
+        write_only=True,
+        style={'input_type': 'password'}
+    )
+
+    first_name = serializers.CharField(
+        required=True
+    )
+
+    last_name = serializers.CharField(
+        required=True
+    )
 
     class Meta:
-        model = get_user_model()
-        fields = ('username', 'password', 'first_name', 'last_name')
+        model = User
+        fields = ('token','username', 'password', 'first_name', 'last_name', 'email', 'id',)
         write_only_fields = ('password')
         read_only_fields = ('is_staff', 'is_superuser', 'is_active',)
 
@@ -25,3 +63,10 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+    def get_token(self, obj):
+        refresh = RefreshToken.for_user(obj)
+        return {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }

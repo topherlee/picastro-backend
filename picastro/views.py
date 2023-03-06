@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework import status
 from rest_framework.views import APIView
-from picastro.serializers import CreateUserSerializer, PostSerializer
+from picastro.serializers import CreateUserSerializer, PostSerializer, UserSerializer
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 from .models import Post
@@ -40,6 +40,13 @@ class LogoutUserAPIView(APIView):
         # simply delete the token to force a login
         request.user.auth_token.delete()
         return Response(status=status.HTTP_200_OK)
+
+
+class CurrentUserView(APIView):
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
+
 
 @api_view(['GET', 'POST', 'DELETE'])
 def get_post_list(request):
