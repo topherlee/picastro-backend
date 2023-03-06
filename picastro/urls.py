@@ -15,9 +15,7 @@ urlpatterns = [
         LogoutUserAPIView.as_view(),
         name='auth_user_logout'),
     re_path(r'^feed/home/$', get_post_list,),
-    re_path(r'^auth/current_user/$',
-        CurrentUserView.as_view(),
-        name='auth_user_current'),
+    path('current_user/',CurrentUserView.as_view(),name='auth_user_current'),
     path('token/access/', TokenRefreshView.as_view(), name='token_get_access'),     
     path('token/both/', TokenObtainPairView.as_view(), name='token_obtain_pair'),       #use this to get access and refresh token
 ]
