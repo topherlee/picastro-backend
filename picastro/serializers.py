@@ -2,13 +2,22 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Post
+from .models import Post, UserProfile
 
 class UserSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email', 'last_login', 'date_joined']
+        
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = UserProfile
+        fields = ['user', 'location', 'userDescription', 'genderIdentifier']
+        
 
 class PosterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,6 +33,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = ('id', 'imageURL', 'astroNameShort', 'astroName', 'imageIsSaved', 
                 'award', 'exposureTime', 'moonPhase', 'cloudCoverage', 'bortle',
                 'starCamp', 'leadingLight', 'pub_date', 'imageDescription', 'poster')
+
 
 class CreateUserSerializer(serializers.ModelSerializer):
     token = serializers.SerializerMethodField()
