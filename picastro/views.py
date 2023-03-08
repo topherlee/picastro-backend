@@ -12,7 +12,7 @@ from picastro.serializers import (
     CreateUserSerializer,
     PostSerializer,
     UserSerializer,
-    UserProfileSerializer,
+    #UserProfileSerializer,
 ) 
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
