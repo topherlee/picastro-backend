@@ -1,5 +1,5 @@
 import json
-import datetime
+from datetime import datetime, timedelta
 from multiprocessing.sharedctypes import Value
 from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError
@@ -10,23 +10,68 @@ from picastro.models import (
     User,
     UserProfile,
     Equipment,
-    Imageissaved,
     Subscription,
-    savedImages
+    savedImages,
+    ImageIsSaved
 )
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        #drop all tables to preven duplicates
-        Post.objects.all().delete()
-        Post.objects.all().delete()
-        StarCamp.objects.all().delete()
-        UserProfile.objects.all().delete()
-        Equipment.objects.all().delete()
-        Imageissaved.objects.all().delete()
-        Subscription.objects.all().delete()
-        print("Tables dropped succesfully")
+        def drop_tables():
+            #drop all tables to preven duplicates
+            User.objects.all().delete()
+            Post.objects.all().delete()
+            StarCamp.objects.all().delete()
+            UserProfile.objects.all().delete()
+            Equipment.objects.all().delete()
+            ImageIsSaved.objects.all().delete()
+            Subscription.objects.all().delete()
+            print("Tables dropped succesfully")
+        
+        drop_tables()
+
         base_dir = Path(__file__).resolve().parent.parent.parent.parent
+
+        #create some users
+        def create_users():
+            print("started creating users")
+            user = User.objects.create(
+                username = "admin",
+                first_name = "admin",
+                last_name = "admin",
+                email = "admin@picastro.com",
+                password = "picastro",
+                date_joined = datetime.now()
+            )
+            user.save()
+            with open(f'{base_dir}/picastro/data/homeFeed.json', 'r') as file:
+                print("Json file opened successfully.")
+                json_data = json.load(file)
+                #print(json_data)
+                i = 0
+                for data_object in json_data:
+                    i += 1
+                    print(i)
+                    user_object = User.objects.filter(username = data_object["userName"])
+                    if user_object.count() > 0:
+                        continue
+                    else:
+                        first_name = "John" + str(i)
+                        last_name = "Doe"
+                        user = User.objects.create(
+                            username = data_object["userName"],
+                            first_name = first_name,
+                            last_name = last_name,
+                            email = first_name + last_name + "@picastro.com",
+                            password = "picastro",
+                            date_joined = datetime.now()
+                        )
+                        user.save()
+                        print("user created", user)
+                        
+        
+        create_users()
+
 
         with open(f'{base_dir}/picastro/data/homeFeed.json', 'r') as file:
             print("Json file opened successfully.")
@@ -47,31 +92,43 @@ class Command(BaseCommand):
                     bortle = data_object["bortle"],
                     starCamp = data_object["starCamp"],
                     leadingLight = data_object["leadingLight"],
-                    pub_date = datetime.now,
-                    poster = ""???
+                    pub_date = datetime.now(),
+                    poster = User.objects.get(username=data_object["userName"]),
                 )
                 post.save()
 
-                star_camp = StarCamp.objects.create(
-                    starCampName = data_object["starCamp"],
-                    starCampLocation = data_object["starCamp"],
-                )
-                star_camp.save()
+                try:
+                    star_camp = StarCamp.objects.create(
+                        starCampName = data_object["starCamp"],
+                        starCampLocation = data_object["starCamp"],
+                    )
+                    star_camp.save()
+                except IntegrityError:
+                    pass
 
-                user_profile = UserProfile.objects.create(
-                    user = "",???
-                    location = data_object["userLocation"],
-                    starCampId = ""???,
-                    subcriptionsExpiry = datetime.now + 2592000,
-                    isEmailVerified = data_object["isEmailVerified"],
+
+                if data_object.get("userDescription") != None:
                     userDescription = data_object["userDescription"]
-                )
-                user_profile.save()
+                else:
+                    userDescription = ""
+
+                try:
+                    user_profile = UserProfile.objects.create(
+                        user = User.objects.get(username=data_object["userName"]),
+                        location = data_object["userLocation"],
+                        starCampId = StarCamp.objects.get(starCampName=data_object["starCamp"]),
+                        subcriptionsExpiry = datetime.now() + timedelta(days=30),
+                        isEmailVerified = True,
+                        userDescription = userDescription
+                    )
+                    user_profile.save()
+                except IntegrityError:
+                    pass
 
                 if data_object["imageIsSaved"]:
                     saved_image = savedImages.objects.create(
-                        userId = ""???,
-                        imageId = ""???
+                        userId = User.objects.get(username=data_object["userName"]),
+                        imageId = Post.objects.get(id=post.id),
                     )
 
                 print(data_object["imageURL"])

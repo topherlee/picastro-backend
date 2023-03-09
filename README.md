@@ -27,6 +27,7 @@ How do I test the code to ensure the build is correct?
 - Run `pip install -r requirements.txt` to install dependencies
 - `python manage.py migrate` to make database migrations.
 - Run `python manage.py createsuperuser` to create a superuser (administrator) for your local backend installation. Set user name and password to whatever you like.
+- Run `python manage.py data_parser` to populate your database with data from a json file.
 - Execute `python manage.py runserver` to start your local development server
 - Open your browser and navigate to [127.0.0.1:8000/admin](127.0.0.1:8000/admin), then login with the above account to see the admin panel.
 

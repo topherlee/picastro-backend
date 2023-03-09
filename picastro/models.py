@@ -23,7 +23,7 @@ class Post(models.Model):
         return self.poster.username
 
 class StarCamp(models.Model):
-    starCampName = models.TextField()
+    starCampName = models.TextField(unique=True)
     starCampLocation = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
@@ -36,6 +36,7 @@ class UserProfile(models.Model):
     subcriptionsExpiry = models.DateTimeField(auto_now_add=True)
     isEmailVerified = models.BooleanField()
     userDescription = models.TextField()
+    genderIdentifier = models.TextField(default="divers")
    
     def __str__(self):
         return self.user.username
