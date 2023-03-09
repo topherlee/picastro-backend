@@ -20,16 +20,38 @@ class Command(BaseCommand):
         def drop_tables():
             #drop all tables to preven duplicates
             User.objects.all().delete()
-            Post.objects.all().delete()
-            StarCamp.objects.all().delete()
-            UserProfile.objects.all().delete()
-            Equipment.objects.all().delete()
-            ImageIsSaved.objects.all().delete()
-            Subscription.objects.all().delete()
+            try:
+                User.objects.all().delete()
+            except:
+                pass
+            try:
+                Post.objects.all().delete()
+            except:
+                pass
+            try:
+                StarCamp.objects.all().delete()
+            except:
+                pass
+            try:
+                UserProfile.objects.all().delete()
+            except:
+                pass
+            try:
+                Equipment.objects.all().delete()
+            except:
+                pass
+            try:
+                ImageIsSaved.objects.all().delete()
+            except:
+                pass
+            try:
+                Subscription.objects.all().delete()
+            except:
+                pass
             print("Tables dropped succesfully")
-        
+            
         drop_tables()
-
+        
         base_dir = Path(__file__).resolve().parent.parent.parent.parent
 
         #create some users
