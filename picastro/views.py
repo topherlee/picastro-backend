@@ -12,6 +12,7 @@ from picastro.serializers import CreateUserSerializer, PostSerializer, UserSeria
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 from .models import Post
+from django.views.generic import ListView
 
 
 class CreateUserAPIView(CreateAPIView):
@@ -54,3 +55,8 @@ def get_post_list(request):
         rest_list = Post.objects.order_by('-pub_date')
         serializer = PostSerializer(rest_list, many=True)
         return JsonResponse(serializer.data, safe=False)
+
+
+class HomePageView(ListView):
+    model = Post
+    template_name = "home.html"
