@@ -11,12 +11,12 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['username', 'first_name', 'last_name', 'email', 'last_login', 'date_joined']
         
 
-# class UserProfileSerializer(serializers.ModelSerializer):
-#     user = UserSerializer(many=False, read_only=True)
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False, read_only=True)
 
-#     class Meta:
-#         model = UserProfile
-#         fields = ['user', 'location', 'userDescription', 'genderIdentifier']
+    class Meta:
+        model = UserProfile
+        fields = ['user', 'location', 'userDescription', 'genderIdentifier']
         
 
 class PosterSerializer(serializers.ModelSerializer):
