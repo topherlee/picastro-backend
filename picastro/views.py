@@ -57,7 +57,7 @@ class CurrentUserView(APIView):
 def get_post_list(request):
     if request.method == "GET":
         rest_list = Post.objects.order_by('-pub_date')
-        serializer = PostSerializer(rest_list, many=True)
+        serializer = PostSerializer(rest_list, many=True, context={'request': request})
         return JsonResponse(serializer.data, safe=False)
 
 

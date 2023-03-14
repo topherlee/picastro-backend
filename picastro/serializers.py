@@ -30,7 +30,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ('id', 'imageURL', 'astroNameShort', 'astroName', 'imageIsSaved', 
+        fields = ('id', 'image', 'astroNameShort', 'astroName', 'imageIsSaved', 
                 'award', 'exposureTime', 'moonPhase', 'cloudCoverage', 'bortle',
                 'starCamp', 'leadingLight', 'pub_date', 'imageDescription', 'poster')
 
