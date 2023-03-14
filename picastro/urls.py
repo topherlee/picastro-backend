@@ -1,10 +1,21 @@
 from django.urls import path, re_path
+from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import CreateUserAPIView, LogoutUserAPIView, get_post_list, CurrentUserView
-from django.urls import path
+from .views import (
+    CreateUserAPIView,
+    LogoutUserAPIView,
+    get_post_list,
+    CurrentUserView,
+    PostViewSet
+)
+from django.urls import path, include
 
 from .views import HomePageView
+
+router = DefaultRouter()
+router.register("posts", PostViewSet)
+
 
 urlpatterns = [
     # re_path(r'^auth/login/$',
@@ -21,4 +32,5 @@ urlpatterns = [
     path('token/access/', TokenRefreshView.as_view(), name='token_get_access'),     
     path('token/both/', TokenObtainPairView.as_view(), name='token_obtain_pair'),       #use this to get access and refresh token
     path("", HomePageView.as_view(), name="home"),
+    path("", include(router.urls)),
 ]

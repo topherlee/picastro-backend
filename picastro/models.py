@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Post(models.Model):
     imageURL = models.URLField()
-    image    = models.ImageField(upload_to='images/', default='blank-profile-picture.png')
+    image = models.ImageField(upload_to='images/', default='blank-profile-picture.png')
     imageDescription = models.TextField()
     astroNameShort = models.TextField()
     astroName = models.TextField()

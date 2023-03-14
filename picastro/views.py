@@ -7,6 +7,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework import status
+from rest_framework.viewsets import ModelViewSet 
 from rest_framework.views import APIView
 from picastro.serializers import (
     CreateUserSerializer,
@@ -63,3 +64,8 @@ def get_post_list(request):
 class HomePageView(ListView):
     model = Post
     template_name = "home.html"
+
+
+class PostViewSet(ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
