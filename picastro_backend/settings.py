@@ -170,6 +170,8 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     # how long the original token is valid for
+    # 'ACCESS_TOKEN_LIFETIME': timedelta(seconds=3),
+    # "REFRESH_TOKEN_LIFETIME": timedelta(seconds=15),
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     "AUTH_HEADER_TYPES": ("Token",),

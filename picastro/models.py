@@ -19,7 +19,7 @@ class Post(models.Model):
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.poster.username
+        return f'{self.poster.username} - {str(self.pub_date)}'
 
 class StarCamp(models.Model):
     starCampName = models.TextField(unique=True)
