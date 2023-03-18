@@ -24,13 +24,11 @@ urlpatterns = [
     re_path(r'^auth/register/$',
         CreateUserAPIView.as_view(),
         name='auth_user_create'),
-    re_path(r'^auth/logout/$',
-        LogoutUserAPIView.as_view(),
-        name='auth_user_logout'),
     re_path(r'^feed/home/$', get_post_list,),
     path('current_user/',CurrentUserView.as_view(),name='auth_user_current'),
-    path('token/access/', TokenRefreshView.as_view(), name='token_get_access'),     
-    path('token/both/', TokenObtainPairView.as_view(), name='token_obtain_pair'),       #use this to get access and refresh token
+    path('auth/login/refresh/', TokenRefreshView.as_view(), name='auth_login_refresh'),     
+    path('auth/login/', TokenObtainPairView.as_view(), name='auth_login'),
+    path('auth/logout/', LogoutUserAPIView.as_view(), name='auth_logout'),       #use this to get access and refresh token
     path("", HomePageView.as_view(), name="home"),
     path("", include(router.urls)),
 ]

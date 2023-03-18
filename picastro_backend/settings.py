@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'picastro',
 ]
@@ -169,9 +170,11 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     # how long the original token is valid for
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "AUTH_HEADER_TYPES": ("Token",)
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    "AUTH_HEADER_TYPES": ("Token",),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True
 }
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
