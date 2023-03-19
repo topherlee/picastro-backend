@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 class Post(models.Model):
     image = models.ImageField(upload_to='images/')
     imageDescription = models.TextField()
+    imageCategory = models.TextField(default="")
     astroNameShort = models.TextField()
     astroName = models.TextField()
     imageIsSaved = models.BooleanField()
