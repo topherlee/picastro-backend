@@ -2,7 +2,11 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.contrib.auth import get_user_model
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import (
+    CreateAPIView,
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView
+)
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -77,3 +81,15 @@ class PostViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+
+#new setup for Post API endpoint to do all together:
+# post, retrieve, filter, search, update (for SortAndFilterScreen, HomeScreen, UserScreen)
+
+class PostAPIView(ListCreateAPIView):
+    serializer_class = PostSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Post.objects.all()
+
+    def perform_create(self, serializer):
+        return serializer.save(poster = self.request.user)

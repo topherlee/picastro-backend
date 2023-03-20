@@ -7,7 +7,8 @@ from .views import (
     LogoutUserAPIView,
     get_post_list,
     CurrentUserView,
-    PostViewSet
+    PostViewSet,
+    PostAPIView
 )
 from django.urls import path, include
 
@@ -25,6 +26,7 @@ urlpatterns = [
         CreateUserAPIView.as_view(),
         name='auth_user_create'),
     re_path(r'^feed/home/$', get_post_list,),
+    path('feed/', PostAPIView.as_view(), name='feed_of_posts'),
     path('current_user/',CurrentUserView.as_view(),name='auth_user_current'),
     path('auth/login/refresh/', TokenRefreshView.as_view(), name='auth_login_refresh'),     
     path('auth/login/', TokenObtainPairView.as_view(), name='auth_login'),

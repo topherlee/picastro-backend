@@ -32,7 +32,8 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = ('id', 'image', 'astroNameShort', 'astroName', 'imageIsSaved', 
                 'award', 'exposureTime', 'moonPhase', 'cloudCoverage', 'bortle',
-                'starCamp', 'leadingLight', 'pub_date', 'imageDescription', 'poster')
+                'starCamp', 'leadingLight', 'pub_date', 'imageDescription', 
+                'imageCategory','poster')
     
     def to_representation(self, instance):
         self.fields['poster'] =  PosterSerializer(read_only=True)
