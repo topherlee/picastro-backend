@@ -7,6 +7,7 @@ from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView
 )
+from rest_framework import filters
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -25,7 +26,7 @@ from rest_framework.decorators import api_view
 from django.http import JsonResponse
 from .models import Post
 from django.views.generic import ListView
-
+from django_filters.rest_framework import DjangoFilterBackend
 
 class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer
@@ -77,10 +78,10 @@ class HomePageView(ListView):
     template_name = "home.html"
 
 
-class PostViewSet(ModelViewSet):
-    permission_classes = (IsAuthenticated,)
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
+# class PostViewSet(ModelViewSet):
+#     permission_classes = (IsAuthenticated,)
+#     queryset = Post.objects.all()
+#     serializer_class = PostSerializer
 
 
 #new setup for Post API endpoint to do all together:
@@ -90,6 +91,20 @@ class PostAPIView(ListCreateAPIView):
     serializer_class = PostSerializer
     permission_classes = (IsAuthenticated,)
     queryset = Post.objects.all()
+    filter_backends = [DjangoFilterBackend,
+                        filters.SearchFilter,
+                        filters.OrderingFilter]
+    filterset_fields = ['id', 'imageCategory', 'pub_date', 'poster']
+    search_fields = ['astroNameShort', 'astroName']
+    ordering_fields = ['id', 'imageCategory', 'pub_date', 'poster']
+    
 
     def perform_create(self, serializer):
         return serializer.save(poster = self.request.user)
+
+
+class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = PostSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Post.objects.all()
+    lookup_field = 'id'
