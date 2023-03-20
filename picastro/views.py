@@ -45,7 +45,7 @@ class LogoutUserAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            refresh_token = request.data["refresh_token"]
+            refresh_token = request.data["refresh"]
             token = RefreshToken(refresh_token)
             token.blacklist()
 
@@ -74,5 +74,6 @@ class HomePageView(ListView):
 
 
 class PostViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = Post.objects.all()
     serializer_class = PostSerializer
