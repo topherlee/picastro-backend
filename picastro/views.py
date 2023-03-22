@@ -24,7 +24,7 @@ from picastro.serializers import (
 ) 
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
-from .models import Post
+from .models import Post, UserProfile
 from django.views.generic import ListView
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -107,4 +107,11 @@ class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = PostSerializer
     permission_classes = (IsAuthenticated,)
     queryset = Post.objects.all()
+    lookup_field = 'id'
+
+
+class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = UserProfile.objects.all()
     lookup_field = 'id'

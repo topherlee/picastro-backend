@@ -9,7 +9,8 @@ from .views import (
     CurrentUserView,
     PostViewSet,        #old API, delete later on
     PostAPIView,
-    PostDetailAPIView
+    PostDetailAPIView,
+    UserProfileAPIView
 )
 from django.urls import path, include
 
@@ -30,6 +31,7 @@ urlpatterns = [
     path('feed/', PostAPIView.as_view(), name='feed_of_posts'),
     path('feed/<int:id>', PostDetailAPIView.as_view(), name='update_delete_posts'),
     path('current_user/',CurrentUserView.as_view(),name='auth_user_current'),
+    path('user/<int:id>',UserProfileAPIView.as_view(),name='user_profile'),
     path('auth/login/refresh/', TokenRefreshView.as_view(), name='auth_login_refresh'),     
     path('auth/login/', TokenObtainPairView.as_view(), name='auth_login'),
     path('auth/logout/', LogoutUserAPIView.as_view(), name='auth_logout'),       #use this to get access and refresh token
