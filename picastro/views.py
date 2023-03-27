@@ -96,7 +96,7 @@ class PostAPIView(ListCreateAPIView):
                         filters.OrderingFilter]
     filterset_fields = ['id', 'imageCategory', 'pub_date', 'poster']
     search_fields = ['astroNameShort', 'astroName']
-    ordering_fields = ['id', 'imageCategory', 'pub_date', 'poster']
+    ordering_fields = ['id', 'imageCategory', '-pub_date', 'poster']
     
 
     def perform_create(self, serializer):

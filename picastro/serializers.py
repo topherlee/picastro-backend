@@ -16,7 +16,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ['user', 'location', 'userDescription', 'genderIdentifier']
+        fields = ['user', 'location', 'userDescription', 'genderIdentifier', 'profileImage']
         
 
 class PosterSerializer(serializers.ModelSerializer):
