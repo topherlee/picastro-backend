@@ -182,3 +182,6 @@ SIMPLE_JWT = {
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+LOGIN_REDIRECT_URL = 'postimage'
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'

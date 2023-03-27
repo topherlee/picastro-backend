@@ -27,6 +27,10 @@ from django.http import JsonResponse
 from .models import Post, UserProfile
 from django.views.generic import ListView
 from django_filters.rest_framework import DjangoFilterBackend
+from django.http import HttpResponse
+from django.contrib.auth import authenticate, login
+from .forms import LoginForm, PostForm
+from django.contrib.auth.decorators import login_required
 
 class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer
@@ -115,3 +119,53 @@ class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = UserProfile.objects.all()
     lookup_field = 'id'
+
+
+def user_login(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            user = authenticate(request,
+                                username=cd['username'],
+                                password=cd['password'])
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return HttpResponse('Authenticated successfully')
+                else:
+                    return HttpResponse('Disabled account')
+            else:
+                return HttpResponse('Invalid login')
+    else:
+        form = LoginForm()
+    return render(request, 'picastro/login.html', {'form': form})
+
+def dashboard(request):
+    return render(request,
+                  'picastro/dashboard.html',
+                  {'section': 'dashboard'}
+
+    )
+
+def post_image(request):
+    form = PostForm()
+    return render(request,
+          'post.html',{'form' : form})
+
+#def signup(request): 
+    #form = SignUpForm(request.POST) 
+    #if form.is_valid(): 
+        #user = form.save()
+         #user.refresh_from_db() 
+         #user.first_name = form.cleaned_data.get('first_name') 
+         #user.last_name = form.cleaned_data.get('last_name') 
+         #address = form.cleaned_data.get('address') 
+         #user.save() profile = Profile.objects.create(address=address, user_id=user.id) 
+         #profile.save() 
+         #username = form.cleaned_data.get('username') 
+         #password = form.cleaned_data.get('password1') 
+         #user = authenticate(username=username, password= password) 
+         #login(request, user) 
+         #return redirect('/') 
+         #return render(request, 'registration/signup.html', {'form': form})
