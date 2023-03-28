@@ -5,7 +5,8 @@ from django.contrib.auth import get_user_model
 from rest_framework.generics import (
     CreateAPIView,
     ListCreateAPIView,
-    RetrieveUpdateDestroyAPIView
+    RetrieveUpdateDestroyAPIView,
+    GenericAPIView
 )
 from rest_framework import filters
 from rest_framework.permissions import AllowAny
@@ -24,9 +25,12 @@ from picastro.serializers import (
 ) 
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
-from .models import Post, UserProfile
 from django.views.generic import ListView
 from django_filters.rest_framework import DjangoFilterBackend
+from django.urls import reverse
+from .models import Post, UserProfile
+from .utils import Util
+
 
 class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer
@@ -38,11 +42,34 @@ class CreateUserAPIView(CreateAPIView):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         # We create a token than will be used for future auth
+        print(serializer.data)
+        domain = 'http://13.42.37.75:8000/'
+        #domain = 'http://127.0.0.1:8000/'
+        relative_link = reverse('email-verify')
+        token = serializer.data['token']['access']
+        print(token)
+        
+        absolute_Url = domain + relative_link + '?token='+token
+        username = serializer.data['username']
+        user_email = serializer.data['email']
+        email_body = 'Hi ' + username +',\nUse link below to verify your email: \n' + absolute_Url
+        data = {
+            'email_subject': 'Verify your email for Picastro',
+            'email_body': email_body,
+            'user_email_address': user_email
+        }
+        Util.send_email(data)
         return Response(
             {**serializer.data},
             status=status.HTTP_201_CREATED,
             headers=headers
         )
+
+
+class VerifyEmail(GenericAPIView):
+    def get(self):
+        pass
+
 
 
 class LogoutUserAPIView(APIView):

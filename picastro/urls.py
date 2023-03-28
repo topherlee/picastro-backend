@@ -14,7 +14,7 @@ from .views import (
 )
 from django.urls import path, include
 
-from .views import HomePageView
+from .views import HomePageView, VerifyEmail
 
 router = DefaultRouter()                #old API, delete later on
 router.register("posts", PostViewSet)   #old API, delete later on
@@ -34,6 +34,7 @@ urlpatterns = [
     path('user/<int:id>',UserProfileAPIView.as_view(),name='user_profile'),
     path('auth/login/refresh/', TokenRefreshView.as_view(), name='auth_login_refresh'),     
     path('auth/login/', TokenObtainPairView.as_view(), name='auth_login'),
+    path('auth/email-verify/', VerifyEmail.as_view(), name='email-verify'),
     path('auth/logout/', LogoutUserAPIView.as_view(), name='auth_logout'),       #use this to get access and refresh token
     path("", HomePageView.as_view(), name="home"),
     path("", include(router.urls)),     #old API, delete later on
