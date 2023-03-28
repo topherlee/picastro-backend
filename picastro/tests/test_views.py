@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from .test_setup import TestSetup
 import pdb
 
@@ -8,9 +9,44 @@ class TestViews(TestSetup):
         #pdb.set_trace()
         self.assertEqual(res.status_code, 400)
 
+
     def test_user_can_register(self):
-        res = self.client.post(self.register_url, self.user_data, format='json')
-        pdb.set_trace()
+        res = self.client.post(
+            self.register_url,
+            self.user_data,
+            format='json')
+        #pdb.set_trace()
         self.assertEqual(res.status_code, 201)
         self.assertEqual(res.data['email'], self.user_data['email'])
         self.assertEqual(res.data['username'], self.user_data['username'])
+
+
+    #test not yet working, because email verification not yet implemented
+    # def test_user_cannot_login_when_email_unverified(self):
+    #     self.client.post(
+    #         self.register_url, self.user_data, format='json'
+    #     )
+    #     res = self.client.post(
+    #         self.login_url,
+    #         self.user_data,
+    #         format='json'
+    #     )
+    #     self.assertEqual(res.status_code, 401)
+
+
+    def test_user_can_login_after_email_verification(self):
+        res = self.client.post(
+            self.register_url,
+            self.user_data,
+            format='json'
+        )
+        username = res.data['username']
+        user = User.objects.get(username=username)
+        user.is_verified = True
+        user.save()
+        res = self.client.post(
+            self.login_url,
+            self.user_data,
+            format='json'
+        )
+        self.assertEqual(res.status_code, 200)
