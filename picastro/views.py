@@ -30,6 +30,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.urls import reverse
 from .models import Post, UserProfile
 from .utils import Util
+from django.core.mail import send_mail
+import os
 
 
 class CreateUserAPIView(CreateAPIView):
@@ -58,7 +60,17 @@ class CreateUserAPIView(CreateAPIView):
             'email_body': email_body,
             'user_email_address': user_email
         }
-        Util.send_email(data)
+
+        print(os.environ.get('EMAIL_HOST_PASSWORD'))
+        
+        send_mail(
+            'Verify your email for Picastro',
+            email_body,
+            'atzen78@web.de',
+            [user_email],
+            fail_silently=False,
+        )
+        #Util.send_email(data)
         return Response(
             {**serializer.data},
             status=status.HTTP_201_CREATED,
@@ -69,7 +81,6 @@ class CreateUserAPIView(CreateAPIView):
 class VerifyEmail(GenericAPIView):
     def get(self):
         pass
-
 
 
 class LogoutUserAPIView(APIView):

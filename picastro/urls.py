@@ -27,7 +27,7 @@ urlpatterns = [
     re_path(r'^auth/register/$',
         CreateUserAPIView.as_view(),
         name='auth_user_create'),
-    re_path(r'^feed/home/$', get_post_list,),   #old API, delete later on
+    #re_path(r'^feed/home/$', get_post_list,),   #old API, delete later on
     path('feed/', PostAPIView.as_view(), name='feed_of_posts'),
     path('feed/<int:id>', PostDetailAPIView.as_view(), name='update_delete_posts'),
     path('current_user/',CurrentUserView.as_view(),name='auth_user_current'),

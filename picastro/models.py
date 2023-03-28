@@ -33,7 +33,7 @@ class StarCamp(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    is_verified = models.BooleanField(default=False)
+    #is_verified = models.BooleanField(default=False)
     profileImage = models.ImageField(upload_to='profileImages/', default='profileImages/sampleuserbig.png')
     location = models.CharField(max_length=100, blank=True)
     starCampId = models.ForeignKey(StarCamp, on_delete=models.CASCADE)
