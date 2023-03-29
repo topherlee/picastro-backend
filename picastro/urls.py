@@ -2,11 +2,12 @@ from django.urls import path, re_path
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import (
+from .views import(
     CreateUserAPIView,
     LogoutUserAPIView,
     get_post_list,
     CurrentUserView,
+    CommentViewSet,
     PostViewSet
 )
 from django.urls import path, include
@@ -33,4 +34,6 @@ urlpatterns = [
     path('token/both/', TokenObtainPairView.as_view(), name='token_obtain_pair'),       #use this to get access and refresh token
     path("", HomePageView.as_view(), name="home"),
     path("", include(router.urls)),
+    path('comments/',CommentViewSet.as_view({'get': 'list'}),name='auth_comment'),
+
 ]

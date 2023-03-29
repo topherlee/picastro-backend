@@ -79,3 +79,15 @@ class savedImages(models.Model):
 
     def __str__(self):
         return self.imageIsSaved
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    commenter_name = models.ForeignKey(User,on_delete=models.CASCADE)
+    comment_body = models.TextField()
+    date_added = models.DateTimeField(auto_now_add=True)
+    
+    
+    def __str__(self):
+        return '%s - %s' % (self.commenter_name,self.comment_body)
+
+

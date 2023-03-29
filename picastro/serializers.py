@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Post, UserProfile
+from .models import Post, UserProfile, Comment
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -84,3 +84,13 @@ class CreateUserSerializer(serializers.ModelSerializer):
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         }
+    
+
+class CommentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment 
+        fields = ['post', 'commenter_name', 'comment_body', 'date_added']        
+            
+
+

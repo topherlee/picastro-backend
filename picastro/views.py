@@ -4,9 +4,12 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework import status
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet 
 from rest_framework.views import APIView
 from picastro.serializers import (
@@ -14,10 +17,10 @@ from picastro.serializers import (
     PostSerializer,
     UserSerializer,
     UserProfileSerializer,
-) 
-from rest_framework.decorators import api_view
+    CommentSerializer,
+)
 from django.http import JsonResponse
-from .models import Post
+from .models import Post,Comment
 from django.views.generic import ListView
 
 
@@ -59,6 +62,7 @@ def get_post_list(request):
         rest_list = Post.objects.order_by('-pub_date')
         serializer = PostSerializer(rest_list, many=True, context={'request': request})
         return JsonResponse(serializer.data, safe=False)
+   
 
 
 class HomePageView(ListView):
@@ -69,3 +73,19 @@ class HomePageView(ListView):
 class PostViewSet(ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+@api_view(['GET', 'POST', 'DELETE'])
+def get_comment_list(request):
+    if request.method == "POST":
+        rest_list = Comment.objects.order_by('-pub_date')
+        serializer = CommentSerializer(rest_list, many=True, context={'request': request})
+        return JsonResponse(serializer.data, safe=False)
+
+
+
+class CommentViewSet(ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+   
+    def perform_create(self, serializer):
+        return super().perform_create(serializer)
