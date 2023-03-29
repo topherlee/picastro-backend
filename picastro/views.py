@@ -25,12 +25,13 @@ from picastro.serializers import (
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 from .models import Post, UserProfile
-from django.views.generic import ListView
+from django.views.generic import ListView, CreateView
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
-from .forms import LoginForm, PostForm
+from .forms import LoginForm, PostForm, UserRegistrationForm
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse_lazy
 
 class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer
@@ -148,24 +149,35 @@ def dashboard(request):
 
     )
 
-def post_image(request):
-    form = PostForm()
-    return render(request,
-          'post.html',{'form' : form})
 
-#def signup(request): 
-    #form = SignUpForm(request.POST) 
-    #if form.is_valid(): 
-        #user = form.save()
-         #user.refresh_from_db() 
-         #user.first_name = form.cleaned_data.get('first_name') 
-         #user.last_name = form.cleaned_data.get('last_name') 
-         #address = form.cleaned_data.get('address') 
-         #user.save() profile = Profile.objects.create(address=address, user_id=user.id) 
-         #profile.save() 
-         #username = form.cleaned_data.get('username') 
-         #password = form.cleaned_data.get('password1') 
-         #user = authenticate(username=username, password= password) 
-         #login(request, user) 
-         #return redirect('/') 
-         #return render(request, 'registration/signup.html', {'form': form})
+
+def register(request):
+    if request.method == 'POST':
+        user_form = UserRegistrationForm(request.POST)
+        if user_form.is_valid():
+            # Create a new user object but avoid saving it yet
+            new_user = user_form.save(commit=False)
+            # Set the chosen password
+            new_user.set_password(
+                user_form.cleaned_data['password'])
+            # Save the User object
+            new_user.save()
+            return render(request,
+                          'picastro/register_done.html',
+                          {'new_user': new_user})
+    else:
+        user_form = UserRegistrationForm()
+    return render(request,
+                  'picastro/register.html',
+                  {'user_form': user_form})
+
+# def post_image(request):
+#     form = PostForm()
+#     return render(request,
+#           'post.html',{'form' : form})
+
+class CreatePostView(CreateView):  # new
+    model = Post
+    form_class = PostForm
+    template_name = "post.html"
+    success_url = reverse_lazy("home")
