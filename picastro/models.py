@@ -5,21 +5,22 @@ from django.contrib.auth.models import User
 class Post(models.Model):
     image = models.ImageField(upload_to='images/')
     imageDescription = models.TextField()
+    imageCategory = models.TextField(default="")
     astroNameShort = models.TextField()
     astroName = models.TextField()
-    imageIsSaved = models.BooleanField()
-    award = models.TextField()
+    imageIsSaved = models.BooleanField(default=False)
+    award = models.TextField(default='None')
     exposureTime = models.TextField()
     moonPhase = models.TextField()
     cloudCoverage = models.TextField()
     bortle = models.TextField()
     starCamp = models.TextField()
-    leadingLight = models.BooleanField()
+    leadingLight = models.BooleanField(default=False)
     pub_date = models.DateTimeField(auto_now_add=True)
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.poster.username
+        return f'{self.poster.username} - {str(self.pub_date)}'
 
 class StarCamp(models.Model):
     starCampName = models.TextField(unique=True)
@@ -30,6 +31,7 @@ class StarCamp(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profileImage = models.ImageField(upload_to='profileImages/', default='profileImages/sampleuserbig.png')
     location = models.CharField(max_length=100, blank=True)
     starCampId = models.ForeignKey(StarCamp, on_delete=models.CASCADE)
     subcriptionsExpiry = models.DateTimeField(auto_now_add=True)

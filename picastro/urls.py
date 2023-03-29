@@ -8,14 +8,17 @@ from .views import(
     get_post_list,
     CurrentUserView,
     CommentViewSet,
-    PostViewSet
+    PostViewSet,        #old API, delete later on
+    PostAPIView,
+    PostDetailAPIView,
+    UserProfileAPIView
 )
 from django.urls import path, include
 
 from .views import HomePageView
 
-router = DefaultRouter()
-router.register("posts", PostViewSet)
+router = DefaultRouter()                #old API, delete later on
+router.register("posts", PostViewSet)   #old API, delete later on
 
 
 urlpatterns = [
@@ -25,15 +28,16 @@ urlpatterns = [
     re_path(r'^auth/register/$',
         CreateUserAPIView.as_view(),
         name='auth_user_create'),
-    re_path(r'^auth/logout/$',
-        LogoutUserAPIView.as_view(),
-        name='auth_user_logout'),
-    re_path(r'^feed/home/$', get_post_list,),
+    re_path(r'^feed/home/$', get_post_list,),   #old API, delete later on
+    path('feed/', PostAPIView.as_view(), name='feed_of_posts'),
+    path('feed/<int:id>', PostDetailAPIView.as_view(), name='update_delete_posts'),
     path('current_user/',CurrentUserView.as_view(),name='auth_user_current'),
-    path('token/access/', TokenRefreshView.as_view(), name='token_get_access'),     
-    path('token/both/', TokenObtainPairView.as_view(), name='token_obtain_pair'),       #use this to get access and refresh token
+    path('user/<int:id>',UserProfileAPIView.as_view(),name='user_profile'),
+    path('auth/login/refresh/', TokenRefreshView.as_view(), name='auth_login_refresh'),     
+    path('auth/login/', TokenObtainPairView.as_view(), name='auth_login'),
+    path('auth/logout/', LogoutUserAPIView.as_view(), name='auth_logout'),       #use this to get access and refresh token
     path("", HomePageView.as_view(), name="home"),
-    path("", include(router.urls)),
+    path("", include(router.urls)),     #old API, delete later on
     path('comments/',CommentViewSet.as_view({'get': 'list'}),name='auth_comment'),
 
 ]

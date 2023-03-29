@@ -2,14 +2,19 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.contrib.auth import get_user_model
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import (
+    CreateAPIView,
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView
+)
+from rest_framework import filters
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework import status
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet 
 from rest_framework.views import APIView
 from picastro.serializers import (
@@ -20,9 +25,9 @@ from picastro.serializers import (
     CommentSerializer,
 )
 from django.http import JsonResponse
-from .models import Post,Comment
+from .models import Post,Comment, UserProfile
 from django.views.generic import ListView
-
+from django_filters.rest_framework import DjangoFilterBackend
 
 class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer
@@ -42,12 +47,17 @@ class CreateUserAPIView(CreateAPIView):
 
 
 class LogoutUserAPIView(APIView):
-    queryset = get_user_model().objects.all()
+    permission_classes = (IsAuthenticated,)
 
-    def get(self, request, format=None):
-        # simply delete the token to force a login
-        request.user.auth_token.delete()
-        return Response(status=status.HTTP_200_OK)
+    def post(self, request, *args, **kwargs):
+        try:
+            refresh_token = request.data["refresh"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class CurrentUserView(APIView):
@@ -56,7 +66,7 @@ class CurrentUserView(APIView):
         return Response(serializer.data)
 
 
-@api_view(['GET', 'POST', 'DELETE'])
+@api_view(['GET', 'POST', 'DELETE'])       #old API, delete later on
 def get_post_list(request):
     if request.method == "GET":
         rest_list = Post.objects.order_by('-pub_date')
@@ -70,17 +80,43 @@ class HomePageView(ListView):
     template_name = "home.html"
 
 
-class PostViewSet(ModelViewSet):
+class PostViewSet(ModelViewSet):    #old API, delete later on
+    permission_classes = (IsAuthenticated,)
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
-@api_view(['GET', 'POST', 'DELETE'])
-def get_comment_list(request):
-    if request.method == "POST":
-        rest_list = Comment.objects.order_by('-pub_date')
-        serializer = CommentSerializer(rest_list, many=True, context={'request': request})
-        return JsonResponse(serializer.data, safe=False)
 
+#new setup for Post API endpoint to do all together:
+# post, retrieve, filter, search, update (for SortAndFilterScreen, HomeScreen, UserScreen)
+
+class PostAPIView(ListCreateAPIView):
+    serializer_class = PostSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Post.objects.all()
+    filter_backends = [DjangoFilterBackend,
+                        filters.SearchFilter,
+                        filters.OrderingFilter]
+    filterset_fields = ['id', 'imageCategory', 'pub_date', 'poster']
+    search_fields = ['astroNameShort', 'astroName']
+    ordering_fields = ['id', 'imageCategory', 'pub_date', 'poster']
+    ordering = '-pub_date'
+
+    def perform_create(self, serializer):
+        return serializer.save(poster = self.request.user)
+
+
+class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = PostSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Post.objects.all()
+    lookup_field = 'id'
+
+
+class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = UserProfile.objects.all()
+    lookup_field = 'id'
 
 
 class CommentViewSet(ModelViewSet):

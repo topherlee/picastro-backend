@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'last_login', 'date_joined']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'last_login', 'date_joined']
         
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -16,7 +16,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ['user', 'location', 'userDescription', 'genderIdentifier']
+        fields = ['user', 'location', 'userDescription', 'genderIdentifier', 'profileImage']
         
 
 class PosterSerializer(serializers.ModelSerializer):
@@ -32,7 +32,8 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = ('id', 'image', 'astroNameShort', 'astroName', 'imageIsSaved', 
                 'award', 'exposureTime', 'moonPhase', 'cloudCoverage', 'bortle',
-                'starCamp', 'leadingLight', 'pub_date', 'imageDescription', 'poster')
+                'starCamp', 'leadingLight', 'pub_date', 'imageDescription', 
+                'imageCategory','poster')
     
     def to_representation(self, instance):
         self.fields['poster'] =  PosterSerializer(read_only=True)

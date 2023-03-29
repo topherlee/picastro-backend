@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-y6qmxm&3awp)*unz^*&!+97x*z0sa$3-s9t0^@fvkc(@xe$^#f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2','13.42.37.75']
 
 
 # Application definition
@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    'django_filters',
     'picastro',
 ]
 
@@ -155,6 +157,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 16,
 }
 # REST_FRAMEWORK = {
 #     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -169,9 +173,13 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     # how long the original token is valid for
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "AUTH_HEADER_TYPES": ("Token",)
+    # 'ACCESS_TOKEN_LIFETIME': timedelta(seconds=3),
+    # "REFRESH_TOKEN_LIFETIME": timedelta(seconds=15),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    "AUTH_HEADER_TYPES": ("Token",),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True
 }
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
