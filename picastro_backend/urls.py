@@ -30,7 +30,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('', include('picastro.urls')),
-    path('picastro/', include('picastro.urls')),
+    path('picastro/', include('picastro_web.urls')),
 ]
 if settings.DEBUG:  # new
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
