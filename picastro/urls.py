@@ -13,8 +13,9 @@ from .views import (
     UserProfileAPIView
 )
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
 
-from .views import HomePageView
+from . import views
 
 router = DefaultRouter()                #old API, delete later on
 router.register("posts", PostViewSet)   #old API, delete later on
@@ -35,6 +36,5 @@ urlpatterns = [
     path('auth/login/refresh/', TokenRefreshView.as_view(), name='auth_login_refresh'),     
     path('auth/login/', TokenObtainPairView.as_view(), name='auth_login'),
     path('auth/logout/', LogoutUserAPIView.as_view(), name='auth_logout'),       #use this to get access and refresh token
-    path("", HomePageView.as_view(), name="home"),
-    path("", include(router.urls)),     #old API, delete later on
+    
 ]

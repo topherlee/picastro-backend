@@ -25,8 +25,12 @@ from picastro.serializers import (
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 from .models import Post, UserProfile
-from django.views.generic import ListView
+from django.views.generic import ListView, CreateView
 from django_filters.rest_framework import DjangoFilterBackend
+from django.http import HttpResponse
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse_lazy
 
 class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer
@@ -73,9 +77,7 @@ def get_post_list(request):
         return JsonResponse(serializer.data, safe=False)
 
 
-class HomePageView(ListView):
-    model = Post
-    template_name = "home.html"
+
 
 
 class PostViewSet(ModelViewSet):    #old API, delete later on
@@ -115,3 +117,5 @@ class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = UserProfile.objects.all()
     lookup_field = 'id'
+
+
