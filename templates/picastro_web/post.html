@@ -1,14 +1,14 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-  
-  <link href="{% static "css/base.css" %}" rel="stylesheet">
-</head>
+{% extends "picastro_web/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
 <h1>Create Post Page</h1>
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
   {{ form.as_p }}
   <button type="submit">Submit New Post</button>
+  <br>
+  <br>
 </form>
-</html>
+
+{% endblock %}

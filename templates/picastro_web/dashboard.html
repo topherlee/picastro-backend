@@ -1,0 +1,17 @@
+{% extends "picastro_web/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+  <h1>Dashboard</h1>
+  <p>Welcome to your dashboard.</p>
+
+  <h2>Your uploaded images</h2>
+
+  {% for post in object_list %}
+  <div>
+  <h3>{{ post.astroName }}</h3>
+  <img src="{{ post.image }}" alt="{{ post.imageDescription }}">
+  </div>
+  {% endfor %}
+
+{% endblock %}

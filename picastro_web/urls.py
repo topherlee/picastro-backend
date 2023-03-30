@@ -4,7 +4,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from .views import (
     
     HomePageView,
-    
+    DashboardView,
     CreatePostView
 )
 from django.urls import path, include
@@ -24,6 +24,5 @@ urlpatterns = [
     #path('post/', views.post_image, name='postimage'),
     path("post/", CreatePostView.as_view(), name="add_post"),
      #path('edit/', views.post_image, name='edit'),
-    path('dashboard/', views.dashboard, name='dashboard'),
-
+    path('dashboard/', DashboardView.as_view(), name='dashboard'),
 ]

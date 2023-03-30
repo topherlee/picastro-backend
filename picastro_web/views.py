@@ -3,19 +3,21 @@ from django.shortcuts import render
 # Create your views here.
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
-from .models import Post, UserProfile
+from picastro.models import Post, UserProfile
 from django.views.generic import ListView, CreateView
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
 from .forms import LoginForm, PostForm, UserRegistrationForm
 from django.contrib.auth.decorators import login_required
-#from django.urls import reverse_lazy
+from django.urls import reverse_lazy
+
 
 class HomePageView(ListView):
     model = Post
-    template_name = "home.html"
-# Create your views here.
+    template_name = "picastro_web/home.html"
+
+
 def user_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -34,14 +36,19 @@ def user_login(request):
                 return HttpResponse('Invalid login')
     else:
         form = LoginForm()
-    return render(request, 'picastro/login.html', {'form': form})
+    return render(request, 'picastro_web/login.html', {'form': form})
 
-def dashboard(request):
-    return render(request,
-                  'picastro/dashboard.html',
-                  {'section': 'dashboard'}
 
-    )
+class DashboardView(ListView):
+    model = Post
+    template_name = "picastro_web/dashboard.html"
+
+# def dashboard(request):
+#     model = Post
+#     return render(request,
+#                   'picastro_web/dashboard.html',
+#                   {'section': 'dashboard'}
+#     )
 
 
 
@@ -57,12 +64,12 @@ def register(request):
             # Save the User object
             new_user.save()
             return render(request,
-                          'picastro/register_done.html',
+                          'registration/register_done.html',
                           {'new_user': new_user})
     else:
         user_form = UserRegistrationForm()
     return render(request,
-                  'picastro/register.html',
+                  'registration/register.html',
                   {'user_form': user_form})
 
 # def post_image(request):
@@ -73,5 +80,5 @@ def register(request):
 class CreatePostView(CreateView):  # new
     model = Post
     form_class = PostForm
-    template_name = "post.html"
-    #success_url = reverse_lazy("home")
+    template_name = "picastro_web/post.html"
+    success_url = reverse_lazy("dashboard")

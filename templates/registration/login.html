@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "picastro_web/base.html" %}
 {% block title %}Log-in{% endblock %}
 {% block content %}
   <h1>Log-in</h1>
@@ -10,7 +10,7 @@
   {% else %}
   <p>
     Please, use the following form to log-in. 
-    If you don't have an account <a href="{% url "register" %}">register here</a>.
+    If you don't have an account <a href="{% url 'register' %}">register here</a>.
   </p>
   
   {% endif %}
