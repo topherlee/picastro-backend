@@ -99,7 +99,7 @@ class PostAPIView(ListCreateAPIView):
     filterset_fields = ['id', 'imageCategory', 'pub_date', 'poster']
     search_fields = ['astroNameShort', 'astroName']
     ordering_fields = ['id', 'imageCategory', 'pub_date', 'poster']
-    
+    ordering = '-pub_date'
 
     def perform_create(self, serializer):
         return serializer.save(poster = self.request.user)
