@@ -1,9 +1,19 @@
 from django.db import models
 from django.contrib.auth.models import User
+from io import BytesIO
+import os
+from pgmagick import Image, FilterTypes
+
+from picastro_backend.settings import BASE_DIR
 
 # Create your models here.
 class Post(models.Model):
     image = models.ImageField(upload_to='images/')
+    thumbnail = models.ImageField(
+        upload_to='resize/',
+        editable=False,
+        default='resize/kaboom-scale.jpg'
+        )
     imageDescription = models.TextField()
     imageCategory = models.TextField(default="")
     astroNameShort = models.TextField()
@@ -19,8 +29,46 @@ class Post(models.Model):
     pub_date = models.DateTimeField(auto_now_add=True)
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    # Class string added to store original name of photo
+    original_image_name = None              # from https://stackoverflow.com/a/74696504
+
     def __str__(self):
         return f'{self.poster.username} - {str(self.pub_date)}'
+
+    # When the form is initialized save the original photo name
+    def __init__(self, *args, **kwargs):    # from https://stackoverflow.com/a/74696504
+        super().__init__(*args, **kwargs)
+        self.original_image_name = self.image.name
+
+    
+    def save(self, *args, **kwargs):        # from https://stackoverflow.com/a/74696504
+        # This checks if the photo was updated or not before saving a thumbnail
+        if self.original_image_name != self.image.name:
+            if not self.make_thumbnail(self):
+                raise Exception('Could not create thumbnail')
+
+    def make_thumbnail(self):
+        #image = Image.open(self.image)
+        im = Image(self.image)
+        im.quality(100)
+        im.scale('1000x1000')
+        im.sharpen(1.0)
+        im.write(str(BASE_DIR / 'media/resize') + '/' + image_uri.split("/")[-1])
+
+        thumb_name, thumb_extension = os.path.splitext(self.image.name)
+        thumb_extension = thumb_extension.lower()
+        thumb_filename = thumb_name + '_scale' + thumb_extension
+
+        # Save thumbnail to in-memory file as StringIO
+        temp_thumb = BytesIO()
+        image.save(temp_thumb)
+        temp_thumb.seek(0)
+
+        self.thumbnail.save(thumb_filename, ContentFile(temp_thumb.read()), save=False)
+        temp_thumb.close()
+
+        return True
+
 
 class StarCamp(models.Model):
     starCampName = models.TextField(unique=True)
