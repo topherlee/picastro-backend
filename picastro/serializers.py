@@ -27,10 +27,8 @@ class PosterSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     #poster = PosterSerializer(many=False, read_only=True)
-    thumbnail = serializers.ImageField(source='image')
-    print('image')
-    print(thumbnail)
-
+    thumbnail = serializers.ImageField(source='image', required=False)
+    
     class Meta:
         model = Post
         fields = ('id', 'image', 'astroNameShort', 'astroName', 'imageIsSaved', 

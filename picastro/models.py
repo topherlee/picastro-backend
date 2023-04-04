@@ -2,7 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from io import BytesIO
 import os
-from pgmagick import Image, FilterTypes
+#from pgmagick import Image
+from PIL import Image
+from django.core.files.base import ContentFile
 
 from picastro_backend.settings import BASE_DIR
 
@@ -12,7 +14,6 @@ class Post(models.Model):
     thumbnail = models.ImageField(
         upload_to='resize/',
         editable=False,
-        default='resize/kaboom-scale.jpg'
         )
     imageDescription = models.TextField()
     imageCategory = models.TextField(default="")
@@ -43,31 +44,54 @@ class Post(models.Model):
     
     def save(self, *args, **kwargs):        # from https://stackoverflow.com/a/74696504
         # This checks if the photo was updated or not before saving a thumbnail
-        if self.original_image_name != self.image.name:
-            if not self.make_thumbnail(self):
-                raise Exception('Could not create thumbnail')
+        print("original name", self.original_image_name)
+        print("image name", self.image.name)
+        #if self.original_image_name != self.image.name:
+            
+        if not self.make_thumbnail():
+            raise Exception('Could not create thumbnail')
+    
+        super(Post, self).save(*args, **kwargs)
 
     def make_thumbnail(self):
         #image = Image.open(self.image)
-        im = Image(self.image)
-        im.quality(100)
-        im.scale('1000x1000')
-        im.sharpen(1.0)
-        im.write(str(BASE_DIR / 'media/resize') + '/' + image_uri.split("/")[-1])
+        print("image processing", self.image)
+        #im = Image(str(self.image)) # does not work with pgmagick
+        # im.quality(100)
+        # im.scale('1000x1000')
+        # im.sharpen(1.0)
+        # im.write(str(BASE_DIR / 'media/resize') + '/' + image_uri.split("/")[-1])
+
+        image = Image.open(self.image)
+        thumb_size = (1000, 1000)
+        image.thumbnail(thumb_size, Image.ANTIALIAS)
+        print("image writing")
 
         thumb_name, thumb_extension = os.path.splitext(self.image.name)
         thumb_extension = thumb_extension.lower()
-        thumb_filename = thumb_name + '_scale' + thumb_extension
+        thumb_filename = thumb_name + '_thumb' + thumb_extension
 
+        if thumb_extension in ['.jpg', '.jpeg']:
+            FTYPE = 'JPEG'
+        elif thumb_extension == '.gif':
+            FTYPE = 'GIF'
+        elif thumb_extension == '.png':
+            FTYPE = 'PNG'
+        elif thumb_extension in ['.tif', '.tiff']:
+            FTYPE = 'TIF'
+        else:
+            return False    # Unrecognized file type
         # Save thumbnail to in-memory file as StringIO
         temp_thumb = BytesIO()
-        image.save(temp_thumb)
+        image.save(temp_thumb, FTYPE)
         temp_thumb.seek(0)
 
+        # set save=False, otherwise it will run in an infinite loop
         self.thumbnail.save(thumb_filename, ContentFile(temp_thumb.read()), save=False)
         temp_thumb.close()
 
         return True
+
 
 
 class StarCamp(models.Model):
