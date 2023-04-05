@@ -11,12 +11,9 @@ from picastro_backend.settings import BASE_DIR
 # Create your models here.
 class Post(models.Model):
     image = models.ImageField(upload_to='images/')
-    thumbnail = models.ImageField(
-        upload_to='resize/',
-        editable=False,
-        )
+    thumbnail = models.ImageField(upload_to='resize/', editable=False, default="")
     imageDescription = models.TextField()
-    imageCategory = models.TextField(default="")
+    imageCategory = models.TextField(default="others")
     astroNameShort = models.TextField()
     astroName = models.TextField()
     imageIsSaved = models.BooleanField(default=False)
@@ -81,6 +78,7 @@ class Post(models.Model):
             FTYPE = 'TIF'
         else:
             return False    # Unrecognized file type
+        
         # Save thumbnail to in-memory file as StringIO
         temp_thumb = BytesIO()
         image.save(temp_thumb, FTYPE)

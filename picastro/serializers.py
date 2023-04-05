@@ -26,15 +26,14 @@ class PosterSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    #poster = PosterSerializer(many=False, read_only=True)
-    thumbnail = serializers.ImageField(source='image', required=False)
-    
     class Meta:
         model = Post
         fields = ('id', 'image', 'astroNameShort', 'astroName', 'imageIsSaved', 
                 'award', 'exposureTime', 'moonPhase', 'cloudCoverage', 'bortle',
                 'starCamp', 'leadingLight', 'pub_date', 'imageDescription', 
                 'imageCategory','poster', 'thumbnail')
+        # read_only_fields = ['thumbnail']
+        extra_kwargs = {'thumbnail': {'required': False}}
     
     def to_representation(self, instance):
         self.fields['poster'] =  PosterSerializer(read_only=True)
