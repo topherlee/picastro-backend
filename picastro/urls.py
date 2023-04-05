@@ -14,6 +14,8 @@ from .views import (
 )
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
+from django.conf.urls.static import static
+from django.conf import settings
 
 from . import views
 
@@ -37,4 +39,4 @@ urlpatterns = [
     path('auth/login/', TokenObtainPairView.as_view(), name='auth_login'),
     path('auth/logout/', LogoutUserAPIView.as_view(), name='auth_logout'),       #use this to get access and refresh token
     
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
