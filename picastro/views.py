@@ -1,9 +1,8 @@
 from django.shortcuts import render
-
-# Create your views here.
 from django.contrib.auth import get_user_model
 from rest_framework.generics import (
     CreateAPIView,
+    GenericAPIView,
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
     GenericAPIView
@@ -22,6 +21,7 @@ from picastro.serializers import (
     PostSerializer,
     UserSerializer,
     UserProfileSerializer,
+    ResetPasswordEmailRequestSerializer
 ) 
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
@@ -106,24 +106,35 @@ class CurrentUserView(APIView):
         return Response(serializer.data)
 
 
-@api_view(['GET', 'POST', 'DELETE'])       #old API, delete later on
-def get_post_list(request):
-    if request.method == "GET":
-        rest_list = Post.objects.order_by('-pub_date')
-        serializer = PostSerializer(rest_list, many=True, context={'request': request})
-        return JsonResponse(serializer.data, safe=False)
-
-
-
-
-
-class PostViewSet(ModelViewSet):    #old API, delete later on
+class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = UserProfileSerializer
     permission_classes = (IsAuthenticated,)
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
+    queryset = UserProfile.objects.all()
+    lookup_field = 'id'
 
 
-#new setup for Post API endpoint to do all together:
+class RequestPasswordResetEmail(GenericAPIView):
+    serializer_class = ResetPasswordEmailRequestSerializer
+
+    def post(self, request):
+        
+
+
+# @api_view(['GET', 'POST', 'DELETE'])       #old API, delete later on
+# def get_post_list(request):
+#     if request.method == "GET":
+#         rest_list = Post.objects.order_by('-pub_date')
+#         serializer = PostSerializer(rest_list, many=True, context={'request': request})
+#         return JsonResponse(serializer.data, safe=False)
+
+
+# class PostViewSet(ModelViewSet):    #old API, delete later on
+#     permission_classes = (IsAuthenticated,)
+#     queryset = Post.objects.all()
+#     serializer_class = PostSerializer
+
+
+# new setup for Post API endpoint to do all together:
 # post, retrieve, filter, search, update (for SortAndFilterScreen, HomeScreen, UserScreen)
 
 class PostAPIView(ListCreateAPIView):
@@ -148,11 +159,5 @@ class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     lookup_field = 'id'
 
-
-class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
-    serializer_class = UserProfileSerializer
-    permission_classes = (IsAuthenticated,)
-    queryset = UserProfile.objects.all()
-    lookup_field = 'id'
 
 

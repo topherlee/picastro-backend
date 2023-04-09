@@ -2,26 +2,25 @@ from django.urls import path, re_path
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import (
-    CreateUserAPIView,
-    LogoutUserAPIView,
-    get_post_list,
-    CurrentUserView,
-    PostViewSet,        #old API, delete later on
-    PostAPIView,
-    PostDetailAPIView,
-    UserProfileAPIView
-)
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 from django.conf import settings
 
-from . import views
+from .views import (
+    CreateUserAPIView,
+    LogoutUserAPIView,
+    #get_post_list,
+    CurrentUserView,
+    #PostViewSet,        #old API, delete later on
+    PostAPIView,
+    PostDetailAPIView,
+    UserProfileAPIView
+)
 
-router = DefaultRouter()                #old API, delete later on
-router.register("posts", PostViewSet)   #old API, delete later on
 
+# router = DefaultRouter()                #old API, delete later on
+# router.register("posts", PostViewSet)   #old API, delete later on
 
 urlpatterns = [
     # re_path(r'^auth/login/$',
@@ -39,5 +38,4 @@ urlpatterns = [
     path('auth/login/', TokenObtainPairView.as_view(), name='auth_login'),
     path('auth/email-verify/', VerifyEmail.as_view(), name='email-verify'),
     path('auth/logout/', LogoutUserAPIView.as_view(), name='auth_logout'),       #use this to get access and refresh token
-    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
