@@ -50,3 +50,24 @@ class TestViews(TestSetup):
             format='json'
         )
         self.assertEqual(res.status_code, 200)
+
+    
+    def test_can_get_current_user_after_login(self):
+        res = self.client.post(
+            self.register_url,
+            self.user_data,
+            format='json'
+        )
+        username = res.data['username']
+        user = User.objects.get(username=username)
+        user.is_verified = True
+        user.save()
+        self.client.post(
+            self.login_url,
+            self.user_data,
+            format='json'
+        )
+        res = self.client.get(
+            self.auth_user_current, self.user_data, format='json'
+        )
+        self.assertEqual(res.data['username'], self.user_data['username'])

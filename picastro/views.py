@@ -25,10 +25,13 @@ from picastro.serializers import (
 ) 
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
-from django.views.generic import ListView
-from django_filters.rest_framework import DjangoFilterBackend
-from django.urls import reverse
 from .models import Post, UserProfile
+from django.views.generic import ListView, CreateView
+from django_filters.rest_framework import DjangoFilterBackend
+from django.http import HttpResponse
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse, reverse_lazy
 from .utils import Util
 from django.core.mail import send_mail
 import os
@@ -111,9 +114,7 @@ def get_post_list(request):
         return JsonResponse(serializer.data, safe=False)
 
 
-class HomePageView(ListView):
-    model = Post
-    template_name = "home.html"
+
 
 
 class PostViewSet(ModelViewSet):    #old API, delete later on
@@ -134,8 +135,8 @@ class PostAPIView(ListCreateAPIView):
                         filters.OrderingFilter]
     filterset_fields = ['id', 'imageCategory', 'pub_date', 'poster']
     search_fields = ['astroNameShort', 'astroName']
-    ordering_fields = ['id', 'imageCategory', '-pub_date', 'poster']
-    
+    ordering_fields = ['id', 'imageCategory', 'pub_date', 'poster']
+    ordering = '-pub_date'
 
     def perform_create(self, serializer):
         return serializer.save(poster = self.request.user)
@@ -153,3 +154,5 @@ class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = UserProfile.objects.all()
     lookup_field = 'id'
+
+

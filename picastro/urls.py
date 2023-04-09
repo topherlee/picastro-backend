@@ -13,8 +13,11 @@ from .views import (
     UserProfileAPIView
 )
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
+from django.conf.urls.static import static
+from django.conf import settings
 
-from .views import HomePageView, VerifyEmail
+from . import views
 
 router = DefaultRouter()                #old API, delete later on
 router.register("posts", PostViewSet)   #old API, delete later on
@@ -36,6 +39,5 @@ urlpatterns = [
     path('auth/login/', TokenObtainPairView.as_view(), name='auth_login'),
     path('auth/email-verify/', VerifyEmail.as_view(), name='email-verify'),
     path('auth/logout/', LogoutUserAPIView.as_view(), name='auth_logout'),       #use this to get access and refresh token
-    path("", HomePageView.as_view(), name="home"),
-    path("", include(router.urls)),     #old API, delete later on
-]
+    
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
