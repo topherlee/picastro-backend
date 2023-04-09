@@ -6,6 +6,7 @@ class TestSetup(APITestCase):
     def setUp(self):
         self.register_url = reverse('auth_user_create')
         self.login_url = reverse('auth_login')
+        self.current_user_url = reverse('auth_user_current')
 
         self.user_data={
             "username": "username",
@@ -19,6 +20,7 @@ class TestSetup(APITestCase):
         }
 
         return super().setUp()
+
 
     def tearDown(self):
         return super().tearDown()

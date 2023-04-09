@@ -44,12 +44,19 @@ class TestViews(TestSetup):
         user = User.objects.get(username=username)
         user.is_verified = True
         user.save()
-        res = self.client.post(
+        res2 = self.client.post(
             self.login_url,
             self.user_data,
             format='json'
         )
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res2.status_code, 200)
+
+
+    # def test_cannot_get_current_user_without_login(self):
+    #     res = self.client.get(
+    #         self.current_user_url, self.user_data, format='json'
+    #     )
+    #     self.assertEqual(res.status_code, 400)
 
     
     def test_can_get_current_user_after_login(self):
@@ -62,12 +69,21 @@ class TestViews(TestSetup):
         user = User.objects.get(username=username)
         user.is_verified = True
         user.save()
-        self.client.post(
+        res2 = self.client.post(
             self.login_url,
             self.user_data,
             format='json'
         )
-        res = self.client.get(
-            self.auth_user_current, self.user_data, format='json'
+        access_token = res2.data['access']
+        print(access_token)
+        res3 = self.client.get(
+            self.current_user_url, format='json'
         )
-        self.assertEqual(res.data['username'], self.user_data['username'])
+        pdb.set_trace()
+        self.assertEqual(res3.data['username'], self.user_data['username'])
+
+
+    #def test_cannot_create_post_without_login(self):
+
+
+    #def test_can_create_post_after_login(self):

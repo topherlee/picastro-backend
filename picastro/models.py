@@ -5,8 +5,8 @@ import os
 #from pgmagick import Image
 from PIL import Image
 from django.core.files.base import ContentFile
-
 from picastro_backend.settings import BASE_DIR
+
 
 # Create your models here.
 class Post(models.Model):
@@ -41,9 +41,9 @@ class Post(models.Model):
     
     def save(self, *args, **kwargs):        # from https://stackoverflow.com/a/74696504
         # This checks if the photo was updated or not before saving a thumbnail
-        print("original name", self.original_image_name)
-        print("image name", self.image.name)
-        #if self.original_image_name != self.image.name:
+        # print("original name", self.original_image_name)
+        # print("image name", self.image.name)
+        # #if self.original_image_name != self.image.name:
             
         if not self.make_thumbnail():
             raise Exception('Could not create thumbnail')
@@ -130,12 +130,12 @@ class Equipment(models.Model):
         return self.setName
     
 
-class ImageIsSaved(models.Model):
-    userId= models.ForeignKey(User, on_delete=models.CASCADE)
-    imageIsSaved = models.ForeignKey(Post, on_delete=models.CASCADE)
+class SavedImages(models.Model):
+    user= models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.imageIsSaved
+        return f'{self.user.username} - {str(self.post.id)}'
 
 
 class Subscription(models.Model):
@@ -145,11 +145,3 @@ class Subscription(models.Model):
 
     def __str__(self):
         return self.subcriptionsPlan
-
-
-class savedImages(models.Model):
-    userId= models.ForeignKey(User, on_delete=models.CASCADE)
-    imageId = models.ForeignKey(Post, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.imageIsSaved
