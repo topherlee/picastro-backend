@@ -91,7 +91,6 @@ class Post(models.Model):
         return True
 
 
-
 class StarCamp(models.Model):
     starCampName = models.TextField(unique=True)
     starCampLocation = models.CharField(max_length=100, blank=True)
@@ -99,8 +98,10 @@ class StarCamp(models.Model):
     def __str__(self):
         return self.starCampName
 
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    #is_verified = models.BooleanField(default=False)
     profileImage = models.ImageField(upload_to='profileImages/', default='profileImages/sampleuserbig.png')
     location = models.CharField(max_length=100, blank=True)
     starCampId = models.ForeignKey(StarCamp, on_delete=models.CASCADE)
@@ -111,6 +112,7 @@ class UserProfile(models.Model):
    
     def __str__(self):
         return self.user.username
+
 
 class Equipment(models.Model):
     setName = models.CharField(max_length=140, default='DEFAULT VALUE')

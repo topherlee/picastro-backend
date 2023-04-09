@@ -186,6 +186,13 @@ SIMPLE_JWT = {
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media/"
 
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.web.de'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
 LOGIN_REDIRECT_URL = 'add_post'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
+

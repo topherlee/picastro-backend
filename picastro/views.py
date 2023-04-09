@@ -5,7 +5,8 @@ from django.contrib.auth import get_user_model
 from rest_framework.generics import (
     CreateAPIView,
     ListCreateAPIView,
-    RetrieveUpdateDestroyAPIView
+    RetrieveUpdateDestroyAPIView,
+    GenericAPIView
 )
 from rest_framework import filters
 from rest_framework.permissions import AllowAny
@@ -30,7 +31,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
+from .utils import Util
+from django.core.mail import send_mail
+import os
+
 
 class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer
@@ -42,11 +47,43 @@ class CreateUserAPIView(CreateAPIView):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         # We create a token than will be used for future auth
+        print(serializer.data)
+        domain = 'http://13.42.37.75:8000/'
+        #domain = 'http://127.0.0.1:8000/'
+        relative_link = reverse('email-verify')
+        token = serializer.data['token']['access']
+        print(token)
+        
+        absolute_Url = domain + relative_link + '?token='+token
+        username = serializer.data['username']
+        user_email = serializer.data['email']
+        email_body = 'Hi ' + username +',\nUse link below to verify your email: \n' + absolute_Url
+        data = {
+            'email_subject': 'Verify your email for Picastro',
+            'email_body': email_body,
+            'user_email_address': user_email
+        }
+
+        print(os.environ.get('EMAIL_HOST_PASSWORD'))
+        
+        send_mail(
+            'Verify your email for Picastro',
+            email_body,
+            'atzen78@web.de',
+            [user_email],
+            fail_silently=False,
+        )
+        #Util.send_email(data)
         return Response(
             {**serializer.data},
             status=status.HTTP_201_CREATED,
             headers=headers
         )
+
+
+class VerifyEmail(GenericAPIView):
+    def get(self):
+        pass
 
 
 class LogoutUserAPIView(APIView):
