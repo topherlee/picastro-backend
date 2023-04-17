@@ -11,6 +11,9 @@ from django.contrib.auth import authenticate, login
 from .forms import LoginForm, PostForm, UserRegistrationForm
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class HomePageView(ListView):
@@ -18,38 +21,16 @@ class HomePageView(ListView):
     template_name = "picastro_web/home.html"
 
 
-def user_login(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            user = authenticate(request,
-                                username=cd['username'],
-                                password=cd['password'])
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    return HttpResponse('Authenticated successfully')
-                else:
-                    return HttpResponse('Disabled account')
-            else:
-                return HttpResponse('Invalid login')
-    else:
-        form = LoginForm()
-    return render(request, 'picastro_web/login.html', {'form': form})
-
-
-class DashboardView(ListView):
+class DashboardView(LoginRequiredMixin, ListView):
     model = Post
     template_name = "picastro_web/dashboard.html"
 
-# def dashboard(request):
-#     model = Post
-#     return render(request,
-#                   'picastro_web/dashboard.html',
-#                   {'section': 'dashboard'}
-#     )
 
+class CreatePostView(LoginRequiredMixin, CreateView):  # new
+    model = Post
+    form_class = PostForm
+    template_name = "picastro_web/post.html"
+    success_url = reverse_lazy("dashboard")
 
 
 def register(request):
@@ -72,13 +53,23 @@ def register(request):
                   'registration/register.html',
                   {'user_form': user_form})
 
-# def post_image(request):
-#     form = PostForm()
-#     return render(request,
-#           'post.html',{'form' : form})
 
-class CreatePostView(CreateView):  # new
-    model = Post
-    form_class = PostForm
-    template_name = "picastro_web/post.html"
-    success_url = reverse_lazy("dashboard")
+def user_login(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            user = authenticate(request,
+                                username=cd['username'],
+                                password=cd['password'])
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return HttpResponse('Authenticated successfully')
+                else:
+                    return HttpResponse('Disabled account')
+            else:
+                return HttpResponse('Invalid login')
+    else:
+        form = LoginForm()
+    return render(request, 'picastro_web/login.html', {'form': form})
