@@ -12,7 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import ModelViewSet 
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 
@@ -30,6 +30,7 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.core.mail import send_mail
 
 import os
+import jwt
 
 from django.http import JsonResponse
 from .models import Post, UserProfile
@@ -47,8 +48,9 @@ from picastro.serializers import (
     UserSerializer,
     UserProfileSerializer,
     ResetPasswordEmailRequestSerializer
-) 
+)
 from .utils import Util
+from django.conf import settings
 
 
 class CreateUserAPIView(CreateAPIView):
@@ -62,16 +64,17 @@ class CreateUserAPIView(CreateAPIView):
         headers = self.get_success_headers(serializer.data)
         # We create a token than will be used for future auth
         print(serializer.data)
-        domain = 'http://13.42.37.75:8000/'
-        #domain = 'http://127.0.0.1:8000/'
+        #domain = 'http://13.42.37.75:8000'
+        domain = 'http://127.0.0.1:8000'
         relative_link = reverse('email-verify')
         token = serializer.data['token']['access']
         print(token)
-        
+
         absolute_Url = domain + relative_link + '?token='+token
         username = serializer.data['username']
         user_email = serializer.data['email']
-        email_body = 'Hi ' + username +',\nUse link below to verify your email: \n' + absolute_Url
+        email_body = 'Hi ' + username + \
+            ',\nUse link below to verify your email: \n' + absolute_Url
         data = {
             'email_subject': 'Verify your email for Picastro',
             'email_body': email_body,
@@ -79,7 +82,7 @@ class CreateUserAPIView(CreateAPIView):
         }
 
         print(os.environ.get('EMAIL_HOST_PASSWORD'))
-        
+
         send_mail(
             'Verify your email for Picastro',
             email_body,
@@ -87,17 +90,38 @@ class CreateUserAPIView(CreateAPIView):
             [user_email],
             fail_silently=False,
         )
-        #Util.send_email(data)
+        # Util.send_email(data)
         return Response(
             {**serializer.data},
-            status=status.HTTP_201_CREATED,
-            headers=headers
+            status=status.HTTP_201_CREATED
         )
 
 
 class VerifyEmail(GenericAPIView):
-    def get(self):
-        pass
+    def get(self, request):
+        token = request.GET.get('token')
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
+            user = UserProfile.objects.get(id=payload['user_id'])
+            print('user', user)
+            if not user.is_verified:
+                user.is_verified = True
+                user.save()
+
+            return Response(
+                {'email': 'Successfully activated'},
+                status=status.HTTP_200_OK
+            )
+        except jwt.ExpiredSignatureError as identifier:
+            return Response(
+                {'error': 'Activation link expired'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except jwt.exceptions.DecodeError as identifier:
+            return Response(
+                {'error': 'Invalid token'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class LogoutUserAPIView(APIView):
@@ -132,7 +156,7 @@ class RequestPasswordResetEmail(GenericAPIView):
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
-        
+
         email = request.data['email']
 
         if User.objects.filter(email=email).exists():
@@ -161,7 +185,7 @@ class RequestPasswordResetEmail(GenericAPIView):
                 [user_email],
                 fail_silently=False,
             )
-        
+
             return Response(
                 {'success': 'We have sent you a link to reset your password'},
                 status=status.HTTP_200_OK
@@ -174,10 +198,8 @@ class RequestPasswordResetEmail(GenericAPIView):
 
 
 class PasswordTokenCheckAPI(GenericAPIView):
-    def get (self, request, uidb64, token):
+    def get(self, request, uidb64, token):
         pass
-
-        
 
 
 # @api_view(['GET', 'POST', 'DELETE'])       #old API, delete later on
@@ -202,15 +224,15 @@ class PostAPIView(ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = Post.objects.all()
     filter_backends = [DjangoFilterBackend,
-                        filters.SearchFilter,
-                        filters.OrderingFilter]
+                       filters.SearchFilter,
+                       filters.OrderingFilter]
     filterset_fields = ['id', 'imageCategory', 'pub_date', 'poster']
     search_fields = ['astroNameShort', 'astroName']
     ordering_fields = ['id', 'imageCategory', 'pub_date', 'poster']
     ordering = '-pub_date'
 
     def perform_create(self, serializer):
-        return serializer.save(poster = self.request.user)
+        return serializer.save(poster=self.request.user)
 
 
 class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
@@ -218,6 +240,3 @@ class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = Post.objects.all()
     lookup_field = 'id'
-
-
-

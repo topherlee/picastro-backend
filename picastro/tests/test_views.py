@@ -21,17 +21,16 @@ class TestViews(TestSetup):
         self.assertEqual(res.data['username'], self.user_data['username'])
 
 
-    #test not yet working, because email verification not yet implemented
-    # def test_user_cannot_login_when_email_unverified(self):
-    #     self.client.post(
-    #         self.register_url, self.user_data, format='json'
-    #     )
-    #     res = self.client.post(
-    #         self.login_url,
-    #         self.user_data,
-    #         format='json'
-    #     )
-    #     self.assertEqual(res.status_code, 401)
+    def test_user_cannot_login_when_email_unverified(self):
+        self.client.post(
+            self.register_url, self.user_data, format='json'
+        )
+        res = self.client.post(
+            self.login_url,
+            self.user_data,
+            format='json'
+        )
+        self.assertEqual(res.status_code, 401)
 
 
     def test_user_can_login_after_email_verification(self):
