@@ -22,12 +22,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-y6qmxm&3awp)*unz^*&!+97x*z0sa$3-s9t0^@fvkc(@xe$^#f'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
+##Production settings:
+#DEBUG = False
+#ALLOWED_HOSTS = ['13.42.37.75']
+#DOMAIN = 'http://13.42.37.75:8000'
+
+##Development settings:
+DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2','13.42.37.75']
+DOMAIN = 'http://127.0.0.1:8000'
 
 
 # Application definition
@@ -187,7 +194,7 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media/"
 
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.web.de'
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')

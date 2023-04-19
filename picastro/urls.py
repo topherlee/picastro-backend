@@ -10,9 +10,7 @@ from django.conf import settings
 from .views import (
     CreateUserAPIView,
     LogoutUserAPIView,
-    #get_post_list,
     CurrentUserView,
-    #PostViewSet,        #old API, delete later on
     PostAPIView,
     PostDetailAPIView,
     UserProfileAPIView,
@@ -22,17 +20,10 @@ from .views import (
 )
 
 
-# router = DefaultRouter()                #old API, delete later on
-# router.register("posts", PostViewSet)   #old API, delete later on
-
 urlpatterns = [
-    # re_path(r'^auth/login/$',
-    #     obtain_auth_token,
-    #     name='auth_user_login'),
     re_path(r'^auth/register/$',
         CreateUserAPIView.as_view(),
         name='auth_user_create'),
-    #re_path(r'^feed/home/$', get_post_list,),   #old API, delete later on
     path('feed/', PostAPIView.as_view(), name='feed_of_posts'),
     path('feed/<int:id>', PostDetailAPIView.as_view(), name='update_delete_posts'),
     path('current_user/',CurrentUserView.as_view(),name='auth_user_current'),
