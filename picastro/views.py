@@ -128,47 +128,48 @@ class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
 
 
 class RequestPasswordResetEmail(GenericAPIView):
-    serializer_class = ResetPasswordEmailRequestSerializer
+    pass
+    # serializer_class = ResetPasswordEmailRequestSerializer
 
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
+    # def post(self, request):
+    #     serializer = self.serializer_class(data=request.data)
         
-        email = request.data['email']
+    #     email = request.data['email']
 
-        if User.objects.filter(email=email).exists():
-            user = User.objects.filter(email=email)
-            uidb64 = urlsafe_base64_encode(user.id)
-            token = PasswordResetTokenGenerator().make_token(user)
+    #     if User.objects.filter(email=email).exists():
+    #         user = User.objects.filter(email=email)
+    #         uidb64 = urlsafe_base64_encode(user.id)
+    #         token = PasswordResetTokenGenerator().make_token(user)
 
-            relative_link = reverse(
-                'password-reset-confirm', kwargs={'uibd64': uidb64, 'token': token})
-            absolute_Url = domain + relative_link
-            username = serializer.data['username']
-            user_email = serializer.data['email']
-            email_body = 'Hello,\nUse link below to reset your password: \n' + absolute_Url
-            data = {
-                'email_subject': 'Reset your password for Picastro',
-                'email_body': email_body,
-                'user_email_address': user_email
-            }
+    #         relative_link = reverse(
+    #             'password-reset-confirm', kwargs={'uibd64': uidb64, 'token': token})
+    #         absolute_Url = DOMAIN + relative_link
+    #         username = serializer.data['username']
+    #         user_email = serializer.data['email']
+    #         email_body = 'Hello,\nUse link below to reset your password: \n' + absolute_Url
+    #         data = {
+    #             'email_subject': 'Reset your password for Picastro',
+    #             'email_body': email_body,
+    #             'user_email_address': user_email
+    #         }
 
-            send_mail(
-                'Verify your email for Picastro',
-                email_body,
-                'atzen78@web.de',
-                [user_email],
-                fail_silently=False,
-            )
+    #         send_mail(
+    #             'Verify your email for Picastro',
+    #             email_body,
+    #             'atzen78@web.de',
+    #             [user_email],
+    #             fail_silently=False,
+    #         )
         
-            return Response(
-                {'success': 'We have sent you a link to reset your password'},
-                status=status.HTTP_200_OK
-            )
-        else:
-            return Response(
-                {'success': 'We could not find your email address. Please check again.'},
-                status=status.HTTP_404_NOT_FOUND
-            )
+    #         return Response(
+    #             {'success': 'We have sent you a link to reset your password'},
+    #             status=status.HTTP_200_OK
+    #         )
+    #     else:
+    #         return Response(
+    #             {'success': 'We could not find your email address. Please check again.'},
+    #             status=status.HTTP_404_NOT_FOUND
+    #         )
 
 
 class PasswordTokenCheckAPI(GenericAPIView):
