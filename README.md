@@ -1,11 +1,8 @@
 # Team-Bravo-2023 Django-Rest-Backend
 
 ## Vision
-<details>
-<summary>more about the vision</summary>
 
  This is the current backend for Picastro, an image sharing mobile application for astrophotographers. This backend is written in Python, using both [Django](https://docs.djangoproject.com/en/4.1/) and [Django Rest Framework](https://www.django-rest-framework.org/) to facilitate it's functionalities.
-</details>
 
 
 ## Requirements
@@ -51,11 +48,24 @@ All libraries needed to build this application can be found in requirements.txt.
 </details>
 
 
+## Structure of the Code/Application
+<details>
+<summary>more about the structure</summary>
+
+The folder `./picastro_backend` is the main folder of this backend, containing for example `settings.py`, the main `urls.py` and so on.
+
+Currently the backend has two apps, `picastro` and `picastro_web`. The picastro app contains the common models and the backend for the mobile application, while picastro_web represents the backend for the web application, but does not contain any own models.
+
+The `./htmlcov` folder contains the report for test coverage (see Testing) and the `./media` folder is the place, where uploaded images, resized images or user profile images will be saved to.
+
+And last, but not least, the `./templates` folder contains all web templates.
+</details>
+
 ## Testing the Application
 <details>
 <summary>more about testing the application</summary>
 
-How do I test the code to ensure the build is correct?
+Currently, there are only a few tests implemented and working. In order to run the tests, execute the following command: `python manage.py test`
 </details>
 
 
