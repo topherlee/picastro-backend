@@ -1,26 +1,27 @@
 # Team-Bravo-2023 Django-Rest-Backend
 
-## Your next steps
-* Change the .gitignore file to suite your needs - it's currently set to ignore python related temp files, etc. Google 'gitignore <your language>' to find examples.
 
+<summary>Vision</summary>
 
 ## Vision
- Add something about what the application will do when more complete
+ This is the current backend for Picastro, an image sharing mobile application for astrophotographers. This backend is written in Python, using both [Django](https://docs.djangoproject.com/en/4.1/) and [Django Rest Framework](https://www.django-rest-framework.org/) to facilitate it's functionalities.
 
+
+<summary>Requirements</summary>
 
 ## Requirements
-In order to run the backend server on your local machine, you need Python and its package installer [pip](https://pypi.org/project/pip/) installed. Furthermore, you need to be familiar with [Django](https://docs.djangoproject.com/en/4.1/).
+In order to run the backend server on your local machine, you need Python and its package installer [pip](https://pypi.org/project/pip/) installed. Furthermore, you need to be familiar with [Django](https://docs.djangoproject.com/en/4.1/) and [Django Rest Framework](https://www.django-rest-framework.org/).
 
-Currently (during development phase), the backend uses a local SQLite Database, so you need SQLite installed on your machine.
+Currently (during development phase), the backend uses a local SQLite Database, so you also need SQLite installed on your machine.
 
 All libraries needed to build this application can be found in requirements.txt. In order to install them, run `pip install -r requirements.txt`.
 
 
-## Testing the build
-How do I test the code to ensure the build is correct?
-
+<summary>Building and Running the Application</summary>
 
 ## Building and Running the Application
+
+### Prerequisites
  
 - Clone the source code onto your local machine
 - `cd` into the root project folder
@@ -29,10 +30,29 @@ How do I test the code to ensure the build is correct?
 - `python manage.py migrate` to make database migrations.
 - Run `python manage.py data_parser` to populate your database with data from a json file.
 - Run `python manage.py createsuperuser` to create a superuser (administrator) for your local backend installation. Set user name and password to whatever you like.
-- Execute `python manage.py runserver` to start your local development server
-- Open your browser and navigate to [127.0.0.1:8000/admin](127.0.0.1:8000/admin), then login with the above account to see the admin panel.
+- Create a `.env` file in the root folder of this repo.
+- Run the command `python3 -c 'import secrets; print(secrets.token_hex(100))'` in order to create a new secret key.
+- Add `export SECRET_KEY='<your_secret_key>'` (Linux/Mac) or `SECRET_KEY='<your_secret_key>'` (Windows) to your .env file and save the file.
+- Run `source .env` in your terminal (Linux/Mac) or un-comment the Windows-specific lines for setting the secret key in `settings.py`.
 
-  
+
+### Run the backend
+- How to run the backend, depends on the mode (production or development) and the domain. `settings.py` contains the settings for both modes and domains. You just need to un-comment the desired settings and comment out the undesired ones.
+- Since we still operate in development mode (even on AWS), we applied the following settings:
+```
+    DEBUG = True
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2','13.42.37.75']
+```
+- Execute `python manage.py runserver` to start your local development server
+- Open your browser and navigate to the respective IP address of your domain (either [127.0.0.1:8000/admin](127.0.0.1:8000/admin) or [13.42.37.75/admin](13.42.37.75/admin), then login with the above account to see the admin panel.
+
+
+<summary>Testing the Application</summary>
+
+## Testing the Application
+How do I test the code to ensure the build is correct?
+
+
 ## Team Members
  Who's working on this branch?
  * Christopher Lee
