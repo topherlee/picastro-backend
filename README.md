@@ -1,25 +1,28 @@
 # Team-Bravo-2023 Django-Rest-Backend
 
-
-<summary>Vision</summary>
-
 ## Vision
+<details>
+<summary>more about the vision</summary>
+
  This is the current backend for Picastro, an image sharing mobile application for astrophotographers. This backend is written in Python, using both [Django](https://docs.djangoproject.com/en/4.1/) and [Django Rest Framework](https://www.django-rest-framework.org/) to facilitate it's functionalities.
+</details>
 
-
-<summary>Requirements</summary>
 
 ## Requirements
+<details>
+<summary>more about the requirements</summary>
+
 In order to run the backend server on your local machine, you need Python and its package installer [pip](https://pypi.org/project/pip/) installed. Furthermore, you need to be familiar with [Django](https://docs.djangoproject.com/en/4.1/) and [Django Rest Framework](https://www.django-rest-framework.org/).
 
 Currently (during development phase), the backend uses a local SQLite Database, so you also need SQLite installed on your machine.
 
 All libraries needed to build this application can be found in requirements.txt. In order to install them, run `pip install -r requirements.txt`.
+</details>
 
-
-<summary>Building and Running the Application</summary>
 
 ## Building and Running the Application
+<details>
+<summary>more about building and running the application</summary>
 
 ### Prerequisites
  
@@ -45,12 +48,15 @@ All libraries needed to build this application can be found in requirements.txt.
 ```
 - Execute `python manage.py runserver` to start your local development server
 - Open your browser and navigate to the respective IP address of your domain (either [127.0.0.1:8000/admin](127.0.0.1:8000/admin) or [13.42.37.75/admin](13.42.37.75/admin), then login with the above account to see the admin panel.
+</details>
 
-
-<summary>Testing the Application</summary>
 
 ## Testing the Application
+<details>
+<summary>more about testing the application</summary>
+
 How do I test the code to ensure the build is correct?
+</details>
 
 
 ## Team Members
