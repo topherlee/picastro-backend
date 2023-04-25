@@ -56,9 +56,11 @@ The folder `./picastro_backend` is the main folder of this backend, containing f
 
 Currently the backend has two apps, `picastro` and `picastro_web`. The picastro app contains the common models and the backend for the mobile application, while picastro_web represents the backend for the web application, but does not contain any own models.
 
-The `./htmlcov` folder contains the report for test coverage (see Testing) and the `./media` folder is the place, where uploaded images, resized images or user profile images will be saved to.
+The `./media` folder is the place, where uploaded images, resized images or user profile images will be saved to.
 
 And last, but not least, the `./templates` folder contains all web templates.
+
+The database file `db.sqlite3` will be created in the root folder of this repository, same as the `./htmlcov` folder after running coverage (see Testing)
 </details>
 
 ## Testing the Application
