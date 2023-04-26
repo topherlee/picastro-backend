@@ -1,7 +1,6 @@
 from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import SimpleUploadedFile
-from rest_framework import status
 
 def create_test_image():
     image_data = BytesIO()

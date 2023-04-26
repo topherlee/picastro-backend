@@ -2,13 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 from io import BytesIO
 import os
-#from pgmagick import Image
 from PIL import Image
 from django.core.files.base import ContentFile
-from picastro_backend.settings import BASE_DIR
 
 
-# Create your models here.
 class Post(models.Model):
     image = models.ImageField(upload_to='images/')
     thumbnail = models.ImageField(upload_to='resize/', editable=False, default="")
@@ -22,8 +19,8 @@ class Post(models.Model):
     moonPhase = models.TextField()
     cloudCoverage = models.TextField()
     bortle = models.TextField()
-    #starCamp = models.TextField()
-    #leadingLight = models.BooleanField(default=False)
+    # starCamp = models.TextField()
+    # leadingLight = models.BooleanField(default=False)
     pub_date = models.DateTimeField(auto_now_add=True)
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -38,7 +35,6 @@ class Post(models.Model):
         super().__init__(*args, **kwargs)
         self.original_image_name = self.image.name
 
-    
     def save(self, *args, **kwargs):        # from https://stackoverflow.com/a/74696504
         # This checks if the photo was updated or not before saving a thumbnail
         # print("original name", self.original_image_name)
@@ -51,9 +47,9 @@ class Post(models.Model):
         super(Post, self).save(*args, **kwargs)
 
     def make_thumbnail(self):
-        #image = Image.open(self.image)
+        # image = Image.open(self.image)
         print("image processing", self.image)
-        #im = Image(str(self.image)) # does not work with pgmagick
+        # im = Image(str(self.image)) # does not work with pgmagick
         # im.quality(100)
         # im.scale('1000x1000')
         # im.sharpen(1.0)
@@ -101,7 +97,7 @@ class StarCamp(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    #is_verified = models.BooleanField(default=False)
+    # is_verified = models.BooleanField(default=False)
     profileImage = models.ImageField(upload_to='profileImages/', default='profileImages/sampleuserbig.png')
     location = models.CharField(max_length=100, blank=True)
     starCampId = models.ForeignKey(StarCamp, on_delete=models.CASCADE)
@@ -131,7 +127,7 @@ class Equipment(models.Model):
     
 
 class SavedImages(models.Model):
-    user= models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -139,9 +135,9 @@ class SavedImages(models.Model):
 
 
 class Subscription(models.Model):
-    subcriptionsPlan = models.TextField()
-    subcriptionsDuration = models.DurationField()
-    subcriptionsPrice = models.DecimalField(max_digits = 5, decimal_places = 2)
+    subscriptionsPlan = models.TextField()
+    subscriptionsDuration = models.DurationField()
+    subscriptionsPrice = models.DecimalField(max_digits=5, decimal_places=2)
 
     def __str__(self):
         return self.subcriptionsPlan

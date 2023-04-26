@@ -1,9 +1,7 @@
-from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 
-# Create your tests here.
 
 class TestListCreatePosts(APITestCase):
 
@@ -28,7 +26,6 @@ class TestListCreatePosts(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f"Token {response.data['access']}")
         print(f"TEst sentence {response.data['access']}")
     
-
     def test_not_create_post_without_authentication(self):
         sample_post = {
             "astroNameShort": "IC442",
@@ -43,7 +40,6 @@ class TestListCreatePosts(APITestCase):
         }
         response = self.client.post(reverse('feed_of_posts'), sample_post)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
 
     def test_should_create_post(self):
         self.authenticate()
@@ -60,4 +56,3 @@ class TestListCreatePosts(APITestCase):
         }
         response = self.client.post(reverse('feed_of_posts'), sample_post)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
