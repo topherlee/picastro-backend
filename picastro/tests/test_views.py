@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
-from .test_setup import TestSetup
+from rest_framework.test import APIClient
 import pdb
+
+from .test_setup import TestSetup
 
 
 class TestViews(TestSetup):
@@ -20,17 +22,17 @@ class TestViews(TestSetup):
         self.assertEqual(res.data['email'], self.user_data['email'])
         self.assertEqual(res.data['username'], self.user_data['username'])
 
-    # test not yet working, because email verification not yet implemented
-    # def test_user_cannot_login_when_email_unverified(self):
-    #     self.client.post(
-    #         self.register_url, self.user_data, format='json'
-    #     )
-    #     res = self.client.post(
-    #         self.login_url,
-    #         self.user_data,
-    #         format='json'
-    #     )
-    #     self.assertEqual(res.status_code, 401)
+    # test will fail, because email verification not yet implemented
+    def test_user_cannot_login_when_email_unverified(self):
+        self.client.post(
+            self.register_url, self.user_data, format='json'
+        )
+        res = self.client.post(
+            self.login_url,
+            self.user_data,
+            format='json'
+        )
+        self.assertEqual(res.status_code, 401)
 
     def test_user_can_login_after_email_verification(self):
         res = self.client.post(
@@ -49,11 +51,11 @@ class TestViews(TestSetup):
         )
         self.assertEqual(res2.status_code, 200)
 
-    # def test_cannot_get_current_user_without_login(self):
-    #     res = self.client.get(
-    #         self.current_user_url, self.user_data, format='json'
-    #     )
-    #     self.assertEqual(res.status_code, 400)
+    def test_cannot_get_current_user_without_login(self):
+        res = self.client.get(
+            self.current_user_url, self.user_data, format='json'
+        )
+        self.assertEqual(res.status_code, 401)
 
     def test_can_get_current_user_after_login(self):
         res = self.client.post(
@@ -71,10 +73,13 @@ class TestViews(TestSetup):
             format='json'
         )
         access_token = res2.data['access']
-        print(access_token)
+        # print(access_token)
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + access_token)
         res3 = self.client.get(
             self.current_user_url, format='json'
         )
+        print(f"Test sentence {res3.data}")
         pdb.set_trace()
         self.assertEqual(res3.data['username'], self.user_data['username'])
 

@@ -21,10 +21,10 @@ class TestListCreatePosts(APITestCase):
             "username": "username",
             "password": "password123",
         })
-        print(f"Token {response.data['access']}")
+        # print(f"Token {response.data['access']}")
 
         self.client.credentials(HTTP_AUTHORIZATION=f"Token {response.data['access']}")
-        print(f"TEst sentence {response.data['access']}")
+        # print(f"Test sentence {response.data['access']}")
     
     def test_not_create_post_without_authentication(self):
         sample_post = {
