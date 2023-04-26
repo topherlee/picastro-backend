@@ -67,12 +67,6 @@ The database file `db.sqlite3` will be created in the root folder of this reposi
 
 For details about testing, please read the [testing.md](testing.md) file.
 
-<details>
-<summary>more about testing the application</summary>
-
-Currently, there are only a few tests implemented and working. In order to run the tests, execute the following command: `python manage.py test`
-</details>
-
 
 ## Team Members
  Who's working on this branch?

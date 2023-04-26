@@ -1,7 +1,8 @@
 # Testing the Picastro Django-Rest-Backend
 
-## Vision
+[Back to README](README.md)
 
+---
 
 ## Packages used for testing
 
@@ -11,8 +12,6 @@ Currently, both the Django test suite, as well as the [pytest](https://pypi.org/
 ## Coverage
 
 To support our testing efforts, we use the Python package [coverage](https://pypi.org/project/coverage/)
-
-`coverage run -m pytest`
 
 The command `coverage html` produces a report in the `/htmlcov/index.html` file, which shows the current test coverage of the project. This report can also be used to get ideas on where tests are required. For more information, please check the documentation of this package.
 
@@ -29,3 +28,25 @@ In order to run the tests, there are two options:
 - `pytest` runs pytest
 
 However, both commands will execute the same tests.
+
+
+## Future development
+
+Anyone progressing with this development should at first extend the test coverage, as the current development team reached the point, where the low test coverage deemed it difficult to do the remaining tests manually.
+
+Some tests are almost fully implemented, but need debugging. Information on the possible cause has been provided in the comments of the respective test.
+
+
+## References
+
+To implement the current tests, the following sources have been used:
+
+- Django documentation
+- Django Rest Framework documentation
+- ['Django and DRF Testing Series'](https://www.youtube.com/watch?v=yaLXsADWfS4&list=PLP1DxoSC17LZTTzgfq0Dimkm6eWJQC9ki&index=12) by Kenyan Engineer
+- ['API Testing Tutorial.'](https://www.youtube.com/watch?v=17KdirMbmHY&list=PLx-q4INfd95EsUuON1TIcjnFZSqUfMf7s&index=16) by Cryce Truly
+- ['Django REST API UNIT Testing'](https://www.youtube.com/watch?v=z6_v1UQ9Ht0) by Stack{Dev}
+- ['Django DRF eCommerce Project'](https://www.youtube.com/playlist?list=PLOLrQ9Pn6cawinBJbH5d9IfloO9RRPMiq) by Very Academy
+
+---
+[Back to README](README.md)
