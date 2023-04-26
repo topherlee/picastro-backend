@@ -51,7 +51,7 @@ class PostFactory(factory.django.DjangoModelFactory):
     cloudCoverage = "20%"
     bortle = "5"
     starCamp = "Aberdeen"
-    leadingLight = False
+    # leadingLight = False
     pub_date = "2023-04-05 12:06:09.920441"
     poster = factory.SubFactory(UserFactory)
 

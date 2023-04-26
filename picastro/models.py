@@ -20,7 +20,7 @@ class Post(models.Model):
     cloudCoverage = models.TextField()
     bortle = models.TextField()
     starCamp = models.TextField()
-    leadingLight = models.BooleanField(default=False)
+    # leadingLight = models.BooleanField(default=False)
     pub_date = models.DateTimeField(auto_now_add=True)
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
 
