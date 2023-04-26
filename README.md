@@ -64,6 +64,9 @@ The database file `db.sqlite3` will be created in the root folder of this reposi
 </details>
 
 ## Testing the Application
+
+For details about testing, please read the [testing.md](testing.md) file.
+
 <details>
 <summary>more about testing the application</summary>
 
