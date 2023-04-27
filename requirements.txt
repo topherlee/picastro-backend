@@ -12,7 +12,6 @@ Faker==18.3.4
 inflection==0.5.1
 iniconfig==2.0.0
 packaging==23.1
-pgmagick==0.7.6
 Pillow==9.5.0
 pluggy==1.0.0
 PyJWT==2.6.0
