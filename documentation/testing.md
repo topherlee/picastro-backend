@@ -1,6 +1,6 @@
 # Testing the Picastro Django-Rest-Backend
 
-[Back to README](README.md)
+[Back to README](../README.md)
 
 ---
 
@@ -51,4 +51,4 @@ To implement the current tests, the following sources have been used:
 
 ---
 
-[Back to README](README.md)
+[Back to README](../README.md)

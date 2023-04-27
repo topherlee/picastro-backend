@@ -1,6 +1,6 @@
 # Structure of the Picastro Django-Rest-Backend
 
-[Back to README](README.md)
+[Back to README](../README.md)
 
 ---
 
@@ -30,4 +30,4 @@ As mentioned before, the web application uses the same models as the mobile appl
 
 ---
 
-[Back to README](README.md)
+[Back to README](../README.md)

@@ -1,6 +1,6 @@
 # Building and Running the Picastro Django-Rest-Backend
 
-[Back to README](README.md)
+[Back to README](../README.md)
 
 ---
 
@@ -38,4 +38,4 @@ Furthermore, after changes to the web application, the command `python manage.py
 
 
 ---
-[Back to README](README.md)
+[Back to README](../README.md)

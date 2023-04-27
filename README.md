@@ -16,17 +16,17 @@ All libraries needed to build this application can be found in [requirements.txt
 
 ## Building and Running the Application
 
-For details about building and running the application, please read the [running.md](running.md) file.
+For details about building and running the application, please read the [running.md](./documentation/running.md) file.
 
 
 ## Structure of the Code/Application
 
-For details about the structure of the code/application, please read the [structure.md](structure.md) file.
+For details about the structure of the code/application, please read the [structure.md](./documentation/structure.md) file.
 
 
 ## Testing the Application
 
-For details about testing, please read the [testing.md](testing.md) file.
+For details about testing, please read the [testing.md](./documentation/testing.md) file.
 
 
 ## Team Members
