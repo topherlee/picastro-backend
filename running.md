@@ -34,6 +34,8 @@
 
 Whenever a new package has been added to the application, execute `pip freeze > requirements.txt` to update the requirements.txt file.
 
+Furthermore, after changes to the web application, the command `python manage.py collectstatic` needs to be executed, to make static files available in the deployed web application. At the moment, the static files of the web application are in the `/static` folder, and the `collectstatic` command will save them in the `/staticfiles` folder.
+
 
 ---
 [Back to README](README.md)
