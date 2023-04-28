@@ -32,3 +32,6 @@ For details about testing, please read the [testing.md](./documentation/testing.
  * Steffen Atlas
  * Christopher Lee
  * Mohtalifa A Ema
+ * Damilola Agboola
+ * Jay Gajjar
+ * Sayed Ishayat Uddin
