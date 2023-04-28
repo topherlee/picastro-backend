@@ -33,32 +33,7 @@ class CreateUserAPIView(CreateAPIView):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         # We create a token than will be used for future auth
-        
-        # # code for email verification, but not yet fully working
-        # print(serializer.data)
-        # relative_link = reverse('email-verify')
-        # token = serializer.data['token']['access']
-        # print(token)
-        
-        # absolute_Url = DOMAIN + relative_link + '?token='+token
-        # username = serializer.data['username']
-        # user_email = serializer.data['email']
-        # email_body = 'Hi ' + username +',\nUse link below to verify your email: \n' + absolute_Url
-        # data = {
-        #     'email_subject': 'Verify your email for Picastro',
-        #     'email_body': email_body,
-        #     'user_email_address': user_email
-        # }
 
-        # print(os.environ.get('EMAIL_HOST_PASSWORD'))
-        
-        # send_mail(
-        #     'Verify your email for Picastro',
-        #     email_body,
-        #     'atzen78@web.de',
-        #     [user_email],
-        #     fail_silently=False,
-        # )
         return Response(
             {**serializer.data},
             status=status.HTTP_201_CREATED,
