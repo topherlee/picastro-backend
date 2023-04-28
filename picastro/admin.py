@@ -8,5 +8,3 @@ admin.site.register(UserProfile)
 admin.site.register(Equipment)
 admin.site.register(SavedImages)
 admin.site.register(Subscription)
-
-

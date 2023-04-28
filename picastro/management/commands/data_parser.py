@@ -1,8 +1,7 @@
 import json
 from datetime import datetime, timedelta
-from multiprocessing.sharedctypes import Value
 from pathlib import Path
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 from picastro.models import (
     Post,

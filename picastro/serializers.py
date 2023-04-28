@@ -36,7 +36,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('token', 'username', 'password',
                   'first_name', 'last_name', 'email', 'id',)
-        write_only_fields = ('password')
+        write_only_fields = 'password'
         read_only_fields = ('is_staff', 'is_superuser', 'is_active',)
 
     def create(self, validated_data):
@@ -94,7 +94,7 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = ('id', 'image', 'astroNameShort', 'astroName', 'imageIsSaved',
                   'award', 'exposureTime', 'moonPhase', 'cloudCoverage', 'bortle',
-                  'starCamp', 'leadingLight', 'pub_date', 'imageDescription',
+                  'starCamp', 'pub_date', 'imageDescription',
                   'imageCategory', 'poster', 'thumbnail')
         # read_only_fields = ['thumbnail']
         extra_kwargs = {'thumbnail': {'required': False}}

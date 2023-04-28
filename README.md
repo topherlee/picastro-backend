@@ -1,38 +1,34 @@
 # Team-Bravo-2023 Django-Rest-Backend
 
-## Your next steps
-* Change the .gitignore file to suite your needs - it's currently set to ignore python related temp files, etc. Google 'gitignore <your language>' to find examples.
-
-
 ## Vision
- Add something about what the application will do when more complete
+
+ This is the current backend for Picastro, an image sharing mobile application for astrophotographers. This backend is written in Python, using both [Django](https://docs.djangoproject.com/en/4.1/) and [Django Rest Framework](https://www.django-rest-framework.org/) to facilitate it's functionalities.
 
 
 ## Requirements
-In order to run the backend server on your local machine, you need Python and its package installer [pip](https://pypi.org/project/pip/) installed. Furthermore, you need to be familiar with [Django](https://docs.djangoproject.com/en/4.1/).
 
-Currently (during development phase), the backend uses a local SQLite Database, so you need SQLite installed on your machine.
+In order to run the backend server on your local machine, you need Python and its package installer [pip](https://pypi.org/project/pip/) installed. Furthermore, you need to be familiar with [Django](https://docs.djangoproject.com/en/4.1/) and [Django Rest Framework](https://www.django-rest-framework.org/).
 
-All libraries needed to build this application can be found in requirements.txt. In order to install them, run `pip install -r requirements.txt`.
+Currently (during development phase), the backend uses a local SQLite Database. Since SQLite is usually a built-in software on most computers, it does not need any installation.
 
-
-## Testing the build
-How do I test the code to ensure the build is correct?
+All libraries needed to build this application can be found in [requirements.txt](requirements.txt). In order to install them, run `pip install -r requirements.txt`.
 
 
 ## Building and Running the Application
- 
-- Clone the source code onto your local machine
-- `cd` into the root project folder
-- setup a virtual environment by running the following two commands: `python -m venv .venv` and `.venv/Scripts/activate.bat` (Windows cmd.exe) or `source .venv/bin/activate` (Linux and MacOS)
-- Run `pip install -r requirements.txt` to install dependencies
-- `python manage.py migrate` to make database migrations.
-- Run `python manage.py data_parser` to populate your database with data from a json file.
-- Run `python manage.py createsuperuser` to create a superuser (administrator) for your local backend installation. Set user name and password to whatever you like.
-- Execute `python manage.py runserver` to start your local development server
-- Open your browser and navigate to [127.0.0.1:8000/admin](127.0.0.1:8000/admin), then login with the above account to see the admin panel.
 
-  
+For details about building and running the application, please read the [running.md](./documentation/running.md) file.
+
+
+## Structure of the Code/Application
+
+For details about the structure of the code/application, please read the [structure.md](./documentation/structure.md) file.
+
+
+## Testing the Application
+
+For details about testing, please read the [testing.md](./documentation/testing.md) file.
+
+
 ## Team Members
  Who's working on this branch?
  * Christopher Lee

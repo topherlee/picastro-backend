@@ -1,8 +1,6 @@
 import factory
-from datetime import datetime
 from django.contrib.auth.models import User
 from tempfile import NamedTemporaryFile
-from PIL import Image
 
 from picastro.models import (
     Post,
@@ -12,7 +10,6 @@ from picastro.models import (
     SavedImages,
     Subscription
 )
-#from .test_image import create_test_image
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -54,7 +51,7 @@ class PostFactory(factory.django.DjangoModelFactory):
     cloudCoverage = "20%"
     bortle = "5"
     starCamp = "Aberdeen"
-    leadingLight = False
+    # leadingLight = False
     pub_date = "2023-04-05 12:06:09.920441"
     poster = factory.SubFactory(UserFactory)
 

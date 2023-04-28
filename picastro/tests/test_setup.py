@@ -1,6 +1,7 @@
 from rest_framework.test import APITestCase
 from django.urls import reverse
 
+
 class TestSetup(APITestCase):
 
     def setUp(self):
@@ -8,7 +9,7 @@ class TestSetup(APITestCase):
         self.login_url = reverse('auth_login')
         self.current_user_url = reverse('auth_user_current')
 
-        self.user_data={
+        self.user_data = {
             "username": "username",
             "password": "password123",
             "first_name": "test_first",
@@ -20,7 +21,6 @@ class TestSetup(APITestCase):
         }
 
         return super().setUp()
-
 
     def tearDown(self):
         return super().tearDown()

@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import os
+#from dotenv import load_dotenv
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,20 +23,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')   # Linux/Mac
+# load_dotenv()  # Windows
+# SECRET_KEY = os.getenv('SECRET_KEY')   # Windows
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-##Production settings:
-#DEBUG = False
-#ALLOWED_HOSTS = ['13.42.37.75']
+# Production settings:
+# DEBUG = False
+# ALLOWED_HOSTS = ['13.42.37.75']
 DOMAIN = 'http://13.42.37.75:8000'
 
-##Development settings:
+# Development settings:
 DEBUG = True
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2','13.42.37.75']
-#DOMAIN = 'http://127.0.0.1:8000'
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2', '13.42.37.75']
+# DOMAIN = 'http://127.0.0.1:8000'
 
 
 # Application definition
@@ -157,7 +163,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # }
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
-        #'rest_framework.permissions.AllowAny',
+        # 'rest_framework.permissions.AllowAny',
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -202,4 +208,3 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 LOGIN_REDIRECT_URL = 'add_post'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
-
