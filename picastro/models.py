@@ -1,9 +1,11 @@
+import os
 from django.db import models
 from django.contrib.auth.models import User
 from io import BytesIO
-import os
 from PIL import Image
 from django.core.files.base import ContentFile
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 
 class Post(models.Model):
@@ -86,6 +88,13 @@ class Post(models.Model):
 
         return True
 
+    @receiver(post_save, sender=User)
+    def create_user_profile(sender, instance, created, **kwargs):
+        if created:
+            UserProfile.objects.create(
+            user=instance,
+        )
+
 
 class StarCamp(models.Model):
     starCampName = models.TextField(unique=True)
@@ -100,10 +109,10 @@ class UserProfile(models.Model):
     # is_verified = models.BooleanField(default=False)
     profileImage = models.ImageField(upload_to='profileImages/', default='profileImages/sampleuserbig.png')
     location = models.CharField(max_length=100, blank=True)
-    starCampId = models.ForeignKey(StarCamp, on_delete=models.CASCADE)
+    starCampId = models.ForeignKey(StarCamp, on_delete=models.CASCADE, default=1)
     subcriptionsExpiry = models.DateTimeField(auto_now_add=True)
-    isEmailVerified = models.BooleanField()
-    userDescription = models.TextField()
+    isEmailVerified = models.BooleanField(default=False)
+    userDescription = models.TextField(default="")
     genderIdentifier = models.TextField(default="divers")
    
     def __str__(self):

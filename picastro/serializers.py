@@ -43,6 +43,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user = super(CreateUserSerializer, self).create(validated_data)
         user.set_password(validated_data['password'])
         user.save()
+        
         return user
 
     def get_token(self, obj):
