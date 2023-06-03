@@ -1,15 +1,19 @@
 import pytest
+from django.test import TestCase
+
+from picastro.models import Post
+from picastro.tests.test_setup import TestSetup
 
 pytestmark = pytest.mark.django_db
 
 
-class TestPostModel:
-    def test_output_string_method(self, post_factory):
-        #Arrange
-        #Act
-        post_data = post_factory()
-        #Assert
-        assert post_data.__str__() == "username - 2023-04-05 12:06:09.920441"
+# class TestPostModel(TestSetup):
+#     def test_output_string_method(self, post_factory):
+#         #Arrange
+#         #Act
+#         post_data = post_factory()
+#         #Assert
+#         assert post_data.__str__() == "username - 2023-04-05 12:06:09.920441"
 
 
 #     def test_init_method():
@@ -33,12 +37,13 @@ class TestPostModel:
 #         pass
 
 
-# class TestStarCampModel:
-#     def test_output_string_method():
+# class TestStarCampModel(TestSetup):
+#     def test_output_string_method(self, starcamp_factory):
 #         #Arrange
 #         #Act
+#         starcamp_data = starcamp_factory()
 #         #Assert
-#         pass
+#         assert starcamp_data.__str__() == "Aberdeeen"
 
 
 # class TestUserProfileModel:

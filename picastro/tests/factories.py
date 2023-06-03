@@ -1,18 +1,19 @@
-import factory
-from django.contrib.auth.models import User
 from tempfile import NamedTemporaryFile
 
+from factory.django import DjangoModelFactory
+from django.contrib.auth.models import User
+
 from picastro.models import (
-    Post,
-    StarCamp,
-    UserProfile,
     Equipment,
+    Post,
     SavedImages,
-    Subscription
+    StarCamp,
+    Subscription,
+    UserProfile
 )
 
 
-class UserFactory(factory.django.DjangoModelFactory):
+class UserFactory(DjangoModelFactory):
     class Meta:
         model = User
 
@@ -26,7 +27,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     genderIdentifier: "diverse"
 
 
-class PostFactory(factory.django.DjangoModelFactory):
+class PostFactory(DjangoModelFactory):
     class Meta:
         model = Post
     
@@ -50,9 +51,16 @@ class PostFactory(factory.django.DjangoModelFactory):
     moonPhase = "10%"
     cloudCoverage = "20%"
     bortle = "5"
-    starCamp = "Aberdeen"
+    starCamp = factory.SubFactory(StarCampFactory)
     # leadingLight = False
     pub_date = "2023-04-05 12:06:09.920441"
     poster = factory.SubFactory(UserFactory)
 
+    
+class StarCampFactory(DjangoModelFactory):
+    class Meta:
+        model = StarCamp
+
+        starCampName = "Aberdeen"
+        starCampLocation = "Aberdeen"
     
