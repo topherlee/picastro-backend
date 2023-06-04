@@ -26,12 +26,16 @@ class TestWebRegisterView(TestSetup):
 class TestWebLoginView(TestSetup):
 
     def test_user_login_POST(self):
+        # starcamp = self.create_test_starcamp()
+        user = self.create_test_user()
         response = self.client.post(self.login_url)
         
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_user_login_GET(self):
+        # starcamp = self.create_test_starcamp()
+        user = self.create_test_user()
         response = self.client.get(self.login_url)
         
         self.assertEquals(response.status_code, 200)
@@ -47,6 +51,8 @@ class TestWebPostView(TestSetup):
         self.assertRedirects(response, self.login_url + '?next=%2Fpicastro%2Fpost%2F')
 
     def test_CreatePostView_POST_with_login(self):
+        # starcamp = self.create_test_starcamp()
+        user = self.create_test_user()
         self.client.post(self.login_url, self.login_data)
         response = self.client.get(self.posts_url, self.post_data)
 
@@ -60,6 +66,8 @@ class TestWebPostView(TestSetup):
         self.assertRedirects(response, self.login_url + '?next=%2Fpicastro%2Fpost%2F')
 
     def test_CreatePostView_GET_with_login(self):
+        starcamp = self.create_test_starcamp()
+        user = self.create_test_user()
         res1 = self.client.post(self.login_url, self.login_data)
         response = self.client.get(self.posts_url)
 
@@ -76,6 +84,8 @@ class TestWebDashboardView(TestSetup):
         self.assertRedirects(response, self.login_url + '?next=%2Fpicastro%2Fdashboard%2F')
         
     def test_DashboardView_with_login(self):
+        starcamp = self.create_test_starcamp()
+        user = self.create_test_user()
         res1 = self.client.post(self.login_url, self.login_data)
         # print("res1", res1)
         response = self.client.get(self.dashboard_url)

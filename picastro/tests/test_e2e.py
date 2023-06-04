@@ -10,7 +10,7 @@ from picastro.models import UserProfile, StarCamp
 class TestRegistration(TestSetup):
 
     def test_user_registration(self):
-        # StarCamp.objects.create(self.starcamp_data)
+        # star_camp = self.create_test_starcamp()
         response = self.client.post(self.register_url, self.user_data)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(User.objects.count(), 1)

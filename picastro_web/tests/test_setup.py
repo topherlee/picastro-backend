@@ -56,26 +56,32 @@ class TestSetup(TestCase):
             "poster": "1",
         }
 
-        self.user1 = User.objects.create_user(
+        return super().setUp()
+
+    def create_test_user(self):
+        user = User.objects.create_user(
             username = "username",
             password = "password123",
             first_name = "test_first",
             last_name = "test_last",
             email = "test@picastro.com", 
         )
+        return user
 
-        # self.user_profile1 = UserProfile.objects.create(
-        #     location = "Dundee_test",
-        #     userDescription = "long test description",
-        #     genderIdentifier = "diverse",
-        # )
+    def create_test_user_profile(self):
+        user_profile = UserProfile.objects.create(
+            location = "Dundee_test",
+            userDescription = "long test description",
+            genderIdentifier = "diverse",
+        )
+        return user_profile
 
-        self.starcamp1 = StarCamp.objects.create(
+    def create_test_starcamp(self):
+        starcamp = StarCamp.objects.create(
             starCampName = "Aberdeen",
             starCampLocation = "Aberdeen"
         )
-
-        return super().setUp()
+        return starcamp
 
     def tearDown(self):
         return super().tearDown()

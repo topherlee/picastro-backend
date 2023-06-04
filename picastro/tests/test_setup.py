@@ -1,5 +1,9 @@
 from rest_framework.test import APITestCase
 from django.urls import reverse
+from django.contrib.auth.models import User
+from tempfile import NamedTemporaryFile
+
+from picastro.models import StarCamp, Post
 
 from picastro.models import StarCamp
 
@@ -44,17 +48,57 @@ class TestSetup(APITestCase):
             "poster": "1",
         }
 
-        self.starcamp_data = {
+        self.starcamp_data1 = {
             "starCampName": "Aberdeen",
             "starCampLocation": "Aberdeen"
         }
 
-        self.star_camp1 = StarCamp.objects.create(
-            starCampName = "Glasgow",
-            starCampLocation = "Glasgow"
-        )
+        self.starcamp_data2 = {
+            "starCampName": "Glasgow",
+            "starCampLocation": "Glasgow"
+        }
 
         return super().setUp()
+
+    def create_test_user(self):
+        user = User.objects.create_user(
+            username = "username",
+            password = "password123",
+            first_name = "test_first",
+            last_name = "test_last",
+            email = "test@picastro.com", 
+        )
+        return user
+
+    def create_test_user_profile(self):
+        user_profile = UserProfile.objects.create(
+            location = "Dundee_test",
+            userDescription = "long test description",
+            genderIdentifier = "diverse",
+        )
+        return user_profile
+
+    def create_test_starcamp(self):
+        starcamp = StarCamp.objects.create(
+            starCampName = "Aberdeen",
+            starCampLocation = "Aberdeen"
+        )
+        return starcamp
+    
+    def create_test_post(self):
+        post = Post.objects.create(
+            image = NamedTemporaryFile(suffix='.jpg', prefix="test_img_"),
+            astroNameShort = "IC442",
+            astroName = "Star #1",
+            exposureTime = "6 hrs",
+            moonPhase = "50%",
+            cloudCoverage = "10%",
+            bortle = "3",
+            imageDescription = "The Omega Nebula",
+            imageCategory = "nebula",
+            poster = 1,
+        )
+        return post
 
     def tearDown(self):
         return super().tearDown()
