@@ -2,8 +2,9 @@ from rest_framework.test import APITestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
 from tempfile import NamedTemporaryFile
+from io import BytesIO
 
-from picastro.models import StarCamp, Post
+from picastro.models import StarCamp, Post, UserProfile
 
 from picastro.models import StarCamp
 
@@ -70,11 +71,12 @@ class TestSetup(APITestCase):
         )
         return user
 
-    def create_test_user_profile(self):
+    def create_test_user_profile(self, user):
         user_profile = UserProfile.objects.create(
             location = "Dundee_test",
             userDescription = "long test description",
             genderIdentifier = "diverse",
+            user=user.id
         )
         return user_profile
 
@@ -85,7 +87,7 @@ class TestSetup(APITestCase):
         )
         return starcamp
     
-    def create_test_post(self):
+    def create_test_post(self, user):
         post = Post.objects.create(
             image = NamedTemporaryFile(suffix='.jpg', prefix="test_img_"),
             astroNameShort = "IC442",
@@ -96,7 +98,7 @@ class TestSetup(APITestCase):
             bortle = "3",
             imageDescription = "The Omega Nebula",
             imageCategory = "nebula",
-            poster = 1,
+            poster = user,
         )
         return post
 
