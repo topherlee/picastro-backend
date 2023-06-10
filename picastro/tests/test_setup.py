@@ -2,9 +2,10 @@ from rest_framework.test import APITestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
 from tempfile import NamedTemporaryFile
+from django.core.files.uploadedfile import SimpleUploadedFile
 from io import BytesIO
 
-from picastro.models import StarCamp, Post, UserProfile
+from picastro.models import StarCamp, Post, UserProfile, Equipment, SavedImages
 
 from picastro.models import StarCamp
 
@@ -59,6 +60,12 @@ class TestSetup(APITestCase):
             "starCampLocation": "Glasgow"
         }
 
+        self.small_gif = (
+            b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x00\x00\x00\x21\xf9\x04'
+            b'\x01\x0a\x00\x01\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02'
+            b'\x02\x4c\x01\x00\x3b'
+        )
+
         return super().setUp()
 
     def create_test_user(self):
@@ -89,7 +96,9 @@ class TestSetup(APITestCase):
     
     def create_test_post(self, user):
         post = Post.objects.create(
-            image = NamedTemporaryFile(suffix='.jpg', prefix="test_img_"),
+            # image = NamedTemporaryFile(suffix='.jpg', prefix="test_img_"),
+            # image = SimpleUploadedFile(name='test_image.jpg', content=open(image_path, 'rb').read(), content_type='image/jpeg'),
+            image = SimpleUploadedFile('small.gif', self.small_gif, content_type='image/gif'),
             astroNameShort = "IC442",
             astroName = "Star #1",
             exposureTime = "6 hrs",
@@ -101,6 +110,28 @@ class TestSetup(APITestCase):
             poster = user,
         )
         return post
+    
+    def create_test_equipment(self, user):
+        equipment = Equipment.objects.create(
+            setName = "Test setName",
+            telescopeName = "Test TelescopeName",
+            cameraName = "Test cameraName",
+            guideCameraName = "Test guideCameraName",
+            offAxisguidecamera = "Test offAxisguidecamera",
+            filterWheelName = "Test filterWheelName",
+            filters = "Test Filters",
+            barlowLense = "Test BarlowLense",
+            otherEquipment = "Test otherEquipment",
+            userId = user
+        )
+        return equipment
+
+    def create_test_saved_image(self, user, post):
+        saved_image = SavedImages.objects.create(
+            user = user,
+            post = post
+        )
+        return saved_image
 
     def tearDown(self):
         return super().tearDown()

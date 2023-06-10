@@ -1,6 +1,7 @@
 import pytest
 from django.test import TestCase
 from django.contrib.auth.models import User
+from datetime import datetime
 
 from picastro.models import Post, UserProfile
 from picastro.tests.test_setup import TestSetup
@@ -22,7 +23,7 @@ class TestPostModel(TestSetup):
         user = self.create_test_user()
         post = self.create_test_post(user)
         #Assert
-        assert post.__str__() == "username - 2023-04-05 12:06:09.920441"
+        assert "username - " in post.__str__()
 
 
 #     def test_init_method():
@@ -74,20 +75,27 @@ class TestUserProfileModel(TestSetup):
         assert user_profile.__str__() == "username"
 
 
-# class TestEquipmentModel:
-#     def test_output_string_method():
-#         #Arrange
-#         #Act
-#         #Assert
-#         assert equipment.__str__() == "test_equipment"
+class TestEquipmentModel(TestSetup):
+
+    def test_output_string_method(self):
+        #Arrange
+        #Act
+        user = self.create_test_user()
+        equipment = self.create_test_equipment(user=user)
+        #Assert
+        assert equipment.__str__() == "Test setName"
 
 
-# class TestSavedImagesModel:
-#     def test_output_string_method():
-#         #Arrange
-#         #Act
-#         #Assert
-#         pass
+class TestSavedImagesModel(TestSetup):
+
+    def test_output_string_method(self):
+        #Arrange
+        #Act
+        user = self.create_test_user()
+        post = self.create_test_post(user)
+        saved_image = self.create_test_saved_image(user, post)
+        #Assert
+        assert saved_image.__str__() == "username - 1"
 
 
 # class TestSubscriptionModel:
