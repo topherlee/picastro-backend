@@ -86,13 +86,6 @@ class Post(models.Model):
 
         return True
 
-    # @receiver(post_save, sender=User)
-    # def create_user_profile(sender, instance, created, **kwargs):
-    #     if created:
-    #         UserProfile.objects.create(
-    #         user=instance,
-    #     )
-
 
 class StarCamp(models.Model):
     starCampName = models.TextField(unique=True)
@@ -149,10 +142,10 @@ class SavedImages(models.Model):
         return f'{self.user.username} - {str(self.post.id)}'
 
 
-class Subscription(models.Model):
-    subscriptionsPlan = models.TextField()
-    subscriptionsDuration = models.DurationField()
-    subscriptionsPrice = models.DecimalField(max_digits=5, decimal_places=2)
+# class Subscription(models.Model):
+#     subscriptionsPlan = models.TextField()
+#     subscriptionsDuration = models.DurationField()
+#     subscriptionsPrice = models.DecimalField(max_digits=5, decimal_places=2)
 
-    def __str__(self):
-        return self.subcriptionsPlan
+#     def __str__(self):
+#         return self.subcriptionsPlan
