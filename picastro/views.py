@@ -70,7 +70,7 @@ class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = (IsAuthenticated,)
     queryset = UserProfile.objects.all()
-    lookup_field = 'id'
+    lookup_field = 'user_id'
 
 
 class RequestPasswordResetEmail(GenericAPIView):

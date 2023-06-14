@@ -96,7 +96,7 @@ class StarCamp(models.Model):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     # image = models.ImageField(upload_to='user_images/')
     # is_verified = models.BooleanField(default=False)
     profileImage = models.ImageField(upload_to='profileImages/', default='profileImages/sampleuserbig.png')
