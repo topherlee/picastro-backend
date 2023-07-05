@@ -11,7 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from .models import Post, UserProfile
+from .models import Post, UserProfile, SavedImages
 from django_filters.rest_framework import DjangoFilterBackend
 
 from picastro.serializers import (
@@ -19,6 +19,7 @@ from picastro.serializers import (
     PostSerializer,
     UserSerializer,
     UserProfileSerializer,
+    LikeImageSerializer
     # ResetPasswordEmailRequestSerializer
 ) 
 
@@ -103,3 +104,10 @@ class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = Post.objects.all()
     lookup_field = 'id'
+
+
+class ImageLikeAPIView(CreateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = LikeImageSerializer
+    queryset = SavedImages.objects.all()
+    lookup_field = 'user'

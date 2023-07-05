@@ -140,6 +140,13 @@ class SavedImages(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - {str(self.post.id)}'
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'post'], name='unique_user_post_combination'
+            )
+        ]
 
 
 # class Subscription(models.Model):

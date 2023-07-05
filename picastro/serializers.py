@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Post, UserProfile
+from .models import Post, UserProfile, SavedImages
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -93,13 +93,19 @@ class PosterSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ('id', 'image', 'astroNameShort', 'astroName', 'imageIsSaved',
-                  'award', 'exposureTime', 'moonPhase', 'cloudCoverage', 'bortle',
-                  'starCamp', 'pub_date', 'imageDescription',
-                  'imageCategory', 'poster', 'thumbnail')
+        fields = ('id', 'image', 'astroNameShort', 'astroName', 'award',
+                'exposureTime', 'moonPhase', 'cloudCoverage', 'bortle',
+                'pub_date', 'imageDescription',
+                'imageCategory', 'poster', 'thumbnail')
         # read_only_fields = ['thumbnail']
         extra_kwargs = {'thumbnail': {'required': False}}
 
     def to_representation(self, instance):
         self.fields['poster'] = PosterSerializer(read_only=True)
         return super(PostSerializer, self).to_representation(instance)
+
+
+class LikeImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SavedImages
+        fields = ['user', 'post']
