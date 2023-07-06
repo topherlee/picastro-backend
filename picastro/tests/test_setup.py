@@ -18,6 +18,8 @@ class TestSetup(APITestCase):
         self.login_url = reverse('auth_login')
         self.current_user_url = reverse('auth_user_current')
         self.posts_url = reverse('feed_of_posts')
+        self.post_details_url = reverse('update_delete_posts', args=[1])
+        self.image_like_url = reverse('image_like', args=[1, 1])
 
         self.user_data = {
             "username": "username",
@@ -39,6 +41,7 @@ class TestSetup(APITestCase):
         }
 
         self.post_data = {
+            #"image": SimpleUploadedFile('small.gif', self.small_gif, content_type='image/gif'),
             "astroNameShort": "IC442",
             "astroName": "Star #1",
             "exposureTime": "6 hrs",

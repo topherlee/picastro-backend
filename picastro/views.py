@@ -2,6 +2,7 @@ from rest_framework.generics import (
     CreateAPIView,
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
+    DestroyAPIView,
     GenericAPIView
 )
 from rest_framework import filters
@@ -109,5 +110,30 @@ class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
 class ImageLikeAPIView(CreateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = LikeImageSerializer
+    
+
+class ImageDislikeAPIView(DestroyAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = LikeImageSerializer
     queryset = SavedImages.objects.all()
-    lookup_field = 'user'
+    #lookup_field = 'unique_user_post_combination'
+
+    def get_user(self, request, format=None):
+        token_user_id = request.user.id
+        print("token_user_id", token_user_id)
+        # token_user_username = request.user.username
+        return token_user_id
+    
+    def destroy(self, request, *args, **kwargs):
+        user = self.get_user(request)
+        print("kwargs", kwargs['post'])
+        post = kwargs['post']
+        instance = SavedImages.objects.filter(user=user, post=post)
+        print("instance", instance)
+
+        # original code of destroy() function of DestroyAPIView
+        # Simply delete - no need to instantiate the serializer
+        self.perform_destroy(instance)
+
+        # Return an empty response
+        return Response(status=status.HTTP_204_NO_CONTENT)
