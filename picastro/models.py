@@ -1,9 +1,11 @@
+import os
 from django.db import models
 from django.contrib.auth.models import User
 from io import BytesIO
-import os
 from PIL import Image
 from django.core.files.base import ContentFile
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 
 class Post(models.Model):
@@ -13,13 +15,11 @@ class Post(models.Model):
     imageCategory = models.TextField(default="others")
     astroNameShort = models.TextField()
     astroName = models.TextField()
-    imageIsSaved = models.BooleanField(default=False)
     award = models.TextField(default='None')
     exposureTime = models.TextField()
     moonPhase = models.TextField()
     cloudCoverage = models.TextField()
     bortle = models.TextField()
-    starCamp = models.TextField()
     # leadingLight = models.BooleanField(default=False)
     pub_date = models.DateTimeField(auto_now_add=True)
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -96,18 +96,26 @@ class StarCamp(models.Model):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    # image = models.ImageField(upload_to='user_images/')
     # is_verified = models.BooleanField(default=False)
     profileImage = models.ImageField(upload_to='profileImages/', default='profileImages/sampleuserbig.png')
     location = models.CharField(max_length=100, blank=True)
-    starCampId = models.ForeignKey(StarCamp, on_delete=models.CASCADE)
+    starCampId = models.ForeignKey(StarCamp, on_delete=models.CASCADE, null=True, blank=True)
     subcriptionsExpiry = models.DateTimeField(auto_now_add=True)
-    isEmailVerified = models.BooleanField()
-    userDescription = models.TextField()
+    isEmailVerified = models.BooleanField(default=False)
+    userDescription = models.TextField(default="")
     genderIdentifier = models.TextField(default="divers")
    
     def __str__(self):
         return self.user.username
+
+    @receiver(post_save, sender=User)
+    def create_user_profile(sender, instance, created, **kwargs):
+        if created:
+            UserProfile.objects.create(
+            user=instance,
+        )
 
 
 class Equipment(models.Model):
@@ -132,12 +140,19 @@ class SavedImages(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - {str(self.post.id)}'
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'post'], name='unique_user_post_combination'
+            )
+        ]
 
 
-class Subscription(models.Model):
-    subscriptionsPlan = models.TextField()
-    subscriptionsDuration = models.DurationField()
-    subscriptionsPrice = models.DecimalField(max_digits=5, decimal_places=2)
+# class Subscription(models.Model):
+#     subscriptionsPlan = models.TextField()
+#     subscriptionsDuration = models.DurationField()
+#     subscriptionsPrice = models.DecimalField(max_digits=5, decimal_places=2)
 
-    def __str__(self):
-        return self.subcriptionsPlan
+#     def __str__(self):
+#         return self.subcriptionsPlan

@@ -10,13 +10,13 @@
 - `cd` into the root project folder
 - setup a virtual environment by running the following two commands: `python -m venv .venv` and `.venv/Scripts/activate.bat` (Windows cmd.exe) or `source .venv/bin/activate` (Linux and MacOS)
 - Run `pip install -r requirements.txt` to install dependencies
-- Run `python manage.py migrate` to make database migrations.
-- Run `python manage.py data_parser` to populate your database with data from a json file.
-- Run `python manage.py createsuperuser` to create a superuser (administrator) for your local backend installation. Set user name and password to whatever you like.
 - Create a `.env` file in the root folder of this repo.
 - Run the command `python3 -c 'import secrets; print(secrets.token_hex(100))'` in order to create a new secret key.
 - Add `export SECRET_KEY='<your_secret_key>'` (Linux/Mac) or `SECRET_KEY='<your_secret_key>'` (Windows) to your .env file and save the file.
 - Run `source .env` in your terminal (Linux/Mac) or un-comment the Windows-specific lines for setting the secret key in `settings.py`.
+- Run `python manage.py migrate` to make database migrations.
+- Run `python manage.py data_parser` to populate your database with data from a json file.
+- Run `python manage.py createsuperuser` to create a superuser (administrator) for your local backend installation. Set user name and password to whatever you like.
 
 
 ## Running the backend

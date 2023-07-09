@@ -12,7 +12,8 @@ from .views import (
     UserProfileAPIView,
     PasswordTokenCheckAPI,
     RequestPasswordResetEmail,
-    VerifyEmail
+    VerifyEmail,
+    ImageLikeAPIView
 )
 
 
@@ -23,7 +24,9 @@ urlpatterns = [
     path('feed/', PostAPIView.as_view(), name='feed_of_posts'),
     path('feed/<int:id>', PostDetailAPIView.as_view(), name='update_delete_posts'),
     path('current_user/', CurrentUserView.as_view(), name='auth_user_current'),
-    path('user/<int:id>', UserProfileAPIView.as_view(), name='user_profile'),
+    path('user/<int:user_id>', UserProfileAPIView.as_view(), name='user_profile'),
+    # path('like/<int:user_id>/<int:image_id>', ImageLikeAPIView.as_view(), name='image_like'),
+    path('like/', ImageLikeAPIView.as_view(), name='image_like'),
     path('auth/login/refresh/', TokenRefreshView.as_view(), name='auth_login_refresh'),     
     path('auth/login/', TokenObtainPairView.as_view(), name='auth_login'),
     path('auth/email-verify/', VerifyEmail.as_view(), name='email-verify'),
