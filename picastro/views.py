@@ -1,33 +1,34 @@
-from django.shortcuts import render
-
-# Create your views here.
-from django.contrib.auth import get_user_model
 from rest_framework.generics import (
     CreateAPIView,
     ListAPIView,
     ListCreateAPIView,
-    RetrieveUpdateDestroyAPIView
+    RetrieveUpdateDestroyAPIView,
+    GenericAPIView
 )
 from rest_framework import filters
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
+from .models import Post, UserProfile
+from django_filters.rest_framework import DjangoFilterBackend
+
 from picastro.serializers import (
     CreateUserSerializer,
     PostSerializer,
     UserSerializer,
     UserProfileSerializer,
     CommentSerializer,
+    # ResetPasswordEmailRequestSerializer
 )
 from django.http import JsonResponse
 from .models import Post,Comment, UserProfile
 from django.views.generic import ListView
 from django_filters.rest_framework import DjangoFilterBackend
+
 
 class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer
@@ -39,11 +40,42 @@ class CreateUserAPIView(CreateAPIView):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         # We create a token than will be used for future auth
+        
+        # # code for email verification, but not yet fully working
+        # print(serializer.data)
+        # relative_link = reverse('email-verify')
+        # token = serializer.data['token']['access']
+        # print(token)
+        
+        # absolute_Url = DOMAIN + relative_link + '?token='+token
+        # username = serializer.data['username']
+        # user_email = serializer.data['email']
+        # email_body = 'Hi ' + username +',\nUse link below to verify your email: \n' + absolute_Url
+        # data = {
+        #     'email_subject': 'Verify your email for Picastro',
+        #     'email_body': email_body,
+        #     'user_email_address': user_email
+        # }
+
+        # print(os.environ.get('EMAIL_HOST_PASSWORD'))
+        
+        # send_mail(
+        #     'Verify your email for Picastro',
+        #     email_body,
+        #     'atzen78@web.de',
+        #     [user_email],
+        #     fail_silently=False,
+        # )
         return Response(
             {**serializer.data},
             status=status.HTTP_201_CREATED,
             headers=headers
         )
+
+
+class VerifyEmail(GenericAPIView):
+    def get(self):
+        pass
 
 
 class LogoutUserAPIView(APIView):
@@ -66,56 +98,47 @@ class CurrentUserView(APIView):
         return Response(serializer.data)
 
 
-@api_view(['GET', 'POST', 'DELETE'])       #old API, delete later on
-def get_post_list(request):
-    if request.method == "GET":
-        rest_list = Post.objects.order_by('-pub_date')
-        serializer = PostSerializer(rest_list, many=True, context={'request': request})
-        return JsonResponse(serializer.data, safe=False)
-   
-
-
 class HomePageView(ListView):
     model = Post
     template_name = "home.html"
-
-
-class PostViewSet(ModelViewSet):    #old API, delete later on
-    permission_classes = (IsAuthenticated,)
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-
-
-#new setup for Post API endpoint to do all together:
-# post, retrieve, filter, search, update (for SortAndFilterScreen, HomeScreen, UserScreen)
-
-class PostAPIView(ListCreateAPIView):
-    serializer_class = PostSerializer
-    permission_classes = (IsAuthenticated,)
-    queryset = Post.objects.all()
-    filter_backends = [DjangoFilterBackend,
-                        filters.SearchFilter,
-                        filters.OrderingFilter]
-    filterset_fields = ['id', 'imageCategory', 'pub_date', 'poster']
-    search_fields = ['astroNameShort', 'astroName']
-    ordering_fields = ['id', 'imageCategory', 'pub_date', 'poster']
-    ordering = '-pub_date'
-
-    def perform_create(self, serializer):
-        return serializer.save(poster = self.request.user)
-
-
-class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
-    serializer_class = PostSerializer
-    permission_classes = (IsAuthenticated,)
-    queryset = Post.objects.all()
-    lookup_field = 'id'
 
 
 class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = (IsAuthenticated,)
     queryset = UserProfile.objects.all()
+    lookup_field = 'id'
+
+
+class RequestPasswordResetEmail(GenericAPIView):
+    pass
+
+
+class PasswordTokenCheckAPI(GenericAPIView):
+    def get(self, request, uidb64, token):
+        pass
+
+
+class PostAPIView(ListCreateAPIView):
+    serializer_class = PostSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Post.objects.all()
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter,
+                       filters.OrderingFilter]
+    filterset_fields = ['id', 'imageCategory', 'pub_date', 'poster']
+    search_fields = ['astroNameShort', 'astroName']
+    ordering_fields = ['id', 'imageCategory', 'pub_date', 'poster']
+    ordering = '-pub_date'
+
+    def perform_create(self, serializer):
+        return serializer.save(poster=self.request.user)
+
+
+class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = PostSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Post.objects.all()
     lookup_field = 'id'
 
 
@@ -133,5 +156,3 @@ class CommentUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (IsAuthenticated,)
-   
-    

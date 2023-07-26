@@ -4,47 +4,12 @@ from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import Post, UserProfile, Comment
 
-class UserSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'last_login', 'date_joined']
-        
-
-class UserProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(many=False, read_only=True)
-
-    class Meta:
-        model = UserProfile
-        fields = ['user', 'location', 'userDescription', 'genderIdentifier', 'profileImage']
-        
-
-class PosterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['username', 'first_name', 'last_name', 'email']
-
-
-class PostSerializer(serializers.ModelSerializer):
-    #poster = PosterSerializer(many=False, read_only=True)
-
-    class Meta:
-        model = Post
-        fields = ('id', 'image', 'astroNameShort', 'astroName', 'imageIsSaved', 
-                'award', 'exposureTime', 'moonPhase', 'cloudCoverage', 'bortle',
-                'starCamp', 'leadingLight', 'pub_date', 'imageDescription', 
-                'imageCategory','poster')
-    
-    def to_representation(self, instance):
-        self.fields['poster'] =  PosterSerializer(read_only=True)
-        return super(PostSerializer, self).to_representation(instance)
-
 
 class CreateUserSerializer(serializers.ModelSerializer):
     token = serializers.SerializerMethodField()
 
     email = serializers.EmailField(
-        required=True, 
+        required=True,
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
 
@@ -69,8 +34,9 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('token','username', 'password', 'first_name', 'last_name', 'email', 'id',)
-        write_only_fields = ('password')
+        fields = ('token', 'username', 'password',
+                  'first_name', 'last_name', 'email', 'id',)
+        write_only_fields = 'password'
         read_only_fields = ('is_staff', 'is_superuser', 'is_active',)
 
     def create(self, validated_data):
@@ -85,13 +51,61 @@ class CreateUserSerializer(serializers.ModelSerializer):
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         }
-    
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name',
+                  'last_name', 'email', 'last_login', 'date_joined']
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = UserProfile
+        fields = ['user', 'location', 'userDescription',
+                  'genderIdentifier', 'profileImage']
+
+
+class ResetPasswordEmailRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    class Meta:
+        fields = ['email']
+
+    def validate(self, attrs):
+
+        email = attrs['data'].get('email', '')
+        
+        return super().validate(attrs)
+
+
+class PosterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email']
+
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ('id', 'image', 'astroNameShort', 'astroName', 'imageIsSaved',
+                  'award', 'exposureTime', 'moonPhase', 'cloudCoverage', 'bortle',
+                  'starCamp', 'pub_date', 'imageDescription',
+                  'imageCategory', 'poster', 'thumbnail')
+        # read_only_fields = ['thumbnail']
+        extra_kwargs = {'thumbnail': {'required': False}}
+
+    def to_representation(self, instance):
+        self.fields['poster'] = PosterSerializer(read_only=True)
+        return super(PostSerializer, self).to_representation(instance)
+
 
 class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment 
-        fields = ['post', 'commenter_name', 'comment_body', 'date_added']        
-            
-
-
+        fields = ['post', 'commenter_name', 'comment_body', 'date_added']
