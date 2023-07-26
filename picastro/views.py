@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from rest_framework.generics import (
     CreateAPIView,
+    ListAPIView,
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView
 )
@@ -15,7 +16,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from rest_framework.viewsets import ModelViewSet 
 from rest_framework.views import APIView
 from picastro.serializers import (
     CreateUserSerializer,
@@ -119,9 +119,19 @@ class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
     lookup_field = 'id'
 
 
-class CommentViewSet(ModelViewSet):
+class CommentCreateAPIView(CreateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = CommentSerializer
+
+
+class CommentListAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = CommentSerializer
+
+
+class CommentUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    permission_classes = (IsAuthenticated,)
    
-    def perform_create(self, serializer):
-        return super().perform_create(serializer)
+    
