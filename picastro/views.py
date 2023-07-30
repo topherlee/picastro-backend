@@ -151,6 +151,9 @@ class CommentListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = CommentSerializer
 
+    queryset = Comment.objects.all()
+    lookup_field = 'post'
+
 
 class CommentUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
