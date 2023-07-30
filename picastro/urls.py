@@ -38,5 +38,5 @@ urlpatterns = [
     path("", HomePageView.as_view(), name="home"),
     path('comments/',CommentCreateAPIView.as_view(),name='comment_create'),
     path('comments/<int:post_id>',CommentListAPIView.as_view(),name='comment_list'),
-    path('comment/<int:comment_id>',CommentUpdateDestroyAPIView.as_view(),name='comment_ud'),
+    path('comment/<int:id>',CommentUpdateDestroyAPIView.as_view(),name='comment_ud'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

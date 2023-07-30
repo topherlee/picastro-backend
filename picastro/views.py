@@ -159,3 +159,5 @@ class CommentUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (IsAuthenticated,)
+
+    lookup_field = 'id'
