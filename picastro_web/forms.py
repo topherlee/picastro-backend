@@ -30,4 +30,4 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ["image", "imageDescription", "imageCategory", "astroNameShort", "astroName",
-                  "exposureTime", "moonPhase", "cloudCoverage", "bortle", "starCamp", "poster"]
+                  "exposureTime", "moonPhase", "cloudCoverage", "bortle", "poster"]

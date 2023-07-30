@@ -13,13 +13,11 @@ class Post(models.Model):
     imageCategory = models.TextField(default="others")
     astroNameShort = models.TextField()
     astroName = models.TextField()
-    imageIsSaved = models.BooleanField(default=False)
     award = models.TextField(default='None')
     exposureTime = models.TextField()
     moonPhase = models.TextField()
     cloudCoverage = models.TextField()
     bortle = models.TextField()
-    starCamp = models.TextField()
     # leadingLight = models.BooleanField(default=False)
     pub_date = models.DateTimeField(auto_now_add=True)
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -145,7 +143,7 @@ class Subscription(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    commenter_name = models.ForeignKey(User,on_delete=models.CASCADE)
+    commenter = models.ForeignKey(User,on_delete=models.CASCADE)
     comment_body = models.TextField()
     date_added = models.DateTimeField(auto_now_add=True)
     

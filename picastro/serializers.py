@@ -92,10 +92,10 @@ class PosterSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ('id', 'image', 'astroNameShort', 'astroName', 'imageIsSaved',
-                  'award', 'exposureTime', 'moonPhase', 'cloudCoverage', 'bortle',
-                  'starCamp', 'pub_date', 'imageDescription',
-                  'imageCategory', 'poster', 'thumbnail')
+        fields = ('id', 'image', 'astroNameShort', 'astroName', 'award',
+                'exposureTime', 'moonPhase', 'cloudCoverage', 'bortle',
+                'pub_date', 'imageDescription',
+                'imageCategory', 'poster', 'thumbnail')
         # read_only_fields = ['thumbnail']
         extra_kwargs = {'thumbnail': {'required': False}}
 
@@ -108,4 +108,4 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment 
-        fields = ['post', 'commenter_name', 'comment_body', 'date_added']
+        fields = ['post', 'commenter', 'comment_body', 'date_added']
