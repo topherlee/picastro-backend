@@ -11,7 +11,8 @@ from picastro.views import (
     UserProfileAPIView,
     PasswordTokenCheckAPI,
     RequestPasswordResetEmail,
-    VerifyEmail
+    VerifyEmail,
+    ImageLikeAPIView
 )
 
 class ApiUrlsTests(SimpleTestCase):
@@ -59,3 +60,7 @@ class ApiUrlsTests(SimpleTestCase):
     def test_auth_logout_is_resolved(self):
         url = reverse('auth_logout')
         self.assertEqual(resolve(url).func.view_class, LogoutUserAPIView)
+
+    def test_image_like_is_resolved(self):
+        url = reverse('image_like', args=[1, 1])
+        self.assertEqual(resolve(url).func.view_class, ImageLikeAPIView)

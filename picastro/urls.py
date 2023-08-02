@@ -13,7 +13,8 @@ from .views import (
     PasswordTokenCheckAPI,
     RequestPasswordResetEmail,
     VerifyEmail,
-    ImageLikeAPIView
+    ImageLikeAPIView,
+    ImageDislikeAPIView
 )
 
 
@@ -27,6 +28,8 @@ urlpatterns = [
     path('user/<int:user_id>', UserProfileAPIView.as_view(), name='user_profile'),
     # path('like/<int:user_id>/<int:image_id>', ImageLikeAPIView.as_view(), name='image_like'),
     path('like/', ImageLikeAPIView.as_view(), name='image_like'),
+    # path('dislike/<int:user>/<int:post>', ImageDislikeAPIView.as_view(), name='image_dislike'),
+    path('dislike/<int:post>', ImageDislikeAPIView.as_view(), name='image_dislike'),
     path('auth/login/refresh/', TokenRefreshView.as_view(), name='auth_login_refresh'),     
     path('auth/login/', TokenObtainPairView.as_view(), name='auth_login'),
     path('auth/email-verify/', VerifyEmail.as_view(), name='email-verify'),
