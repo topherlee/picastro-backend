@@ -15,7 +15,7 @@ from .views import (
     RequestPasswordResetEmail,
     VerifyEmail,
     ImageLikeAPIView,
-    ImageDislikeAPIView
+    ImageDislikeAPIView,
     CommentCreateAPIView,
     CommentListAPIView,
     CommentUpdateDestroyAPIView

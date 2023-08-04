@@ -64,11 +64,16 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(many=False, read_only=True)
+    total_likes = serializers.SerializerMethodField()
 
     class Meta:
         model = UserProfile
         fields = ['user', 'location', 'userDescription',
-                  'genderIdentifier', 'profileImage']
+                  'genderIdentifier', 'profileImage', 'total_likes']
+
+    def get_total_likes(self, obj):
+        print(obj.user)
+        return SavedImages.objects.filter(user=obj.user).count()
 
 
 class ResetPasswordEmailRequestSerializer(serializers.Serializer):
