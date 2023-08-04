@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 from .views import (
+    HomePageView,
     CreateUserAPIView,
     LogoutUserAPIView,
     CurrentUserView,
@@ -15,7 +16,11 @@ from .views import (
     VerifyEmail,
     ImageLikeAPIView,
     ImageDislikeAPIView
+    CommentCreateAPIView,
+    CommentListAPIView,
+    CommentUpdateDestroyAPIView
 )
+from django.urls import path, include
 
 
 urlpatterns = [
@@ -36,4 +41,8 @@ urlpatterns = [
     path('auth/pw-reset/', RequestPasswordResetEmail.as_view(), name='request_password-reset'),
     path('auth/reset/<uidb64>/<token>/', PasswordTokenCheckAPI.as_view(), name='password-reset-confirm'),
     path('auth/logout/', LogoutUserAPIView.as_view(), name='auth_logout'),   # use this to get access and refresh token
+    path("", HomePageView.as_view(), name="home"),
+    path('comments/',CommentCreateAPIView.as_view(),name='comment_create'),
+    path('comments/<int:post_id>',CommentListAPIView.as_view(),name='comment_list'),
+    path('comment/<int:id>',CommentUpdateDestroyAPIView.as_view(),name='comment_ud'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,5 +1,6 @@
 from rest_framework.generics import (
     CreateAPIView,
+    ListAPIView,
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
     DestroyAPIView,
@@ -7,10 +8,11 @@ from rest_framework.generics import (
 )
 from rest_framework import filters
 from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from .models import Post, UserProfile, SavedImages
 from django_filters.rest_framework import DjangoFilterBackend
@@ -20,9 +22,14 @@ from picastro.serializers import (
     PostSerializer,
     UserSerializer,
     UserProfileSerializer,
-    LikeImageSerializer
+    LikeImageSerializer,
+    CommentSerializer,
     # ResetPasswordEmailRequestSerializer
-) 
+)
+from django.http import JsonResponse
+from .models import Post,Comment, UserProfile
+from django.views.generic import ListView
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class CreateUserAPIView(CreateAPIView):
@@ -66,6 +73,11 @@ class CurrentUserView(APIView):
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
+
+
+class HomePageView(ListView):
+    model = Post
+    template_name = "home.html"
 
 
 class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
@@ -137,3 +149,24 @@ class ImageDislikeAPIView(DestroyAPIView):
 
         # Return an empty response
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CommentCreateAPIView(CreateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = CommentSerializer
+
+
+class CommentListAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = CommentSerializer
+
+    queryset = Comment.objects.all()
+    lookup_field = 'post'
+
+
+class CommentUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = (IsAuthenticated,)
+
+    lookup_field = 'id'

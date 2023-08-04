@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Post, UserProfile, SavedImages
+from .models import Post, UserProfile, SavedImages, Comment
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -109,3 +109,10 @@ class LikeImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = SavedImages
         fields = ['user', 'post']
+
+
+class CommentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment 
+        fields = ['post', 'commenter', 'comment_body', 'date_added']
