@@ -1,7 +1,7 @@
-from pytest_factoryboy import register
+# from pytest_factoryboy import register
 
-from .factories import PostFactory, UserFactory
+# from .factories import PostFactory, UserFactory
 
 
-register(PostFactory)
-register(UserFactory)
+# register(PostFactory)
+# register(UserFactory)

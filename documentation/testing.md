@@ -48,6 +48,7 @@ To implement the current tests, the following sources have been used:
 - ['Django DRF eCommerce Project'](https://www.youtube.com/playlist?list=PLOLrQ9Pn6cawinBJbH5d9IfloO9RRPMiq) by Very Academy
 - ['Django and DRF Testing Series'](https://www.youtube.com/watch?v=yaLXsADWfS4&list=PLP1DxoSC17LZTTzgfq0Dimkm6eWJQC9ki&index=12) by Kenyan Engineer
 - ['Django REST API UNIT Testing'](https://www.youtube.com/watch?v=z6_v1UQ9Ht0) by Stack{Dev}
+- ['Django Testing Tutorial - How To Test Your Django Applications'](https://www.youtube.com/watch?v=0MrgsYswT1c&list=PLbpAWbHbi5rMF2j5n6imm0enrSD9eQUaM) by The Dumbfounds
 
 ---
 

@@ -3,6 +3,7 @@ from rest_framework.generics import (
     ListAPIView,
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
+    DestroyAPIView,
     GenericAPIView
 )
 from rest_framework import filters
@@ -13,7 +14,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
-from .models import Post, UserProfile
+from .models import Post, UserProfile, SavedImages
 from django_filters.rest_framework import DjangoFilterBackend
 
 from picastro.serializers import (
@@ -21,6 +22,7 @@ from picastro.serializers import (
     PostSerializer,
     UserSerializer,
     UserProfileSerializer,
+    LikeImageSerializer,
     CommentSerializer,
     # ResetPasswordEmailRequestSerializer
 )
@@ -40,32 +42,7 @@ class CreateUserAPIView(CreateAPIView):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         # We create a token than will be used for future auth
-        
-        # # code for email verification, but not yet fully working
-        # print(serializer.data)
-        # relative_link = reverse('email-verify')
-        # token = serializer.data['token']['access']
-        # print(token)
-        
-        # absolute_Url = DOMAIN + relative_link + '?token='+token
-        # username = serializer.data['username']
-        # user_email = serializer.data['email']
-        # email_body = 'Hi ' + username +',\nUse link below to verify your email: \n' + absolute_Url
-        # data = {
-        #     'email_subject': 'Verify your email for Picastro',
-        #     'email_body': email_body,
-        #     'user_email_address': user_email
-        # }
 
-        # print(os.environ.get('EMAIL_HOST_PASSWORD'))
-        
-        # send_mail(
-        #     'Verify your email for Picastro',
-        #     email_body,
-        #     'atzen78@web.de',
-        #     [user_email],
-        #     fail_silently=False,
-        # )
         return Response(
             {**serializer.data},
             status=status.HTTP_201_CREATED,
@@ -107,7 +84,7 @@ class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = (IsAuthenticated,)
     queryset = UserProfile.objects.all()
-    lookup_field = 'id'
+    lookup_field = 'user_id'
 
 
 class RequestPasswordResetEmail(GenericAPIView):
@@ -140,6 +117,38 @@ class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = Post.objects.all()
     lookup_field = 'id'
+
+
+class ImageLikeAPIView(CreateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = LikeImageSerializer
+    
+
+class ImageDislikeAPIView(DestroyAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = LikeImageSerializer
+    queryset = SavedImages.objects.all()
+    #lookup_field = 'unique_user_post_combination'
+
+    def get_user(self, request, format=None):
+        token_user_id = request.user.id
+        print("token_user_id", token_user_id)
+        # token_user_username = request.user.username
+        return token_user_id
+    
+    def destroy(self, request, *args, **kwargs):
+        user = self.get_user(request)
+        print("kwargs", kwargs['post'])
+        post = kwargs['post']
+        instance = SavedImages.objects.filter(user=user, post=post)
+        print("instance", instance)
+
+        # original code of destroy() function of DestroyAPIView
+        # Simply delete - no need to instantiate the serializer
+        self.perform_destroy(instance)
+
+        # Return an empty response
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CommentCreateAPIView(CreateAPIView):

@@ -5,7 +5,7 @@ import pdb
 from .test_setup import TestSetup
 
 
-class TestViews(TestSetup):
+class TestRegisterView(TestSetup):
 
     def test_user_cannot_register_without_data(self):
         res = self.client.post(self.register_url)
@@ -13,6 +13,7 @@ class TestViews(TestSetup):
         self.assertEqual(res.status_code, 400)
 
     def test_user_can_register(self):
+        #star_camp = self.create_test_starcamp()
         res = self.client.post(
             self.register_url,
             self.user_data,
@@ -24,6 +25,7 @@ class TestViews(TestSetup):
 
     # test will fail, because email verification not yet implemented
     def test_user_cannot_login_when_email_unverified(self):
+        #star_camp = self.create_test_starcamp()
         self.client.post(
             self.register_url, self.user_data, format='json'
         )
@@ -35,6 +37,7 @@ class TestViews(TestSetup):
         self.assertEqual(res.status_code, 401)
 
     def test_user_can_login_after_email_verification(self):
+        #star_camp = self.create_test_starcamp()
         res = self.client.post(
             self.register_url,
             self.user_data,

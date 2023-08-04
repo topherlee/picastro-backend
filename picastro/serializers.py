@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Post, UserProfile, Comment
+from .models import Post, UserProfile, SavedImages, Comment
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -43,6 +43,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user = super(CreateUserSerializer, self).create(validated_data)
         user.set_password(validated_data['password'])
         user.save()
+        
         return user
 
     def get_token(self, obj):
@@ -102,6 +103,12 @@ class PostSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         self.fields['poster'] = PosterSerializer(read_only=True)
         return super(PostSerializer, self).to_representation(instance)
+
+
+class LikeImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SavedImages
+        fields = ['user', 'post']
 
 
 class CommentSerializer(serializers.ModelSerializer):

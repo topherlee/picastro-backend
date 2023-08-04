@@ -11,7 +11,8 @@ from picastro.views import (
     UserProfileAPIView,
     PasswordTokenCheckAPI,
     RequestPasswordResetEmail,
-    VerifyEmail
+    VerifyEmail,
+    ImageLikeAPIView
 )
 
 class ApiUrlsTests(SimpleTestCase):
@@ -24,17 +25,17 @@ class ApiUrlsTests(SimpleTestCase):
         url = reverse('feed_of_posts')
         self.assertEqual(resolve(url).func.view_class, PostAPIView)
 
-    # def test_that_update_delete_posts_is_resolved(self):
-    #     url = reverse('update_delete_posts')
-    #     self.assertEqual(resolve(url).func.view_class, PostDetailAPIView)
+    def test_that_update_delete_posts_is_resolved(self):
+        url = reverse('update_delete_posts', args=[1])
+        self.assertEqual(resolve(url).func.view_class, PostDetailAPIView)
 
     def test_current_user_is_resolved(self):
         url = reverse('auth_user_current')
         self.assertEqual(resolve(url).func.view_class, CurrentUserView)
 
-    # def test_user_profile_is_resolved(self):
-    #     url = reverse('user_profile')
-    #     self.assertEqual(resolve(url).func.view_class, UserProfileAPIView)
+    def test_user_profile_is_resolved(self):
+        url = reverse('user_profile', args=[1])
+        self.assertEqual(resolve(url).func.view_class, UserProfileAPIView)
 
     def test_auth_login_refresh_is_resolved(self):
         url = reverse('auth_login_refresh')
@@ -52,10 +53,14 @@ class ApiUrlsTests(SimpleTestCase):
         url = reverse('request_password-reset')
         self.assertEqual(resolve(url).func.view_class, RequestPasswordResetEmail)
 
-    # def test_password_reset_confirm_is_resolved(self):
-    #     url = reverse('password-reset-confirm')
-    #     self.assertEqual(resolve(url).func.view_class, PasswordTokenCheckAPI)
+    def test_password_reset_confirm_is_resolved(self):
+        url = reverse('password-reset-confirm', args=[1, 1])
+        self.assertEqual(resolve(url).func.view_class, PasswordTokenCheckAPI)
 
     def test_auth_logout_is_resolved(self):
         url = reverse('auth_logout')
         self.assertEqual(resolve(url).func.view_class, LogoutUserAPIView)
+
+    def test_image_like_is_resolved(self):
+        url = reverse('image_like', args=[1, 1])
+        self.assertEqual(resolve(url).func.view_class, ImageLikeAPIView)
