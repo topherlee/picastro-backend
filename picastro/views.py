@@ -112,6 +112,12 @@ class PostAPIView(ListCreateAPIView):
         return serializer.save(poster=self.request.user)
 
 
+class PostRandomAPIView(ListAPIView):
+    serializer_class = PostSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Post.objects.all().order_by('?')
+
+
 class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = PostSerializer
     permission_classes = (IsAuthenticated,)
