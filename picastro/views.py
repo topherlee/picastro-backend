@@ -99,7 +99,7 @@ class PasswordTokenCheckAPI(GenericAPIView):
 class PostAPIView(ListCreateAPIView):
     serializer_class = PostSerializer
     permission_classes = (IsAuthenticated,)
-    #queryset = Post.objects.filter(user=user, post=post)
+    queryset = Post.objects.all()
     filter_backends = [DjangoFilterBackend,
                        filters.SearchFilter,
                        filters.OrderingFilter]
@@ -112,8 +112,18 @@ class PostAPIView(ListCreateAPIView):
         return serializer.save(poster=self.request.user)
     
     def get_queryset(self):
-        requesting_user = self.request.user.id
-        return Post.objects.exclude(poster=requesting_user)
+        
+        if "poster" in self.request.get_full_path().split("/")[-1]:
+            print("route if", self.request.get_full_path())
+            print(Post.objects.all())
+            return Post.objects.all()
+        elif "random" in self.request.get_full_path():
+            print("random route")
+            return Post.objects.all().order_by('?')            
+        else:
+            print("route else", self.request.get_full_path())
+            requesting_user = self.request.user.id
+            return Post.objects.exclude(poster=requesting_user)
 
 
 class PostRandomAPIView(ListAPIView):
