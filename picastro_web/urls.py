@@ -11,7 +11,6 @@ from . import views
 
 
 urlpatterns = [
-    #use this to get access and refresh token
     path("", HomePageView.as_view(), name="home"),
     path('register/', views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(), name='login'),
