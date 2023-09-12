@@ -106,24 +106,21 @@ class PostAPIView(ListCreateAPIView):
     filterset_fields = ['id', 'imageCategory', 'pub_date', 'poster']
     search_fields = ['astroNameShort', 'astroName']
     ordering_fields = ['id', 'imageCategory', 'pub_date', 'poster']
-    ordering = '?'
+    
+    def get_queryset(self):
+        order = self.request.GET.get("order")
+        print(order)
+        if order == "random":
+            ordering = "?"
+        else:
+            ordering = "-pub_date"
+        
+        self.queryset = self.queryset.order_by(ordering)
+        print(ordering)
+        return self.queryset
 
     def perform_create(self, serializer):
         return serializer.save(poster=self.request.user)
-    
-    def get_queryset(self):
-        
-        if "poster" in self.request.get_full_path().split("/")[-1]:
-            print("route if", self.request.get_full_path())
-            print(Post.objects.all())
-            return Post.objects.all()
-        elif "random" in self.request.get_full_path():
-            print("random route")
-            return Post.objects.all().order_by('?')            
-        else:
-            print("route else", self.request.get_full_path())
-            requesting_user = self.request.user.id
-            return Post.objects.exclude(poster=requesting_user)
 
 
 class PostRandomAPIView(ListAPIView):
