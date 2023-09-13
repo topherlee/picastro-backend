@@ -23,6 +23,7 @@ class Post(models.Model):
     # leadingLight = models.BooleanField(default=False)
     pub_date = models.DateTimeField(auto_now_add=True)
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
+    aspectRatio = models.FloatField(editable=False, default=1)
 
     # Class string added to store original name of photo
     original_image_name = None              # from https://stackoverflow.com/a/74696504
@@ -56,6 +57,7 @@ class Post(models.Model):
         # im.write(str(BASE_DIR / 'media/resize') + '/' + image_uri.split("/")[-1])
 
         image = Image.open(self.image)
+        self.aspectRatio = image.width / image.height
         thumb_size = (1000, 1000)
         image.thumbnail(thumb_size, Image.ANTIALIAS)
         print("image writing")

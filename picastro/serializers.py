@@ -101,7 +101,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = ('id', 'image', 'astroNameShort', 'astroName', 'award',
                 'exposureTime', 'moonPhase', 'cloudCoverage', 'bortle',
                 'pub_date', 'imageDescription',
-                'imageCategory', 'poster', 'thumbnail')
+                'imageCategory', 'poster', 'thumbnail', 'aspectRatio')
         # read_only_fields = ['thumbnail']
         extra_kwargs = {'thumbnail': {'required': False}}
 
