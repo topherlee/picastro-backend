@@ -28,7 +28,7 @@ from picastro.serializers import (
     # ResetPasswordEmailRequestSerializer
 )
 from django.http import JsonResponse
-from .models import Post,Comment, UserProfile
+from .models import Post, Comment, UserProfile, SavedImages
 from django.views.generic import ListView
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -140,6 +140,11 @@ class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
 class ImageLikeAPIView(ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = LikeImageSerializer
+    queryset = SavedImages.objects.all()
+
+    def get_queryset(self):
+        self.queryset = self.queryset.filter(user=self.request.user)
+        return self.queryset
     
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
