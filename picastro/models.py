@@ -11,15 +11,15 @@ from django.db.models.signals import post_save
 class Post(models.Model):
     image = models.ImageField(upload_to='images/')
     thumbnail = models.ImageField(upload_to='resize/', editable=False, default="")
-    imageDescription = models.TextField()
+    imageDescription = models.TextField(max_length=200)
     imageCategory = models.TextField(default="others")
-    astroNameShort = models.TextField()
-    astroName = models.TextField()
+    astroNameShort = models.TextField(max_length=10)
+    astroName = models.TextField(max_length=50)
     award = models.TextField(default='None')
-    exposureTime = models.TextField()
-    moonPhase = models.TextField()
-    cloudCoverage = models.TextField()
-    bortle = models.TextField()
+    exposureTime = models.TextField(max_length=7)
+    moonPhase = models.TextField(max_length=4)
+    cloudCoverage = models.TextField(max_length=4)
+    bortle = models.TextField(max_length=1)
     # leadingLight = models.BooleanField(default=False)
     pub_date = models.DateTimeField(auto_now_add=True)
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -100,13 +100,13 @@ class UserProfile(models.Model):
     # image = models.ImageField(upload_to='user_images/')
     # is_verified = models.BooleanField(default=False)
     profileImage = models.ImageField(upload_to='profileImages/', default='profileImages/sampleuserbig.png')
-    location = models.CharField(max_length=100, blank=True)
+    location = models.CharField(max_length=50, blank=True)
     starCampId = models.ForeignKey(StarCamp, on_delete=models.CASCADE, null=True, blank=True)
     subcriptionsExpiry = models.DateTimeField(auto_now_add=True)
     isEmailVerified = models.BooleanField(default=False)
-    userDescription = models.TextField(default="")
-    genderIdentifier = models.TextField(default="divers")
-   
+    userDescription = models.TextField(default="", max_length=200)
+    genderIdentifier = models.TextField(default="divers", max_length=10)
+
     def __str__(self):
         return self.user.username
 

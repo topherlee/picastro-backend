@@ -111,6 +111,7 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class LikeImageSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = SavedImages
         fields = ['user', 'post']

@@ -16,6 +16,7 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.views import APIView
 from .models import Post, UserProfile, SavedImages
 from django_filters.rest_framework import DjangoFilterBackend
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 from picastro.serializers import (
     CreateUserSerializer,
@@ -136,10 +137,38 @@ class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
     lookup_field = 'id'
 
 
-class ImageLikeAPIView(CreateAPIView):
+class ImageLikeAPIView(ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = LikeImageSerializer
     
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        request.data['post'] = self.kwargs['post']
+        request.data['user'] = request.user.id
+        print("request.data", request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        # We create a token than will be used for future auth
+
+        return Response(
+            {**serializer.data},
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
+        
+    # def test_func(self):
+    #     post = self.kwargs['post']
+    #     poster = Post.objects.filter(id=post).poster
+    #     print("poster", poster)
+    #     return not poster == self.request.user
+    
+    # def perform_create(self, serializer, *args, **kwargs):
+    #     post = kwargs['post']
+    #     print("post, user", post)
+        
+    #     return serializer.save(post=post)
+
 
 class ImageDislikeAPIView(DestroyAPIView):
     permission_classes = (IsAuthenticated,)
@@ -150,8 +179,13 @@ class ImageDislikeAPIView(DestroyAPIView):
     def get_user(self, request, format=None):
         token_user_id = request.user.id
         print("token_user_id", token_user_id)
-        # token_user_username = request.user.username
+        
         return token_user_id
+    
+    # def test_func(self):
+    #     poster = Post.objects.filter(id=post).poster
+    #     print("poster", poster)
+    #     return poster == self.request.user
     
     def destroy(self, request, *args, **kwargs):
         user = self.get_user(request)
