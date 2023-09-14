@@ -2,7 +2,7 @@ import os
 from django.db import models
 from django.contrib.auth.models import User
 from io import BytesIO
-from PIL import Image
+from PIL import Image, ImageOps
 from django.core.files.base import ContentFile
 from django.dispatch import receiver
 from django.db.models.signals import post_save
@@ -57,7 +57,9 @@ class Post(models.Model):
         # im.write(str(BASE_DIR / 'media/resize') + '/' + image_uri.split("/")[-1])
 
         image = Image.open(self.image)
+        image = ImageOps.exif_transpose(image)  #reset width and height if the exif of an image has rotation on it
         self.aspectRatio = image.width / image.height
+        # print(self.aspectRatio, image.width, image.height)
         thumb_size = (1000, 1000)
         image.thumbnail(thumb_size, Image.ANTIALIAS)
         print("image writing")
