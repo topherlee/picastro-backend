@@ -110,7 +110,7 @@ class PostAPIView(ListCreateAPIView):
     
     def get_queryset(self):
         order = self.request.GET.get("order")
-        print(order)
+        #print(order)
         if order == "random":
             ordering = "?"
         else:
