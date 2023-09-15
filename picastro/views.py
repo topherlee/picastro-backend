@@ -143,6 +143,16 @@ class ImageLikeAPIView(ListCreateAPIView):
     queryset = SavedImages.objects.all()
 
     def get_queryset(self):
+        # list_of_liked_posts = self.queryset.filter(user=self.request.user)
+        # values_of_liked_posts = list_of_liked_posts.values("post")
+        # print(list_of_liked_posts)
+        # print("values", values_of_liked_posts)
+        # list_of_post_ids = []
+        # for post in values_of_liked_posts:
+        #     list_of_post_ids.append(post["post"])
+        # list_new = []
+        
+        # print(list_of_post_ids)
         self.queryset = self.queryset.filter(user=self.request.user)
         return self.queryset
     
