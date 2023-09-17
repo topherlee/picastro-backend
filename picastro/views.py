@@ -116,6 +116,8 @@ class PostAPIView(ListCreateAPIView):
         else:
             ordering = "-pub_date"
         
+        requesting_user = self.request.user.id
+        
         self.queryset = self.queryset.order_by(ordering)
         print(ordering)
         return self.queryset
