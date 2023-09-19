@@ -11,30 +11,23 @@ from picastro.views import (
     UserProfileAPIView,
     PasswordTokenCheckAPI,
     RequestPasswordResetEmail,
-    VerifyEmail
+    VerifyEmail,
+    ImageLikeAPIView,
+    ImageDislikeAPIView,
+    CommentCreateAPIView,
+    CommentListAPIView,
+    CommentUpdateDestroyAPIView
 )
 
 class ApiUrlsTests(SimpleTestCase):
 
+    def test_home_is_resolved(self):
+        url = reverse('home')
+        self.assertEqual(resolve(url).func.view_class, HomePageView)
+
     def test_auth_user_create_is_resolved(self):
         url = reverse('auth_user_create')
         self.assertEqual(resolve(url).func.view_class, CreateUserAPIView)
-
-    def test_feed_is_resolved(self):
-        url = reverse('feed_of_posts')
-        self.assertEqual(resolve(url).func.view_class, PostAPIView)
-
-    def test_that_update_delete_posts_is_resolved(self):
-        url = reverse('update_delete_posts', args=[1])
-        self.assertEqual(resolve(url).func.view_class, PostDetailAPIView)
-
-    def test_current_user_is_resolved(self):
-        url = reverse('auth_user_current')
-        self.assertEqual(resolve(url).func.view_class, CurrentUserView)
-
-    def test_user_profile_is_resolved(self):
-        url = reverse('user_profile', args=[1])
-        self.assertEqual(resolve(url).func.view_class, UserProfileAPIView)
 
     def test_auth_login_refresh_is_resolved(self):
         url = reverse('auth_login_refresh')
@@ -59,3 +52,39 @@ class ApiUrlsTests(SimpleTestCase):
     def test_auth_logout_is_resolved(self):
         url = reverse('auth_logout')
         self.assertEqual(resolve(url).func.view_class, LogoutUserAPIView)
+    
+    def test_current_user_is_resolved(self):
+        url = reverse('auth_user_current')
+        self.assertEqual(resolve(url).func.view_class, CurrentUserView)
+
+    def test_user_profile_is_resolved(self):
+        url = reverse('user_profile', args=[1])
+        self.assertEqual(resolve(url).func.view_class, UserProfileAPIView)
+
+    def test_feed_is_resolved(self):
+        url = reverse('feed_of_posts')
+        self.assertEqual(resolve(url).func.view_class, PostAPIView)
+
+    def test_that_update_delete_posts_is_resolved(self):
+        url = reverse('update_delete_posts', args=[1])
+        self.assertEqual(resolve(url).func.view_class, PostDetailAPIView)
+
+    def test_image_like_is_resolved(self):
+        url = reverse('image_like', args=[1, 1])
+        self.assertEqual(resolve(url).func.view_class, ImageLikeAPIView)
+
+    def test_image_dislike_is_resolved(self):
+        url = reverse('image_dislike')
+        self.assertEqual(resolve(url).func.view_class, ImageDislikeAPIView)
+
+    def test_comment_create_is_resolved(self):
+        url = reverse('comment_create')
+        self.assertEqual(resolve(url).func.view_class, CommentCreateAPIView)
+
+    def test_comment_list_is_resolved(self):
+        url = reverse('comment_list')
+        self.assertEqual(resolve(url).func.view_class, CommentListAPIView)
+
+    def test_comment_ud_is_resolved(self):
+        url = reverse('comment_ud')
+        self.assertEqual(resolve(url).func.view_class, CommentUpdateDestroyAPIView)

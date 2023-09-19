@@ -1,9 +1,9 @@
 {% extends "picastro_web/base.html" %}
-{% block title %}Welcome{% endblock %}
+{% block title %}Account Created{% endblock %}
 {% block content %}
-  <h1>Welcome {{ new_user.first_name }}!</h1>
+  <h1>Account Created</h1>
   <p>
     Your account has been successfully created. 
-    Now you can <a href="{% url 'login' %}">log in</a>.
+    Click <a href="{% url 'login' %}">here</a> to login.
   </p>
 {% endblock %}

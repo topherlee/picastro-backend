@@ -25,10 +25,11 @@ router = routers.DefaultRouter()
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'api/', include('picastro.urls')),
-    path('', include(router.urls)),
+    path('rest/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('', include('picastro.urls')),
-    path('picastro/', include('picastro_web.urls')),
+    # path('', include('picastro.urls')),
+    path('', include('picastro_web.urls')),
+    path("__reload__/", include("django_browser_reload.urls")),
 ]
 if settings.DEBUG:  # new
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

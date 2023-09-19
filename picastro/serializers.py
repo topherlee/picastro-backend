@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Post, UserProfile, SavedImages
+from .models import Post, UserProfile, SavedImages, Comment
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -64,11 +64,16 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(many=False, read_only=True)
+    total_likes = serializers.SerializerMethodField()
 
     class Meta:
         model = UserProfile
         fields = ['user', 'location', 'userDescription',
-                  'genderIdentifier', 'profileImage']
+                  'genderIdentifier', 'profileImage', 'total_likes']
+
+    def get_total_likes(self, obj):
+        print(obj.user)
+        return SavedImages.objects.filter(user=obj.user).count()
 
 
 class ResetPasswordEmailRequestSerializer(serializers.Serializer):
@@ -96,7 +101,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = ('id', 'image', 'astroNameShort', 'astroName', 'award',
                 'exposureTime', 'moonPhase', 'cloudCoverage', 'bortle',
                 'pub_date', 'imageDescription',
-                'imageCategory', 'poster', 'thumbnail')
+                'imageCategory', 'poster', 'thumbnail', 'aspectRatio')
         # read_only_fields = ['thumbnail']
         extra_kwargs = {'thumbnail': {'required': False}}
 
@@ -106,6 +111,14 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class LikeImageSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = SavedImages
         fields = ['user', 'post']
+
+
+class CommentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment 
+        fields = ['post', 'commenter', 'comment_body', 'date_added']

@@ -9,13 +9,17 @@ from picastro.models import Post
 from .forms import LoginForm, PostForm, UserRegistrationForm
 
 
-class HomePageView(ListView):
+class HomePageView(LoginRequiredMixin, ListView):
     model = Post
+    ordering_fields = ['id', 'imageCategory', 'pub_date', 'poster']
+    ordering = '-pub_date'
     template_name = "picastro_web/home.html"
 
 
 class DashboardView(LoginRequiredMixin, ListView):
     model = Post
+    ordering_fields = ['id', 'imageCategory', 'pub_date', 'poster']
+    ordering = '-pub_date'
     template_name = "picastro_web/dashboard.html"
 
 

@@ -2,7 +2,7 @@ import os
 from django.db import models
 from django.contrib.auth.models import User
 from io import BytesIO
-from PIL import Image
+from PIL import Image, ImageOps
 from django.core.files.base import ContentFile
 from django.dispatch import receiver
 from django.db.models.signals import post_save
@@ -11,18 +11,19 @@ from django.db.models.signals import post_save
 class Post(models.Model):
     image = models.ImageField(upload_to='images/')
     thumbnail = models.ImageField(upload_to='resize/', editable=False, default="")
-    imageDescription = models.TextField()
+    imageDescription = models.TextField(max_length=2000)
     imageCategory = models.TextField(default="others")
-    astroNameShort = models.TextField()
-    astroName = models.TextField()
+    astroNameShort = models.TextField(max_length=10)
+    astroName = models.TextField(max_length=50)
     award = models.TextField(default='None')
-    exposureTime = models.TextField()
-    moonPhase = models.TextField()
-    cloudCoverage = models.TextField()
-    bortle = models.TextField()
+    exposureTime = models.TextField(max_length=8)
+    moonPhase = models.TextField(max_length=4)
+    cloudCoverage = models.TextField(max_length=4)
+    bortle = models.TextField(max_length=1)
     # leadingLight = models.BooleanField(default=False)
     pub_date = models.DateTimeField(auto_now_add=True)
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
+    aspectRatio = models.FloatField(editable=False, default=1)
 
     # Class string added to store original name of photo
     original_image_name = None              # from https://stackoverflow.com/a/74696504
@@ -56,6 +57,9 @@ class Post(models.Model):
         # im.write(str(BASE_DIR / 'media/resize') + '/' + image_uri.split("/")[-1])
 
         image = Image.open(self.image)
+        image = ImageOps.exif_transpose(image)  #reset width and height if the exif of an image has rotation on it
+        self.aspectRatio = image.width / image.height
+        # print(self.aspectRatio, image.width, image.height)
         thumb_size = (1000, 1000)
         image.thumbnail(thumb_size, Image.ANTIALIAS)
         print("image writing")
@@ -100,13 +104,13 @@ class UserProfile(models.Model):
     # image = models.ImageField(upload_to='user_images/')
     # is_verified = models.BooleanField(default=False)
     profileImage = models.ImageField(upload_to='profileImages/', default='profileImages/sampleuserbig.png')
-    location = models.CharField(max_length=100, blank=True)
+    location = models.CharField(max_length=50, blank=True)
     starCampId = models.ForeignKey(StarCamp, on_delete=models.CASCADE, null=True, blank=True)
     subcriptionsExpiry = models.DateTimeField(auto_now_add=True)
     isEmailVerified = models.BooleanField(default=False)
-    userDescription = models.TextField(default="")
-    genderIdentifier = models.TextField(default="divers")
-   
+    userDescription = models.TextField(default="", max_length=200)
+    genderIdentifier = models.TextField(default="divers", max_length=10)
+
     def __str__(self):
         return self.user.username
 
@@ -141,12 +145,12 @@ class SavedImages(models.Model):
     def __str__(self):
         return f'{self.user.username} - {str(self.post.id)}'
     
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'post'], name='unique_user_post_combination'
-            )
-        ]
+    # class Meta:
+    #     constraints = [
+    #         models.UniqueConstraint(
+    #             fields=['user', 'post'], name='unique_user_post_combination'
+    #         )
+    #     ]
 
 
 # class Subscription(models.Model):
@@ -154,5 +158,16 @@ class SavedImages(models.Model):
 #     subscriptionsDuration = models.DurationField()
 #     subscriptionsPrice = models.DecimalField(max_digits=5, decimal_places=2)
 
-#     def __str__(self):
-#         return self.subcriptionsPlan
+#    def __str__(self):
+#        return self.subcriptionsPlan
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    commenter = models.ForeignKey(User,on_delete=models.CASCADE)
+    comment_body = models.TextField()
+    date_added = models.DateTimeField(auto_now_add=True)
+    
+    
+    def __str__(self):
+        return '%s - %s' % (self.commenter_name,self.comment_body)
