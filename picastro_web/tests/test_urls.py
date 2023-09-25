@@ -15,7 +15,7 @@ from picastro_web import views
 class UrlsTests(SimpleTestCase):
 
     def test_home_is_resolved(self):
-        url = reverse('home')
+        url = reverse('web_home')
         self.assertEqual(resolve(url).func.view_class, HomePageView)
 
     def test_login_is_resolved(self):

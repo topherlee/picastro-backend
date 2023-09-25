@@ -1,3 +1,4 @@
+from rest_framework import filters
 from rest_framework.generics import (
     CreateAPIView,
     ListAPIView,
@@ -6,17 +7,20 @@ from rest_framework.generics import (
     DestroyAPIView,
     GenericAPIView
 )
-from rest_framework import filters
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly
+)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
-from .models import Post, UserProfile, SavedImages
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.views.generic import ListView
+from django.http import JsonResponse
 
 from picastro.serializers import (
     CreateUserSerializer,
@@ -27,10 +31,7 @@ from picastro.serializers import (
     CommentSerializer,
     # ResetPasswordEmailRequestSerializer
 )
-from django.http import JsonResponse
-from .models import Post, Comment, UserProfile, SavedImages
-from django.views.generic import ListView
-from django_filters.rest_framework import DjangoFilterBackend
+from .models import PicastroUser, Post, Comment, SavedImages
 
 
 class CreateUserAPIView(CreateAPIView):
@@ -84,7 +85,7 @@ class HomePageView(ListView):
 class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = (IsAuthenticated,)
-    queryset = UserProfile.objects.all()
+    queryset = PicastroUser.objects.all()
     lookup_field = 'user_id'
 
 

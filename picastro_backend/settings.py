@@ -210,3 +210,5 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 LOGIN_REDIRECT_URL = 'add_post'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
+
+AUTH_USER_MODEL = 'picastro.PicastroUser'

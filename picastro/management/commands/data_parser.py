@@ -6,7 +6,7 @@ from django.db import IntegrityError
 from picastro.models import (
     Post,
     StarCamp,
-    User,
+    PicastroUser,
     UserProfile,
     Equipment,
     Subscription,
@@ -18,9 +18,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         def drop_tables():
             #drop all tables to preven duplicates
-            User.objects.all().delete()
+            PicastroUser.objects.all().delete()
             try:
-                User.objects.all().delete()
+                PicastroUser.objects.all().delete()
             except:
                 pass
             try:
@@ -29,10 +29,6 @@ class Command(BaseCommand):
                 pass
             try:
                 StarCamp.objects.all().delete()
-            except:
-                pass
-            try:
-                UserProfile.objects.all().delete()
             except:
                 pass
             try:
@@ -56,7 +52,7 @@ class Command(BaseCommand):
         #create some users
         def create_users():
             print("started creating users")
-            user = User.objects.create(
+            user = PicastroUser.objects.create(
                 username = "admin",
                 first_name = "admin",
                 last_name = "admin",
@@ -73,13 +69,13 @@ class Command(BaseCommand):
                 for data_object in json_data:
                     i += 1
                     print(i)
-                    user_object = User.objects.filter(username = data_object["userName"])
+                    user_object = PicastroUser.objects.filter(username = data_object["userName"])
                     if user_object.count() > 0:
                         continue
                     else:
                         first_name = "John" + str(i)
                         last_name = "Doe"
-                        user = User.objects.create(
+                        user = PicastroUser.objects.create(
                             username = data_object["userName"],
                             first_name = first_name,
                             last_name = last_name,
@@ -114,7 +110,7 @@ class Command(BaseCommand):
                     starCamp = data_object["starCamp"],
                     leadingLight = data_object["leadingLight"],
                     pub_date = datetime.now(),
-                    poster = User.objects.get(username=data_object["userName"]),
+                    poster = PicastroUser.objects.get(username=data_object["userName"]),
                 )
                 post.save()
 
@@ -135,7 +131,7 @@ class Command(BaseCommand):
 
                 try:
                     user_profile = UserProfile.objects.create(
-                        user = User.objects.get(username=data_object["userName"]),
+                        user = PicastroUser.objects.get(username=data_object["userName"]),
                         location = data_object["userLocation"],
                         starCampId = StarCamp.objects.get(starCampName=data_object["starCamp"]),
                         subcriptionsExpiry = datetime.now() + timedelta(days=30),
@@ -148,7 +144,7 @@ class Command(BaseCommand):
 
                 if data_object["imageIsSaved"]:
                     saved_image = savedImages.objects.create(
-                        userId = User.objects.get(username=data_object["userName"]),
+                        userId = PicastroUser.objects.get(username=data_object["userName"]),
                         imageId = Post.objects.get(id=post.id),
                     )
 

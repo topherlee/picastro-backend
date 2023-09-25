@@ -3,6 +3,7 @@ from django.test import SimpleTestCase
 from django.urls import reverse, resolve
 
 from picastro.views import (
+    HomePageView,
     CreateUserAPIView,
     LogoutUserAPIView,
     CurrentUserView,
@@ -70,11 +71,11 @@ class ApiUrlsTests(SimpleTestCase):
         self.assertEqual(resolve(url).func.view_class, PostDetailAPIView)
 
     def test_image_like_is_resolved(self):
-        url = reverse('image_like', args=[1, 1])
+        url = reverse('image_like', args=[1])
         self.assertEqual(resolve(url).func.view_class, ImageLikeAPIView)
 
     def test_image_dislike_is_resolved(self):
-        url = reverse('image_dislike')
+        url = reverse('image_dislike', args=[1])
         self.assertEqual(resolve(url).func.view_class, ImageDislikeAPIView)
 
     def test_comment_create_is_resolved(self):
@@ -82,9 +83,9 @@ class ApiUrlsTests(SimpleTestCase):
         self.assertEqual(resolve(url).func.view_class, CommentCreateAPIView)
 
     def test_comment_list_is_resolved(self):
-        url = reverse('comment_list')
+        url = reverse('comment_list', args=[1])
         self.assertEqual(resolve(url).func.view_class, CommentListAPIView)
 
     def test_comment_ud_is_resolved(self):
-        url = reverse('comment_ud')
+        url = reverse('comment_ud', args=[1])
         self.assertEqual(resolve(url).func.view_class, CommentUpdateDestroyAPIView)

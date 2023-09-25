@@ -31,6 +31,7 @@ class TestUserRegistrationForm(TestCase):
             'first_name': 'testfirstname',
             'last_name': 'testlastname',
             'email': 'test@email.com',
+            'phone_no': '0123456789',
             'password': 'test_password',
             'password2': 'test_password'
         })
@@ -41,7 +42,7 @@ class TestUserRegistrationForm(TestCase):
         form = UserRegistrationForm(data={})
         
         self.assertFalse(form.is_valid())
-        self.assertEquals(len(form.errors), 3)
+        self.assertEquals(len(form.errors), 7)
 
 
 class TestPostForm(TestSetup):
