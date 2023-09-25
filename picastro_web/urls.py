@@ -1,23 +1,20 @@
-from django.urls import path, re_path
-from rest_framework.routers import DefaultRouter
-from rest_framework.authtoken.views import obtain_auth_token
+from django.urls import path
+from django.contrib.auth import views as auth_views
+from django.conf.urls.static import static
+from django.conf import settings
 from .views import (
     HomePageView,
     DashboardView,
     CreatePostView
 )
-from django.urls import path, include
-from django.contrib.auth import views as auth_views
 from . import views
 
 
 urlpatterns = [
-    #use this to get access and refresh token
-    path("", HomePageView.as_view(), name="home"),
+    path("", HomePageView.as_view(), name="web_home"),
+    path('register/', views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('register/', views.register, name='register'),
-    #path('post/', views.post_image, name='postimage'),
     path("post/", CreatePostView.as_view(), name="add_post"),
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

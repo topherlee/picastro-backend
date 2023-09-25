@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import os
+#from dotenv import load_dotenv
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,6 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
+<<<<<<< HEAD
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 
@@ -37,6 +40,24 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2','13.42.37.75']
 DOMAIN = 'http://127.0.0.1:8000'
+=======
+SECRET_KEY = os.environ.get('SECRET_KEY')   # Linux/Mac
+# load_dotenv()  # Windows
+# SECRET_KEY = os.getenv('SECRET_KEY')   # Windows
+
+
+# SECURITY WARNING: don't run with debug turned on in production!
+
+# Production settings:
+# DEBUG = False
+# ALLOWED_HOSTS = ['13.42.37.75']
+DOMAIN = 'http://13.42.37.75:8000'
+
+# Development settings:
+DEBUG = True
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2', '13.42.37.75']
+# DOMAIN = 'http://127.0.0.1:8000'
+>>>>>>> origin/django-rest
 
 
 # Application definition
@@ -52,7 +73,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
-    'django_filters',
+    'django_filters', 
+    "django_browser_reload",
     'picastro',
     'picastro_web'
 ]
@@ -66,6 +88,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 ROOT_URLCONF = 'picastro_backend.urls'
@@ -156,7 +179,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # }
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
-        #'rest_framework.permissions.AllowAny',
+        # 'rest_framework.permissions.AllowAny',
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -193,7 +216,7 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media/"
 
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.web.de'
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
@@ -202,3 +225,4 @@ LOGIN_REDIRECT_URL = 'add_post'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 
+AUTH_USER_MODEL = 'picastro.PicastroUser'

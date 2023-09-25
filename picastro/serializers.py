@@ -1,8 +1,7 @@
-from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Post, UserProfile
+from .models import Post, PicastroUser, SavedImages, Comment
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -10,16 +9,18 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
     email = serializers.EmailField(
         required=True,
-        validators=[UniqueValidator(queryset=User.objects.all())]
+        validators=[UniqueValidator(queryset=PicastroUser.objects.all())]
     )
 
     username = serializers.CharField(
         required=True,
-        max_length=32,
-        validators=[UniqueValidator(queryset=User.objects.all())]
+        max_length=25,
+        validators=[UniqueValidator(queryset=PicastroUser.objects.all())]
     )
 
     password = serializers.CharField(
+        min_length=6,
+        max_length=68,
         write_only=True,
         style={'input_type': 'password'}
     )
@@ -33,16 +34,18 @@ class CreateUserSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = User
+        model = PicastroUser
         fields = ('token', 'username', 'password',
-                  'first_name', 'last_name', 'email', 'id',)
-        write_only_fields = ('password')
-        read_only_fields = ('is_staff', 'is_superuser', 'is_active',)
+                'first_name', 'last_name', 'email', 'id',)
+        write_only_fields = 'password'
+        read_only_fields = ('is_staff', 'is_superuser', 'is_active',
+                'isEmailVerified', 'isPhoneVerified',) 
 
     def create(self, validated_data):
         user = super(CreateUserSerializer, self).create(validated_data)
         user.set_password(validated_data['password'])
         user.save()
+        
         return user
 
     def get_token(self, obj):
@@ -56,18 +59,58 @@ class CreateUserSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = User
+        model = PicastroUser
         fields = ['id', 'username', 'first_name',
                   'last_name', 'email', 'last_login', 'date_joined']
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(many=False, read_only=True)
+    total_likes = serializers.SerializerMethodField()
 
     class Meta:
-        model = UserProfile
-        fields = ['user', 'location', 'userDescription',
-                  'genderIdentifier', 'profileImage']
+        model = PicastroUser
+        fields = ['id', 'username', 'first_name', 'last_name', 'email',
+                  'last_login', 'date_joined''location', 'userDescription',
+                  'genderIdentifier', 'profileImage', 'total_likes']
+
+    def get_total_likes(self, obj):
+        print(obj.user)
+        return SavedImages.objects.filter(user=obj.user).count()
+
+
+class PosterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PicastroUser
+        fields = ['id', 'username', 'profileImage', 'location']
+
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ['id', 'image', 'astroNameShort', 'astroName', 'award',
+                'exposureTime', 'moonPhase', 'cloudCoverage', 'bortle',
+                'pub_date', 'imageDescription',
+                'imageCategory', 'poster', 'thumbnail', 'aspectRatio']
+        # read_only_fields = ['thumbnail']
+        extra_kwargs = {'thumbnail': {'required': False}}
+
+    def to_representation(self, instance):
+        self.fields['poster'] = PosterSerializer(read_only=True)
+        return super(PostSerializer, self).to_representation(instance)
+
+
+class LikeImageSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = SavedImages
+        fields = ['user', 'post']
+
+
+class CommentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment 
+        fields = ['post', 'commenter', 'comment_body', 'date_added']
 
 
 class ResetPasswordEmailRequestSerializer(serializers.Serializer):
@@ -81,24 +124,3 @@ class ResetPasswordEmailRequestSerializer(serializers.Serializer):
         email = attrs['data'].get('email', '')
         
         return super().validate(attrs)
-
-
-class PosterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['username', 'first_name', 'last_name', 'email']
-
-
-class PostSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Post
-        fields = ('id', 'image', 'astroNameShort', 'astroName', 'imageIsSaved',
-                  'award', 'exposureTime', 'moonPhase', 'cloudCoverage', 'bortle',
-                  'starCamp', 'leadingLight', 'pub_date', 'imageDescription',
-                  'imageCategory', 'poster', 'thumbnail')
-        # read_only_fields = ['thumbnail']
-        extra_kwargs = {'thumbnail': {'required': False}}
-
-    def to_representation(self, instance):
-        self.fields['poster'] = PosterSerializer(read_only=True)
-        return super(PostSerializer, self).to_representation(instance)

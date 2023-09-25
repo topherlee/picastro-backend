@@ -1,28 +1,25 @@
 from django.shortcuts import render
-
-# Create your views here.
-from django.contrib.auth import get_user_model
-from django.http import JsonResponse
-from picastro.models import Post, UserProfile
 from django.views.generic import ListView, CreateView
-from django_filters.rest_framework import DjangoFilterBackend
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
-from .forms import LoginForm, PostForm, UserRegistrationForm
-from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from picastro.models import Post
+from .forms import LoginForm, PostForm, UserRegistrationForm
 
-class HomePageView(ListView):
+
+class HomePageView(LoginRequiredMixin, ListView):
     model = Post
+    ordering_fields = ['id', 'imageCategory', 'pub_date', 'poster']
+    ordering = '-pub_date'
     template_name = "picastro_web/home.html"
 
 
 class DashboardView(LoginRequiredMixin, ListView):
     model = Post
+    ordering_fields = ['id', 'imageCategory', 'pub_date', 'poster']
+    ordering = '-pub_date'
     template_name = "picastro_web/dashboard.html"
 
 

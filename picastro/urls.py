@@ -1,46 +1,48 @@
 from django.urls import path, re_path
-from rest_framework.routers import DefaultRouter
-from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from django.urls import path, include
-from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 from django.conf import settings
 
 from .views import (
+    HomePageView,
     CreateUserAPIView,
     LogoutUserAPIView,
-    #get_post_list,
     CurrentUserView,
-    #PostViewSet,        #old API, delete later on
     PostAPIView,
     PostDetailAPIView,
     UserProfileAPIView,
     PasswordTokenCheckAPI,
     RequestPasswordResetEmail,
-    VerifyEmail
+    VerifyEmail,
+    ImageLikeAPIView,
+    ImageDislikeAPIView,
+    CommentCreateAPIView,
+    CommentListAPIView,
+    CommentUpdateDestroyAPIView
 )
+from django.urls import path, include
 
-
-# router = DefaultRouter()                #old API, delete later on
-# router.register("posts", PostViewSet)   #old API, delete later on
 
 urlpatterns = [
-    # re_path(r'^auth/login/$',
-    #     obtain_auth_token,
-    #     name='auth_user_login'),
+    path("", HomePageView.as_view(), name="home"),
     re_path(r'^auth/register/$',
-        CreateUserAPIView.as_view(),
-        name='auth_user_create'),
-    #re_path(r'^feed/home/$', get_post_list,),   #old API, delete later on
-    path('feed/', PostAPIView.as_view(), name='feed_of_posts'),
-    path('feed/<int:id>', PostDetailAPIView.as_view(), name='update_delete_posts'),
-    path('current_user/',CurrentUserView.as_view(),name='auth_user_current'),
-    path('user/<int:id>',UserProfileAPIView.as_view(),name='user_profile'),
+            CreateUserAPIView.as_view(),
+            name='auth_user_create'),
     path('auth/login/refresh/', TokenRefreshView.as_view(), name='auth_login_refresh'),     
     path('auth/login/', TokenObtainPairView.as_view(), name='auth_login'),
     path('auth/email-verify/', VerifyEmail.as_view(), name='email-verify'),
     path('auth/pw-reset/', RequestPasswordResetEmail.as_view(), name='request_password-reset'),
     path('auth/reset/<uidb64>/<token>/', PasswordTokenCheckAPI.as_view(), name='password-reset-confirm'),
-    path('auth/logout/', LogoutUserAPIView.as_view(), name='auth_logout'),       #use this to get access and refresh token
+    path('auth/logout/', LogoutUserAPIView.as_view(), name='auth_logout'),   # use this to get access and refresh token
+    path('current_user/', CurrentUserView.as_view(), name='auth_user_current'),
+    path('user/<int:user_id>', UserProfileAPIView.as_view(), name='user_profile'),
+    path('feed/', PostAPIView.as_view(), name='feed_of_posts'),
+    path('feed/<int:id>', PostDetailAPIView.as_view(), name='update_delete_posts'),
+    # path('like/<int:user_id>/<int:image_id>', ImageLikeAPIView.as_view(), name='image_like'),
+    path('like/<int:post>', ImageLikeAPIView.as_view(), name='image_like'),
+    # path('dislike/<int:user>/<int:post>', ImageDislikeAPIView.as_view(), name='image_dislike'),
+    path('dislike/<int:post>', ImageDislikeAPIView.as_view(), name='image_dislike'),
+    path('comments/',CommentCreateAPIView.as_view(),name='comment_create'),
+    path('comments/<int:post_id>',CommentListAPIView.as_view(),name='comment_list'),
+    path('comment/<int:id>',CommentUpdateDestroyAPIView.as_view(),name='comment_ud'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
