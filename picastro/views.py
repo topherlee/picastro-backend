@@ -210,23 +210,6 @@ class PasswordTokenCheckAPI(GenericAPIView):
         pass
 
 
-# @api_view(['GET', 'POST', 'DELETE'])       #old API, delete later on
-# def get_post_list(request):
-#     if request.method == "GET":
-#         rest_list = Post.objects.order_by('-pub_date')
-#         serializer = PostSerializer(rest_list, many=True, context={'request': request})
-#         return JsonResponse(serializer.data, safe=False)
-
-
-# class PostViewSet(ModelViewSet):    #old API, delete later on
-#     permission_classes = (IsAuthenticated,)
-#     queryset = Post.objects.all()
-#     serializer_class = PostSerializer
-
-
-# new setup for Post API endpoint to do all together:
-# post, retrieve, filter, search, update (for SortAndFilterScreen, HomeScreen, UserScreen)
-
 class PostAPIView(ListCreateAPIView):
     serializer_class = PostSerializer
     permission_classes = (IsAuthenticated,)
