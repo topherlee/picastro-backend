@@ -25,22 +25,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-<<<<<<< HEAD
-SECRET_KEY = os.environ.get('SECRET_KEY')
-
-
-## SECURITY WARNING: don't run with debug turned on in production!
-
-##Production settings:
-#DEBUG = False
-#ALLOWED_HOSTS = ['13.42.37.75']
-#DOMAIN = 'http://13.42.37.75:8000'
-
-##Development settings:
-DEBUG = True
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2','13.42.37.75']
-DOMAIN = 'http://127.0.0.1:8000'
-=======
 SECRET_KEY = os.environ.get('SECRET_KEY')   # Linux/Mac
 # load_dotenv()  # Windows
 # SECRET_KEY = os.getenv('SECRET_KEY')   # Windows
@@ -57,7 +41,6 @@ DOMAIN = 'http://13.42.37.75:8000'
 DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2', '13.42.37.75']
 # DOMAIN = 'http://127.0.0.1:8000'
->>>>>>> origin/django-rest
 
 
 # Application definition
