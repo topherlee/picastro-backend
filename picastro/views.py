@@ -1,3 +1,6 @@
+import os
+import jwt
+
 from rest_framework import filters
 from rest_framework.generics import (
     CreateAPIView,
@@ -21,11 +24,13 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 
-from django.shortcuts import render
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.core.mail import send_mail
+from django.http import JsonResponse
+from django.shortcuts import render
 from django.utils.encoding import (
     smart_str,
     force_str,
@@ -33,18 +38,8 @@ from django.utils.encoding import (
     DjangoUnicodeDecodeError
 )
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.core.mail import send_mail
-
-import os
-import jwt
-
-from django.http import JsonResponse
-from .models import Post, UserProfile
 from django.views.generic import ListView, CreateView
 from django_filters.rest_framework import DjangoFilterBackend
-from django.contrib.auth.mixins import UserPassesTestMixin
-from django.views.generic import ListView
-from django.http import JsonResponse
 
 from picastro.serializers import (
     CreateUserSerializer,
@@ -110,7 +105,7 @@ class VerifyEmail(GenericAPIView):
         token = request.GET.get('token')
         try:
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
-            user = UserProfile.objects.get(id=payload['user_id'])
+            user = PicastroUser.objects.get(id=payload['user_id'])
             print('user', user)
             if not user.is_verified:
                 user.is_verified = True
@@ -172,8 +167,8 @@ class RequestPasswordResetEmail(GenericAPIView):
 
         email = request.data['email']
 
-        if User.objects.filter(email=email).exists():
-            user = User.objects.filter(email=email)
+        if PicastroUser.objects.filter(email=email).exists():
+            user = PicastroUser.objects.filter(email=email)
             uidb64 = urlsafe_base64_encode(user.id)
             token = PasswordResetTokenGenerator().make_token(user)
 
