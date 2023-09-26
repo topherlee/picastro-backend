@@ -31,6 +31,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.urls import reverse
 from django.utils.encoding import (
     smart_str,
     force_str,
