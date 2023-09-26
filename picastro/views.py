@@ -166,6 +166,7 @@ class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
 
 class RequestPasswordResetEmail(GenericAPIView):
     serializer_class = ResetPasswordEmailRequestSerializer
+    permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -194,7 +195,7 @@ class RequestPasswordResetEmail(GenericAPIView):
             send_mail(
                 'Verify your email for Picastro',
                 email_body,
-                'atzen78@web.de',
+                settings.EMAIL_HOST_USER,
                 [user_email],
                 fail_silently=False,
             )
