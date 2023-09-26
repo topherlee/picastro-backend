@@ -77,14 +77,15 @@ class CreateUserAPIView(CreateAPIView):
         username = serializer.data['username']
         user_email = serializer.data['email']
         email_body = 'Hi ' + username + \
-            ',\nUse link below to verify your email: \n' + absolute_Url
+            ',\nUse link below to verify your email address for Picastro: \n' + absolute_Url
         data = {
             'email_subject': 'Verify your email for Picastro',
             'email_body': email_body,
             'user_email_address': user_email
         }
 
-        print(os.environ.get('EMAIL_HOST_PASSWORD'))
+        print("body", email_body)
+        print("email data", data)
 
         send_mail(
             'Verify your email for Picastro',
@@ -108,8 +109,9 @@ class VerifyEmail(GenericAPIView):
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
             user = PicastroUser.objects.get(id=payload['user_id'])
             print('user', user)
-            if not user.is_verified:
-                user.is_verified = True
+            if not user.isEmailVerified:
+                user.isEmailVerified = True
+                user.is_active = True
                 user.save()
 
             return Response(
