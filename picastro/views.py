@@ -90,7 +90,7 @@ class CreateUserAPIView(CreateAPIView):
         send_mail(
             'Verify your email for Picastro',
             email_body,
-            'atzen78@web.de',
+            settings.EMAIL_HOST_USER,
             [user_email],
             fail_silently=False,
         )
@@ -103,6 +103,8 @@ class CreateUserAPIView(CreateAPIView):
 
 
 class VerifyEmail(GenericAPIView):
+    permission_classes = [AllowAny]
+    
     def get(self, request):
         token = request.GET.get('token')
         try:
