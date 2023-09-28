@@ -36,6 +36,8 @@ class PicastroUser(AbstractUser):
 class Post(models.Model):
     image = models.ImageField(upload_to='images/')
     thumbnail = models.ImageField(upload_to='resize/', editable=False, default="")
+    #thumbnail_xs = models.ImageField(upload_to='resize_xs/', editable=False, default="")
+    #thumbnail_s = models.ImageField(upload_to='resize_s/', editable=False, default="")
     imageDescription = models.TextField(max_length=2000)
     imageCategory = models.TextField(default="others")
     astroNameShort = models.TextField(max_length=10)
@@ -86,7 +88,7 @@ class Post(models.Model):
         self.aspectRatio = image.width / image.height
         # print(self.aspectRatio, image.width, image.height)
         thumb_size = (1000, 1000)
-        image.thumbnail(thumb_size, Image.ANTIALIAS)
+        image.thumbnail(thumb_size, Image.LANCZOS)
         print("image writing")
 
         thumb_name, thumb_extension = os.path.splitext(self.image.name)

@@ -161,7 +161,7 @@ class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = (IsAuthenticated,)
     queryset = PicastroUser.objects.all()
-    lookup_field = 'user_id'
+    lookup_field = 'id'
 
 
 class RequestPasswordResetEmail(GenericAPIView):
