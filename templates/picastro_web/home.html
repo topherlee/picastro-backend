@@ -1,4 +1,6 @@
 {% extends "picastro_web/base.html" %}
+{% load settings %}
+
 {% block title %}Main Feed{% endblock %}
 {% block content %}
 
@@ -7,8 +9,8 @@
     {% for post in object_list %}
 
         <p style="font-size: 1.5em; margin-bottom: -10px;">{{ post.astroNameShort }} - {{ post.astroName }}</p>
-        <p>Posted By: {{ post.poster }}</p>
-        <img src="/media/{{ post.image }}" alt="{{ post.imageDescription }}">
+        <p>Posted By: {{ post.image }}</p>
+        <img src="http://{% settings_value 'AWS_S3_CUSTOM_DOMAIN' %}/{{ post.image }}" alt="{{ post.imageDescription }}">
         <div style="display: flex; flex-direction: row; justify-content: space-between;">
             <div>Image Category: {{ post.imageCategory }}</div>
             <div>Exposure Time: {{ post.exposureTime }}</div>
