@@ -34,12 +34,11 @@ SECRET_KEY = os.environ.get('SECRET_KEY')   # Linux/Mac
 
 # Production settings:
 # DEBUG = False
-# ALLOWED_HOSTS = ['13.42.37.75']
-DOMAIN = 'http://13.42.37.75:8000'
+DOMAIN = 'http://mainapp.picastroapp.com:8000'
 
 # Development settings:
 DEBUG = True
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2', '13.42.37.75']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2', '3.11.192.134', 'mainapp.picastroapp.com']
 # DOMAIN = 'http://127.0.0.1:8000'
 
 
