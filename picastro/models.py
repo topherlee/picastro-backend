@@ -2,12 +2,42 @@ import os
 from django.db import models
 from django.db.models.signals import post_save
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 from io import BytesIO
 from PIL import Image, ImageOps
 from django.core.files.base import ContentFile
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
+
+class PicastroUserManager(UserManager):
+    def create_user(self, email, password, **extra_fields):
+        """
+        Create and save a user with the given email and password.
+        """
+        if not email:
+            raise ValueError(_("Email cannot be empty"))
+        elif not password:
+            raise ValueError(_("Password cannot be empty"))
+
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save()
+        return user
+
+    def create_superuser(self, email, password, **extra_fields):
+        """
+        Create and save a SuperUser with the given email and password.
+        """
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("is_active", True)
+
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError(_("Superuser must have is_staff=True."))
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError(_("Superuser must have is_superuser=True."))
+        return self.create_user(email, password, **extra_fields)
 
 
 class PicastroUser(AbstractUser):
@@ -29,9 +59,10 @@ class PicastroUser(AbstractUser):
     userDescription = models.TextField(default="", max_length=200, blank=True)
     genderIdentifier = models.TextField(default="divers", max_length=10, blank=True)
 
+    objects = PicastroUserManager()
+
     def __str__(self):
         return self.username
-
 
 class Post(models.Model):
     image = models.ImageField(upload_to='images/')
