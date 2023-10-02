@@ -11,3 +11,9 @@ class Util:
             to=[data['user_email_address']]
         )
         email.send()
+
+    def get_user(self, request, format=None):
+        token_user_id = request.user.id
+        print("token_user_id", token_user_id)
+        
+        return token_user_id

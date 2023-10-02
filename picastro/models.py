@@ -9,35 +9,36 @@ from django.core.files.base import ContentFile
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
-class PicastroUserManager(UserManager):
-    def create_user(self, email, password, **extra_fields):
-        """
-        Create and save a user with the given email and password.
-        """
-        if not email:
-            raise ValueError(_("Email cannot be empty"))
-        elif not password:
-            raise ValueError(_("Password cannot be empty"))
+#import uuid
 
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
+
+class PicastroUserManager(UserManager):
+    
+    def create_user(self, email,date_of_birth, username,password=None,):
+        if not email:
+            msg = 'Email address is required'
+            raise ValueError(msg)
+
+        if not username:
+            msg = 'This username is not valid'
+            raise ValueError(msg)
+
+        user = self.model( email=UserManager.normalize_email(email),
+        username=username )
+        
         user.set_password(password)
-        user.save()
+        user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password, **extra_fields):
-        """
-        Create and save a SuperUser with the given email and password.
-        """
-        extra_fields.setdefault("is_staff", True)
-        extra_fields.setdefault("is_superuser", True)
-        extra_fields.setdefault("is_active", True)
+    def create_superuser(self,email,username,password,date_of_birth):
+        user = self.create_user(email,password=password,username=username,date_of_birth=date_of_birth)
+        user.is_admin = True
+        user.is_staff = True
+        user.is_active = True
+        user.is_superuser = True
+        user.save(using=self._db)
+        return user
 
-        if extra_fields.get("is_staff") is not True:
-            raise ValueError(_("Superuser must have is_staff=True."))
-        if extra_fields.get("is_superuser") is not True:
-            raise ValueError(_("Superuser must have is_superuser=True."))
-        return self.create_user(email, password, **extra_fields)
 
 
 class PicastroUser(AbstractUser):

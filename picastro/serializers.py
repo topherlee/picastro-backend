@@ -74,7 +74,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
                   'genderIdentifier', 'profileImage', 'total_likes']
 
     def get_total_likes(self, obj):
-        print("obj", obj)
         return SavedImages.objects.filter(user=obj).count()
 
 

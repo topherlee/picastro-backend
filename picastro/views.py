@@ -274,7 +274,7 @@ class ImageLikeAPIView(ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         request.data['post'] = self.kwargs['post']
-        request.data['user'] = request.user.id
+        request.data['user'] = Util.get_user(self, request)
         print("request.data", request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -318,7 +318,7 @@ class ImageDislikeAPIView(DestroyAPIView):
     #     return poster == self.request.user
     
     def destroy(self, request, *args, **kwargs):
-        user = self.get_user(request)
+        user = Util.get_user(self, request)
         print("kwargs", kwargs['post'])
         post = kwargs['post']
         instance = SavedImages.objects.filter(user=user, post=post)
@@ -335,6 +335,10 @@ class ImageDislikeAPIView(DestroyAPIView):
 class CommentCreateAPIView(CreateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = CommentSerializer
+
+    # def perform_create(self, serializer):
+    #     print("serializer", serializer)
+    #     serializer.save(commenter=self.request.user)
 
 
 class CommentListAPIView(ListAPIView):
