@@ -9,36 +9,9 @@ from django.core.files.base import ContentFile
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
+from .managers import PicastroUserManager
+
 #import uuid
-
-
-class PicastroUserManager(UserManager):
-    
-    def create_user(self, email,date_of_birth, username,password=None,):
-        if not email:
-            msg = 'Email address is required'
-            raise ValueError(msg)
-
-        if not username:
-            msg = 'This username is not valid'
-            raise ValueError(msg)
-
-        user = self.model( email=UserManager.normalize_email(email),
-        username=username )
-        
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def create_superuser(self,email,username,password,date_of_birth):
-        user = self.create_user(email,password=password,username=username,date_of_birth=date_of_birth)
-        user.is_admin = True
-        user.is_staff = True
-        user.is_active = True
-        user.is_superuser = True
-        user.save(using=self._db)
-        return user
-
 
 
 class PicastroUser(AbstractUser):
