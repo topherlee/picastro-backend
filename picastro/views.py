@@ -73,27 +73,31 @@ class CreateUserAPIView(CreateAPIView):
         token = serializer.data['token']['access']
         print(token)
 
-        absolute_Url = domain + relative_link + '?token='+token
         username = serializer.data['username']
         user_email = serializer.data['email']
-        email_body = 'Hi ' + username + \
-            ',\nUse link below to verify your email address for Picastro: \n' + absolute_Url
-        data = {
-            'email_subject': 'Verify your email for Picastro',
-            'email_body': email_body,
-            'user_email_address': user_email
-        }
 
-        print("body", email_body)
-        print("email data", data)
+        Util.send_token_email(relative_link, token,username, user_email)
 
-        send_mail(
-            'Verify your email for Picastro',
-            email_body,
-            settings.EMAIL_HOST_USER,
-            [user_email],
-            fail_silently=False,
-        )
+        # absolute_Url = domain + relative_link + '?token='+token
+
+        # email_body = 'Hi ' + username + \
+        #     ',\nUse link below to verify your email address for Picastro: \n' + absolute_Url
+        # data = {
+        #     'email_subject': 'Verify your email for Picastro',
+        #     'email_body': email_body,
+        #     'user_email_address': user_email
+        # }
+
+        # print("body", email_body)
+        # print("email data", data)
+
+        # send_mail(
+        #     'Verify your email for Picastro',
+        #     email_body,
+        #     settings.EMAIL_HOST_USER,
+        #     [user_email],
+        #     fail_silently=False,
+        # )
         # Util.send_email(data)
 
         return Response(

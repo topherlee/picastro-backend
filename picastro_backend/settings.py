@@ -40,7 +40,7 @@ DOMAIN = 'http://13.42.37.75:8000'
 # Development settings:
 DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2', '13.42.37.75']
-# DOMAIN = 'http://127.0.0.1:8000'
+DOMAIN = 'http://127.0.0.1:8000'
 
 
 # Application definition
