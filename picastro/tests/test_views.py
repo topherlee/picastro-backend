@@ -1,8 +1,8 @@
-from django.contrib.auth.models import User
 from rest_framework.test import APIClient
 import pdb
 
 from .test_setup import TestSetup
+from picastro.models import PicastroUser
 
 
 class TestRegisterView(TestSetup):
@@ -44,7 +44,7 @@ class TestRegisterView(TestSetup):
             format='json'
         )
         username = res.data['username']
-        user = User.objects.get(username=username)
+        user = PicastroUser.objects.get(username=username)
         user.is_verified = True
         user.save()
         res2 = self.client.post(
@@ -69,7 +69,7 @@ class TestRegisterView(TestSetup):
     #         format='json'
     #     )
     #     username = res.data['username']
-    #     user = User.objects.get(username=username)
+    #     user = PicastroUser.objects.get(username=username)
     #     user.is_verified = True
     #     user.save()
     #     res2 = self.client.post(

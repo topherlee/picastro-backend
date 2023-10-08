@@ -27,11 +27,13 @@ For details about the structure of the code/application, please read the [struct
 For details about testing, please read the [testing.md](./documentation/testing.md) file.
 
 
+## Deploying to AWS and updating the server
+
+For details about the deployment, as well as running and updating the server, please read the [server.md](./documentation/server.md) file.
+
+
 ## Team Members
  Who's working on this branch?
  * Steffen Atlas
  * Christopher Lee
  * Mohtalifa A Ema
- * Damilola Agboola
- * Jay Gajjar
- * Sayed Ishayat Uddin

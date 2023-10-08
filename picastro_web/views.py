@@ -22,6 +22,11 @@ class DashboardView(LoginRequiredMixin, ListView):
     ordering = '-pub_date'
     template_name = "picastro_web/dashboard.html"
 
+    
+    def get_queryset(self):
+        print(self.request.user)
+        return Post.objects.filter(poster__username__contains=self.request.user)
+
 
 class CreatePostView(LoginRequiredMixin, CreateView):  # new
     model = Post

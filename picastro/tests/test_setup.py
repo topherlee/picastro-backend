@@ -1,11 +1,10 @@
 from rest_framework.test import APITestCase
 from django.urls import reverse
-from django.contrib.auth.models import User
 from tempfile import NamedTemporaryFile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from io import BytesIO
 
-from picastro.models import StarCamp, Post, UserProfile, Equipment, SavedImages
+from picastro.models import StarCamp, Post, PicastroUser, Equipment, SavedImages
 
 from picastro.models import StarCamp
 
@@ -19,7 +18,7 @@ class TestSetup(APITestCase):
         self.current_user_url = reverse('auth_user_current')
         self.posts_url = reverse('feed_of_posts')
         self.post_details_url = reverse('update_delete_posts', args=[1])
-        self.image_like_url = reverse('image_like', args=[1, 1])
+        self.image_like_url = reverse('image_like', args=[1])
 
         self.user_data = {
             "username": "username",
@@ -72,7 +71,7 @@ class TestSetup(APITestCase):
         return super().setUp()
 
     def create_test_user(self):
-        user = User.objects.create_user(
+        user = PicastroUser.objects.create_user(
             username = "username",
             password = "password123",
             first_name = "test_first",
@@ -80,15 +79,6 @@ class TestSetup(APITestCase):
             email = "test@picastro.com", 
         )
         return user
-
-    def create_test_user_profile(self, user):
-        user_profile = UserProfile.objects.create(
-            location = "Dundee_test",
-            userDescription = "long test description",
-            genderIdentifier = "diverse",
-            user=user.id
-        )
-        return user_profile
 
     def create_test_starcamp(self):
         starcamp = StarCamp.objects.create(

@@ -1,4 +1,4 @@
 from django.contrib import admin
 
-from picastro.models import Post, StarCamp, Equipment, SavedImages, UserProfile
+from picastro.models import Post, StarCamp, Equipment, SavedImages, PicastroUser
 
