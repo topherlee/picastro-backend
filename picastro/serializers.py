@@ -36,7 +36,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = PicastroUser
         fields = ('token', 'username', 'password',
-                'first_name', 'last_name', 'email', 'id',)
+                'first_name', 'last_name', 'email', 'id', 'phone_no')
         write_only_fields = 'password'
         read_only_fields = ('is_staff', 'is_superuser', 'is_active',
                 'isEmailVerified', 'isPhoneVerified',) 
