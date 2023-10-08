@@ -1,4 +1,6 @@
 {% extends "picastro_web/base.html" %}
+{% load settings %}
+
 {% block title %}My Uploaded Images{% endblock %}
 {% block content %}
 
@@ -6,7 +8,7 @@
 
 	{% for post in object_list %}
 		<p style="font-size: 1.5em; margin-bottom: 0px;">{{ post.astroNameShort }} - {{ post.astroName }}</p>
-		<img src="/media/{{ post.image }}" alt="{{ post.imageDescription }}">
+		<img src="http://{% settings_value 'AWS_S3_CUSTOM_DOMAIN' %}/{{ post.image }}" alt="{{ post.imageDescription }}">
 		<div style="display: flex; flex-direction: row; justify-content: space-between;">
 			<div>Image Category: {{ post.imageCategory }}</div>
 			<div>Exposure Time: {{ post.exposureTime }}</div>
