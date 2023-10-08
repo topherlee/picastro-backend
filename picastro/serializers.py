@@ -69,10 +69,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PicastroUser
-        fields = ['id', 'username', 'first_name', 'last_name', 'email',
-                  'last_login', 'date_joined', 'location', 'userDescription',
-                  'genderIdentifier', 'profileImage', 'total_likes', 'phone_no']
-        write_only_fields = 'password'
+        fields = ['id', 'username', 'first_name', 'last_name',
+                  'location', 'userDescription',
+                  'genderIdentifier', 'profileImage', 'total_likes']
+        read_only_fields = ['username',]
 
     def get_total_likes(self, obj):
         return SavedImages.objects.filter(user=obj).count()
