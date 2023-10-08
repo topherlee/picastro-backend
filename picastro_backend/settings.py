@@ -34,12 +34,12 @@ SECRET_KEY = os.environ.get('SECRET_KEY')   # Linux/Mac
 
 # Production settings:
 # DEBUG = False
-# ALLOWED_HOSTS = ['13.42.37.75']
-DOMAIN = 'http://13.42.37.75:8000'
+# ALLOWED_HOSTS = ['mainapp.picastroapp.com']
+DOMAIN = 'https://mainapp.picastroapp.com'
 
 # Development settings:
 DEBUG = True
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2', '13.42.37.75']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2', 'mainapp.picastroapp.com']
 DOMAIN = 'http://127.0.0.1:8000'
 
 
@@ -188,7 +188,7 @@ SIMPLE_JWT = {
     # how long the original token is valid for
     # 'ACCESS_TOKEN_LIFETIME': timedelta(seconds=3),
     # "REFRESH_TOKEN_LIFETIME": timedelta(seconds=15),
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     "AUTH_HEADER_TYPES": ("Token",),
     'ROTATE_REFRESH_TOKENS': True,
@@ -197,6 +197,8 @@ SIMPLE_JWT = {
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media/"
+
+#EMAIL
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
