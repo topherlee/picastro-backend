@@ -60,7 +60,8 @@ INSTALLED_APPS = [
     'django_filters', 
     "django_browser_reload",
     'picastro',
-    'picastro_web'
+    'picastro_web',
+    'django_cleanup.apps.CleanupConfig',    #KEEP THIS AT THE BOTTOM
 ]
 
 MIDDLEWARE = [
