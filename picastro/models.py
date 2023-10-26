@@ -35,6 +35,42 @@ class PicastroUser(AbstractUser):
 
     objects = PicastroUserManager()
 
+    def save(self, *args, **kwargs): 
+        print("processing profile image", self.profileImage)
+        image = Image.open(self.profileImage)
+        image = ImageOps.exif_transpose(image)
+        thumb_size = (500, 500)
+        image.thumbnail(thumb_size, Image.LANCZOS)
+        print("image writing")
+
+        thumb_name, thumb_extension = os.path.splitext(self.profileImage.name)
+        thumb_extension = thumb_extension.lower()
+        thumb_filename = 'profile_image_' + self.username + thumb_extension
+        print('Profile image will be saved as ' + thumb_filename)
+
+        if thumb_extension in ['.jpg', '.jpeg']:
+            FTYPE = 'JPEG'
+        elif thumb_extension == '.gif':
+            FTYPE = 'GIF'
+        elif thumb_extension == '.png':
+            FTYPE = 'PNG'
+        elif thumb_extension in ['.tif', '.tiff']:
+            FTYPE = 'TIF'
+        else:
+            return    # Unrecognized file type
+        
+        # Save thumbnail to in-memory file as StringIO
+        temp_thumb = BytesIO()
+        image.save(temp_thumb, FTYPE)
+        temp_thumb.seek(0)
+
+        # set save=False, otherwise it will run in an infinite loop
+        self.profileImage.save(thumb_filename, ContentFile(temp_thumb.read()), save=False)
+        temp_thumb.close()
+
+        super(PicastroUser, self).save(*args, **kwargs)
+
+
     def __str__(self):
         return self.username
 
