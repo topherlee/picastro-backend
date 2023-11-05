@@ -156,11 +156,6 @@ class CurrentUserView(APIView):
         return Response(serializer.data)
 
 
-class HomePageView(ListView):
-    model = Post
-    template_name = "home.html"
-
-
 class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = (IsAuthenticated,)
@@ -348,9 +343,10 @@ class CommentCreateAPIView(CreateAPIView):
 class CommentListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = CommentSerializer
-
-    queryset = Comment.objects.all()
-    lookup_field = 'post'
+    ordering_fields = ['date_added']
+    
+    def get_queryset(self):
+        return Comment.objects.filter(post__id=self.kwargs['post_id']).order_by('-date_added')
 
 
 class CommentUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):

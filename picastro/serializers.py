@@ -110,7 +110,11 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment 
-        fields = ['post', 'commenter', 'comment_body', 'date_added']
+        fields = ['id', 'post', 'commenter', 'comment_body', 'date_added']
+
+    def to_representation(self, instance):
+        self.fields['commenter'] = PosterSerializer(read_only=True)
+        return super(CommentSerializer, self).to_representation(instance)
 
 
 class ResetPasswordEmailRequestSerializer(serializers.Serializer):

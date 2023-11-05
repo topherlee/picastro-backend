@@ -4,7 +4,6 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 from .views import (
-    HomePageView,
     CreateUserAPIView,
     LogoutUserAPIView,
     CurrentUserView,
@@ -24,7 +23,6 @@ from django.urls import path, include
 
 
 urlpatterns = [
-    path("", HomePageView.as_view(), name="home"),
     re_path(r'^auth/register/$',
             CreateUserAPIView.as_view(),
             name='auth_user_create'),

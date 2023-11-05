@@ -238,4 +238,4 @@ class Comment(models.Model):
     
     
     def __str__(self):
-        return '%s - %s' % (self.commenter_name,self.comment_body)
+        return f'{self.commenter} - {self.post} - {self.comment_body}'
