@@ -24,6 +24,7 @@ class PicastroUser(AbstractUser):
     isPhoneVerified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
+    payment_checkout_id = models.CharField(max_length=500)
     subcriptionsExpiry = models.DateTimeField(auto_now_add=True)
     profileImage = models.ImageField(
         upload_to='profileImages/',

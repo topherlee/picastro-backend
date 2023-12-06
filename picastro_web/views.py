@@ -1,6 +1,11 @@
+import stripe
+from django.conf import settings
 from django.shortcuts import render
+from django.views.generic.base import TemplateView
 from django.views.generic import ListView, CreateView
+from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from django.http.response import JsonResponse
 from django.contrib.auth import authenticate, login
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -75,3 +80,96 @@ def user_login(request):
     else:
         form = LoginForm()
     return render(request, 'picastro_web/login.html', {'form': form})
+
+
+class VerifyEmail(TemplateView):
+    template_name = "picastro_web/verify_email"
+    
+    def get(self, request):
+        token = request.GET.get('token')
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
+            user = PicastroUser.objects.get(id=payload['user_id'])
+            print('user', user)
+            if not user.isEmailVerified:
+                user.isEmailVerified = True
+                user.is_active = True
+                user.save()
+
+            return Response(
+                {'email': 'Successfully activated'},
+                status=status.HTTP_200_OK
+            )
+        except jwt.ExpiredSignatureError as identifier:
+            return Response(
+                {'error': 'Activation link expired'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except jwt.exceptions.DecodeError as identifier:
+            return Response(
+                {'error': 'Invalid token'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+class Payment(TemplateView):
+    template_name = 'picastro_web/pay_subscription.html'
+
+    def post(self, request):
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+
+        checkout_session = stripe.checkout.Session.create(
+            line_items=[{"price": "prod_P7zVdlezaq2Gpf", "quantity": 1}],
+            mode="payment",
+            customer_creation = 'always',
+            success_url = reverse_lazy('payment_successful'),
+            cancel_url = reverse_lazy('payment_failed'),
+        )
+
+
+class PaymentSuccessful(TemplateView):
+    template_name = 'picastro_web/payment_successful'
+
+
+class PaymentFailed(TemplateView):
+    template_name = 'picastro_web/payment_failed'
+
+
+@csrf_exempt
+def stripe_config(request):
+    if request.method == 'GET':
+        stripe_config = {'publicKey': settings.STRIPE_PUBLISHABLE_KEY}
+        return JsonResponse(stripe_config, safe=False)
+
+
+@csrf_exempt
+def create_checkout_session(request):
+    if request.method == 'GET':
+        domain_url = settings.DOMAIN
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        try:
+            # Create new Checkout Session for the order
+            # Other optional params include:
+            # [billing_address_collection] - to display billing address details on the page
+            # [customer] - if you have an existing Stripe Customer ID
+            # [payment_intent_data] - capture the payment later
+            # [customer_email] - prefill the email input in the form
+            # For full details see https://stripe.com/docs/api/checkout/sessions/create
+
+            # ?session_id={CHECKOUT_SESSION_ID} means the redirect will have the session ID set as a query param
+            checkout_session = stripe.checkout.Session.create(
+                success_url=domain_url + reverse_lazy('payment_successful') + '?session_id={CHECKOUT_SESSION_ID}',
+                cancel_url=domain_url + reverse_lazy('payment_failed'),
+                payment_method_types=['card'],
+                mode='payment',
+                line_items=[
+                    {
+                        "price": "prod_P7zVdlezaq2Gpf",
+                        "quantity": 1
+                    }
+                ],
+            
+            )
+            return JsonResponse({'sessionId': checkout_session['id']})
+        except Exception as e:
+            return JsonResponse({'error': str(e)})

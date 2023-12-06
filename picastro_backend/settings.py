@@ -209,3 +209,7 @@ LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 
 AUTH_USER_MODEL = 'picastro.PicastroUser'
+
+# Stripe
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
