@@ -128,11 +128,11 @@ class Payment(TemplateView):
 
 
 class PaymentSuccessful(TemplateView):
-    template_name = 'picastro_web/payment_successful'
+    template_name = 'picastro_web/payment_successful.html'
 
 
 class PaymentFailed(TemplateView):
-    template_name = 'picastro_web/payment_failed'
+    template_name = 'picastro_web/payment_failed.html'
 
 
 @csrf_exempt
@@ -164,8 +164,11 @@ def create_checkout_session(request):
                 mode='payment',
                 line_items=[
                     {
-                        "price": "prod_P7zVdlezaq2Gpf",
-                        "quantity": 1
+                        # "price": "prod_P7zVdlezaq2Gpf",
+                        # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+                        # 'price': 'price_1OKUUoKVqvas7UjjIDZK5AHl', # only GBP 0,01, so not enough for Stripe
+                        'price': 'price_1OKVKdKVqvas7Ujje2cYbnD5',
+                        'quantity': 1,
                     }
                 ],
             
