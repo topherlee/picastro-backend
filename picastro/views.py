@@ -76,7 +76,7 @@ class CreateUserAPIView(CreateAPIView):
         username = serializer.data['username']
         user_email = serializer.data['email']
 
-        Util.send_token_email(relative_link, token,username, user_email)
+        Util.send_token_email(relative_link, token, username, user_email)
 
         # absolute_Url = domain + relative_link + '?token='+token
 
@@ -117,13 +117,14 @@ class VerifyEmail(GenericAPIView):
             print('user', user)
             if not user.isEmailVerified:
                 user.isEmailVerified = True
-                user.is_active = True
+                # user.is_active = True
                 user.save()
 
-            return Response(
-                {'email': 'Successfully activated'},
-                status=status.HTTP_200_OK
-            )
+            # return Response(
+            #     {'email': 'Successfully activated'},
+            #     status=status.HTTP_200_OK
+            # )
+            return redirect(reverse('pay_subscription'))
         except jwt.ExpiredSignatureError as identifier:
             return Response(
                 {'error': 'Activation link expired'},
