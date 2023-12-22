@@ -162,14 +162,21 @@ class Payment(LoginRequiredMixin, TemplateView):
         return redirect(checkout_session.url, code=303)
 
 
+class PaymentPending(TemplateView):
+    template_name = 'picastro_web/payment_pending.html'
+
+
 class PaymentSuccessful(TemplateView):
     template_name = 'picastro_web/payment_successful.html'
 
-    def get(self, request):
-        user = request.user
-        user.subcriptionsExpiry += datetime.timedelta(365)
-        user.save()
-        return render(request, "picastro_web/payment_successful.html", context=context)
+    # def get(self, request):
+    #     requesting_user = request.user
+    #     print("Payment successful requesting_user", requesting_user.username, requesting_user.id)
+    #     user = PicastroUser.objects.get(id=requesting_user.id)
+    #     print("Payment successful user", user.username)
+    #     user.subscriptionExpiry += timedelta(days=365)
+    #     user.save()
+    #     return render(request, "picastro_web/payment_successful.html")
 
 
 class PaymentFailed(TemplateView):
@@ -242,7 +249,17 @@ def stripe_webhook(request):
 
     # Handle the checkout.session.completed event
     if event['type'] == 'checkout.session.completed':
-        print("Payment was successful.")
-        # TODO: run some custom code here
+        requesting_user = request.user
+        print("stripe_webhook requesting_user", requesting_user.username, requesting_user.id)
+        user = PicastroUser.objects.get(id=requesting_user.id)
+        print("stripe_webhook user", user.username)
+        user.subscriptionExpiry += timedelta(days=365)
 
+        session = event['data']['object']
+        session_id = session.get('id', None)
+        time.sleep(15)
+        user.payment_checkout_id = session_id
+
+        user.save()
+        return render(request, "picastro_web/payment_successful.html")
     return HttpResponse(status=200)

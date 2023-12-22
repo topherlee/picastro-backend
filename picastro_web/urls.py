@@ -9,6 +9,7 @@ from .views import (
     VerifyEmail,
     Payment,
     # PaymentCheckView,
+    PaymentPending,
     PaymentSuccessful,
     PaymentFailed,
     # StripeWebhook
@@ -26,6 +27,7 @@ urlpatterns = [
     path('auth/email-verify/', VerifyEmail.as_view(), name='email-verify'),
     # path('pay_check/', PaymentCheckView.as_view(), name='pay_check'),
     path('pay_subscription/', Payment.as_view(), name='pay_subscription'),
+    path('payment_pending/', PaymentPending.as_view(), name='payment_pending'),
     path('payment_successful/', PaymentSuccessful.as_view(), name='payment_successful'),
     path('payment_failed/', PaymentFailed.as_view(), name='payment_failed'),
     path('config/', views.stripe_config),

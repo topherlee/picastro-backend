@@ -1,0 +1,33 @@
+{% extends "picastro_web/base.html" %}
+
+{% block content %}
+
+{% load static %}
+
+
+{% if user.is_authenticated %}
+<div class="container">
+  <form enctype="multipart/form-data" method="post" role="product_page">
+    {% csrf_token %}
+    <h2>So far, all looks good {{ user }}.</h2>
+    <p>As soon as we receive a comfirmation of the succussful payment, you will be redirected.
+    </p>
+  </form>
+</div>
+{% else %}
+<div class="container">
+  <h2>You're not logged in...</h2><a href="{% url 'login' %}" class="btn btn-secondary">Log in</a>
+</div>
+{% endif %}
+<!-- 
+<div class="container">
+  <p>Congratulations, your email has been succesfully verified. The next step
+    befor using the app is purchasing the subscription, which you can do by
+    clicking the button below.
+  </p>
+</div>
+<div class="container">
+  <button class="button is-primary" id="submitBtn">Purchase Subscription!</button>
+</div> -->
+
+{% endblock %}
