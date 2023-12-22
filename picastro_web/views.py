@@ -159,6 +159,7 @@ class Payment(LoginRequiredMixin, TemplateView):
             cancel_url = settings.DOMAIN + reverse_lazy('payment_failed'),
             customer_email = user.email
         )
+        return redirect(checkout_session.url, code=303)
 
 
 class PaymentSuccessful(TemplateView):
