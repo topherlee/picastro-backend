@@ -32,6 +32,6 @@ urlpatterns = [
     path('payment_failed/', PaymentFailed.as_view(), name='payment_failed'),
     path('config/', views.stripe_config),
     path('create-checkout-session/', views.create_checkout_session),
-    path('webhook/', views.stripe_webhook),
+    path('stripe_webhook/', views.stripe_webhook, name='stripe_webhook'),
     # path('payment_success_webhook/', StripeWebhook.as_view(), name='payment_success_webhook')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

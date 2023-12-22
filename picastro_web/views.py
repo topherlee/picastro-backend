@@ -1,5 +1,6 @@
 import jwt
 import stripe
+import time
 from datetime import datetime, timezone, timedelta
 from django.conf import settings
 from django.shortcuts import render
@@ -25,7 +26,7 @@ class HomePageView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     template_name = "picastro_web/home.html"
 
     def test_func(self):
-        return self.request.user.subcriptionsExpiry > datetime.now(timezone.utc)
+        return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
 
     def handle_no_permission(self):
         return redirect(reverse('pay_subscription'))
@@ -42,7 +43,7 @@ class DashboardView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return Post.objects.filter(poster__username__contains=self.request.user)
 
     def test_func(self):
-        return self.request.user.subcriptionsExpiry > datetime.now(timezone.utc)
+        return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
 
     def handle_no_permission(self):
         return redirect(reverse('pay_subscription'))
@@ -55,7 +56,7 @@ class CreatePostView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     success_url = reverse_lazy("dashboard")
 
     def test_func(self):
-        return self.request.user.subcriptionsExpiry > datetime.now(timezone.utc)
+        return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
 
     def handle_no_permission(self):
         return redirect(reverse('pay_subscription'))
@@ -80,36 +81,6 @@ def register(request):
     return render(request,
                   'registration/register.html',
                   {'user_form': user_form})
-
-
-# #refactor as FormView? https://docs.djangoproject.com/en/4.2/ref/class-based-views/generic-editing/#formview
-# def user_login(request):
-#     if request.method == 'POST':
-#         form = LoginForm(request.POST)
-#         if form.is_valid():
-#             cd = form.cleaned_data
-#             user = authenticate(request,
-#                                 username=cd['username'],
-#                                 password=cd['password'])
-#             if user is not None:
-#                 if user.is_active:
-#                     login(request, user)
-#                     if user.subcriptionsExpiry - datetime.now > 0:
-#                         return redirect(reverse('dashboard'))
-#                     else:
-#                         context = {
-#                             'username': user.username,
-#                             'user_email': user.email
-#                         }
-#                         return redirect(reverse('pay_subscription'))
-#                     return HttpResponse('Authenticated successfully')
-#                 else:
-#                     return HttpResponse('Disabled account')
-#             else:
-#                 return HttpResponse('Invalid login')
-#     else:
-#         form = LoginForm()
-#     return render(request, 'picastro_web/login.html', {'form': form})
 
 
 class VerifyEmail(TemplateView):
@@ -169,15 +140,6 @@ class PaymentPending(TemplateView):
 class PaymentSuccessful(TemplateView):
     template_name = 'picastro_web/payment_successful.html'
 
-    # def get(self, request):
-    #     requesting_user = request.user
-    #     print("Payment successful requesting_user", requesting_user.username, requesting_user.id)
-    #     user = PicastroUser.objects.get(id=requesting_user.id)
-    #     print("Payment successful user", user.username)
-    #     user.subscriptionExpiry += timedelta(days=365)
-    #     user.save()
-    #     return render(request, "picastro_web/payment_successful.html")
-
 
 class PaymentFailed(TemplateView):
     template_name = 'picastro_web/payment_failed.html'
@@ -214,9 +176,6 @@ def create_checkout_session(request):
                 mode='payment',
                 line_items=[
                     {
-                        # "price": "prod_P7zVdlezaq2Gpf",
-                        # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-                        # 'price': 'price_1OKUUoKVqvas7UjjIDZK5AHl', # only GBP 0,01, so not enough for Stripe
                         'price': 'price_1OKVKdKVqvas7Ujje2cYbnD5',
                         'quantity': 1,
                     }
@@ -249,15 +208,24 @@ def stripe_webhook(request):
 
     # Handle the checkout.session.completed event
     if event['type'] == 'checkout.session.completed':
-        requesting_user = request.user
-        print("stripe_webhook requesting_user", requesting_user.username, requesting_user.id)
-        user = PicastroUser.objects.get(id=requesting_user.id)
+
+        session = event['data']['object']
+        
+        # Fetch all the required data from session
+        client_reference_id = session.get('client_reference_id')
+        stripe_customer_id = session.get('customer')
+        stripe_subscription_id = session.get('subscription')
+        stripe_customer_email = session.get('customer_email')
+
+        # Get the user and create a new StripeCustomer
+        user = PicastroUser.objects.get(email=stripe_customer_email)
+        print(user.username + stripe_customer_email + ' just subscribed.')
+
         print("stripe_webhook user", user.username)
         user.subscriptionExpiry += timedelta(days=365)
 
-        session = event['data']['object']
         session_id = session.get('id', None)
-        time.sleep(15)
+        #time.sleep(15)
         user.payment_checkout_id = session_id
 
         user.save()
