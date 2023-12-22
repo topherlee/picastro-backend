@@ -12,7 +12,7 @@
       {% if request.path == "/login/" or request.path == "/register/" or request.path == "/logout/" %}
         <a href="{% url 'login' %}"><img src="/static/images/logo-text-gray.png" title="Picastro"></a>
       {% else %}
-        <a href="{% url 'home' %}"><img src="/static/images/logo.png" title="Picastro"></a>
+        <a href="{% url 'web_home' %}"><img src="/static/images/logo.png" title="Picastro"></a>
       {% endif %}
     </div>
     {% if request.user.is_authenticated %}

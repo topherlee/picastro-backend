@@ -12,7 +12,7 @@ from .views import (
     UserProfileAPIView,
     PasswordTokenCheckAPI,
     RequestPasswordResetEmail,
-    VerifyEmail,
+    #VerifyEmail,
     ImageLikeAPIView,
     ImageDislikeAPIView,
     CommentCreateAPIView,
@@ -28,7 +28,7 @@ urlpatterns = [
             name='auth_user_create'),
     path('auth/login/refresh/', TokenRefreshView.as_view(), name='auth_login_refresh'),     
     path('auth/login/', TokenObtainPairView.as_view(), name='auth_login'),
-    path('auth/email-verify/', VerifyEmail.as_view(), name='email-verify'),
+    #path('auth/email-verify/', VerifyEmail.as_view(), name='email-verify'),
     path('auth/pw-reset/', RequestPasswordResetEmail.as_view(), name='request_password-reset'),
     path('auth/reset/<uidb64>/<token>/', PasswordTokenCheckAPI.as_view(), name='password-reset-confirm'),
     path('auth/logout/', LogoutUserAPIView.as_view(), name='auth_logout'),   # use this to get access and refresh token
