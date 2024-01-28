@@ -6,7 +6,7 @@ from .models import PicastroUser, Post, StarCamp, Equipment, SavedImages, Commen
 
 class PicastroUserAdmin(UserAdmin):
     model = PicastroUser
-    list_display = ["email", "username",]
+    list_display = ["email", "username", "subcriptionsExpiry"]
 
 
 admin.site.register(PicastroUser, )
