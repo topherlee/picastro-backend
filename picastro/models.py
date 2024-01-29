@@ -20,12 +20,6 @@ class PicastroUser(AbstractUser):
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=25)
     phone_no = models.CharField(max_length=16)
-    isEmailVerified = models.BooleanField(default=False)
-    isPhoneVerified = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
-    payment_checkout_id = models.CharField(default="", max_length=500)
-    subscriptionExpiry = models.DateTimeField(auto_now_add=True)
     profileImage = models.ImageField(
         upload_to='profileImages/',
         default='profileImages/sampleuserbig.png',
@@ -33,6 +27,12 @@ class PicastroUser(AbstractUser):
     location = models.CharField(max_length=50, blank=True)
     userDescription = models.TextField(default="", max_length=200, blank=True)
     genderIdentifier = models.TextField(default="divers", max_length=10, blank=True)
+    is_active = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    isEmailVerified = models.BooleanField(default=False)
+    isPhoneVerified = models.BooleanField(default=False)
+    payment_checkout_id = models.CharField(default="", max_length=500)
+    subscriptionExpiry = models.DateTimeField(auto_now_add=True)
 
     objects = PicastroUserManager()
 
