@@ -1,9 +1,8 @@
 import pytest
 from django.test import TestCase
-from django.contrib.auth.models import User
 from datetime import datetime
 
-from picastro.models import Post, UserProfile
+from picastro.models import Post, PicastroUser
 from picastro.tests.test_setup import TestSetup
 
 pytestmark = pytest.mark.django_db
@@ -56,21 +55,19 @@ class TestStarCampModel(TestSetup):
         assert starcamp.__str__() == "Aberdeen"
 
 
-class TestUserProfileModel(TestSetup):
+class TestPicastroUserModel(TestSetup):
 
     def test_should_create_post(self):
-        self.assertEqual(User.objects.count(), 0)
-        self.assertEqual(UserProfile.objects.count(), 0)
+        self.assertEqual(PicastroUser.objects.count(), 0)
         post = self.create_test_user()
-        self.assertEqual(User.objects.count(), 1)
-        self.assertEqual(UserProfile.objects.count(), 1)
-
+        self.assertEqual(PicastroUser.objects.count(), 1)
+        
     def test_output_string_method(self):
         #Arrange
         #Act
         user = self.create_test_user()
         #user_profile = self.create_test_user_profile()
-        user_profile = UserProfile.objects.get(user=user)
+        user_profile = PicastroUser.objects.get(id=user.id)
         #Assert
         assert user_profile.__str__() == "username"
 

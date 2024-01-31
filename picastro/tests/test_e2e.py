@@ -1,10 +1,9 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
-from django.contrib.auth.models import User
 
 from picastro.tests.test_setup import TestSetup
-from picastro.models import UserProfile, StarCamp
+from picastro.models import PicastroUser, StarCamp
 
 
 class TestRegistration(TestSetup):
@@ -13,9 +12,8 @@ class TestRegistration(TestSetup):
         # star_camp = self.create_test_starcamp()
         response = self.client.post(self.register_url, self.user_data)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(User.objects.count(), 1)
-        self.assertEqual(UserProfile.objects.count(), 1)
-
+        self.assertEqual(PicastroUser.objects.count(), 1)
+        
 
 class TestListCreatePosts(TestSetup):
 

@@ -1,10 +1,9 @@
-from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
 from django.urls import reverse
 from django.test import TestCase, Client
 from tempfile import NamedTemporaryFile
 
-from picastro.models import StarCamp
+from picastro.models import StarCamp, PicastroUser
 
 
 class TestSetup(TestCase):
@@ -17,7 +16,7 @@ class TestSetup(TestCase):
         self.logout_url = reverse('logout')
         self.posts_url = reverse('add_post')
         self.dashboard_url = reverse('dashboard')
-        self.home_url = reverse('home')
+        self.home_url = reverse('web_home')
 
         self.user_data = {
             "username": "username",
@@ -59,7 +58,7 @@ class TestSetup(TestCase):
         return super().setUp()
 
     def create_test_user(self):
-        user = User.objects.create_user(
+        user = PicastroUser.objects.create_user(
             username = "username",
             password = "password123",
             first_name = "test_first",
@@ -67,14 +66,6 @@ class TestSetup(TestCase):
             email = "test@picastro.com", 
         )
         return user
-
-    def create_test_user_profile(self):
-        user_profile = UserProfile.objects.create(
-            location = "Dundee_test",
-            userDescription = "long test description",
-            genderIdentifier = "diverse",
-        )
-        return user_profile
 
     def create_test_starcamp(self):
         starcamp = StarCamp.objects.create(

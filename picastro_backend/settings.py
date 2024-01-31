@@ -34,12 +34,13 @@ SECRET_KEY = os.environ.get('SECRET_KEY')   # Linux/Mac
 
 # Production settings:
 # DEBUG = False
-DOMAIN = 'http://mainapp.picastroapp.com:8000'
+# ALLOWED_HOSTS = ['mainapp.picastroapp.com']
+# DOMAIN = 'https://mainapp.picastroapp.com'
 
 # Development settings:
 DEBUG = True
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2', '3.11.192.134', 'mainapp.picastroapp.com']
-# DOMAIN = 'http://127.0.0.1:8000'
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2', 'mainapp.picastroapp.com']
+DOMAIN = 'http://127.0.0.1:8000'
 
 
 # Application definition
@@ -59,7 +60,8 @@ INSTALLED_APPS = [
     'django_filters', 
     "django_browser_reload",
     'picastro',
-    'picastro_web'
+    'picastro_web',
+    'django_cleanup.apps.CleanupConfig',    #KEEP THIS AT THE BOTTOM
 ]
 
 MIDDLEWARE = [
@@ -129,18 +131,15 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
@@ -175,7 +174,7 @@ SIMPLE_JWT = {
     # how long the original token is valid for
     # 'ACCESS_TOKEN_LIFETIME': timedelta(seconds=3),
     # "REFRESH_TOKEN_LIFETIME": timedelta(seconds=15),
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     "AUTH_HEADER_TYPES": ("Token",),
     'ROTATE_REFRESH_TOKENS': True,
@@ -184,6 +183,8 @@ SIMPLE_JWT = {
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media/"
+
+#EMAIL
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
@@ -200,9 +201,15 @@ AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = 'picastroapp'
 AWS_S3_REGION_NAME = 'eu-west-2'
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.%s.amazonaws.com' % (AWS_STORAGE_BUCKET_NAME, AWS_S3_REGION_NAME)
-AWS_S3_FILE_OVERWRITE = False
+AWS_S3_FILE_OVERWRITE = True
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage' 
 
 LOGIN_REDIRECT_URL = 'add_post'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
+
+AUTH_USER_MODEL = 'picastro.PicastroUser'
+
+# Stripe
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')

@@ -1,9 +1,8 @@
 import json
-from django.contrib.auth.models import User
 from django.test import TestCase, Client
 from django.urls import reverse
 
-from picastro.models import Post, StarCamp
+from picastro.models import Post, StarCamp, PicastroUser
 from picastro_web.forms import LoginForm, PostForm, UserRegistrationForm
 from picastro_web.tests.test_setup import TestSetup
 
@@ -48,7 +47,7 @@ class TestWebPostView(TestSetup):
         response = self.client.post(self.posts_url)
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, self.login_url + '?next=%2Fpicastro%2Fpost%2F')
+        self.assertRedirects(response, self.login_url + '?next=%2Fpost%2F')
 
     def test_CreatePostView_POST_with_login(self):
         # starcamp = self.create_test_starcamp()
@@ -63,7 +62,7 @@ class TestWebPostView(TestSetup):
         response = self.client.get(self.posts_url)
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, self.login_url + '?next=%2Fpicastro%2Fpost%2F')
+        self.assertRedirects(response, self.login_url + '?next=%2Fpost%2F')
 
     def test_CreatePostView_GET_with_login(self):
         starcamp = self.create_test_starcamp()
@@ -81,7 +80,7 @@ class TestWebDashboardView(TestSetup):
         response = self.client.get(self.dashboard_url)
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, self.login_url + '?next=%2Fpicastro%2Fdashboard%2F')
+        self.assertRedirects(response, self.login_url + '?next=%2Fdashboard%2F')
         
     def test_DashboardView_with_login(self):
         starcamp = self.create_test_starcamp()

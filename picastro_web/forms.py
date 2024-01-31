@@ -1,6 +1,5 @@
 from django import forms
-from picastro.models import Post
-from django.contrib.auth.models import User
+from picastro.models import Post, PicastroUser
 
 
 class LoginForm(forms.Form):
@@ -15,8 +14,8 @@ class UserRegistrationForm(forms.ModelForm):
                                 widget=forms.PasswordInput)
 
     class Meta:
-        model = User
-        fields = ['username', 'first_name', 'last_name', 'email']
+        model = PicastroUser
+        fields = ['username', 'first_name', 'last_name', 'email', 'phone_no']
 
     def clean_password2(self):
         cd = self.cleaned_data

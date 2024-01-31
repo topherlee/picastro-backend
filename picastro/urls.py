@@ -4,7 +4,6 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 from .views import (
-    HomePageView,
     CreateUserAPIView,
     LogoutUserAPIView,
     CurrentUserView,
@@ -24,7 +23,6 @@ from django.urls import path, include
 
 
 urlpatterns = [
-    path("", HomePageView.as_view(), name="home"),
     re_path(r'^auth/register/$',
             CreateUserAPIView.as_view(),
             name='auth_user_create'),
@@ -35,7 +33,7 @@ urlpatterns = [
     path('auth/reset/<uidb64>/<token>/', PasswordTokenCheckAPI.as_view(), name='password-reset-confirm'),
     path('auth/logout/', LogoutUserAPIView.as_view(), name='auth_logout'),   # use this to get access and refresh token
     path('current_user/', CurrentUserView.as_view(), name='auth_user_current'),
-    path('user/<int:user_id>', UserProfileAPIView.as_view(), name='user_profile'),
+    path('user/<int:id>', UserProfileAPIView.as_view(), name='user_profile'),
     path('feed/', PostAPIView.as_view(), name='feed_of_posts'),
     path('feed/<int:id>', PostDetailAPIView.as_view(), name='update_delete_posts'),
     # path('like/<int:user_id>/<int:image_id>', ImageLikeAPIView.as_view(), name='image_like'),
