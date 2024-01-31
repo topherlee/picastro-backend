@@ -1,4 +1,6 @@
+import jwt
 import stripe
+import time
 from django.conf import settings
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
@@ -10,7 +12,7 @@ from django.contrib.auth import authenticate, login
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from picastro.models import Post
+from picastro.models import Post, PicastroUser
 from .forms import LoginForm, PostForm, UserRegistrationForm
 
 
