@@ -9,7 +9,9 @@
 <div class="container">
   <form enctype="multipart/form-data" method="post" role="product_page">
     {% csrf_token %}
-    <h2>Hi {{ user }}! To pay, click on this button <button type="submit" class="btn btn-success" href="{% url 'pay_subscription' %}" data-bind-href="pricing">Payment</button></h2>
+    <h2>So far, all looks good {{ user }}.</h2>
+    <p>As soon as we receive a comfirmation of the succussful payment, you will be redirected.
+    </p>
   </form>
 </div>
 {% else %}

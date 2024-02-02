@@ -1,0 +1,15 @@
+{% extends "picastro_web/base.html" %}
+
+{% block content %}
+
+<p>
+    Congratulations {{username}},
+</p>
+<p>
+    Your email has been succesfully verified.
+    Please log in and purchase the subscription to use the app.
+</p>
+
+<meta http-equiv="refresh" content="3;url={% url 'login' %}">
+
+{% endblock %}

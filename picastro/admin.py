@@ -1,15 +1,20 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
 
 from .models import PicastroUser, Post, StarCamp, Equipment, SavedImages, Comment
 
 
-class PicastroUserAdmin(UserAdmin):
+class PicastroUserAdmin(admin.ModelAdmin):
     model = PicastroUser
-    list_display = ["email", "username",]
+    # fields = ["username", "email", "phone_no", 
+    #           "profileImage", "first_name", "last_name", 
+    #           "location", "userDescription", "genderIdentifier",
+    #           "isEmailVerified", "isPhoneVerified",
+    #           "is_active", "is_staff",
+    #           "subscriptionExpiry", "payment_checkout_id"]
+    readonly_fields = ["subscriptionExpiry"]
 
 
-admin.site.register(PicastroUser, )
+admin.site.register(PicastroUser, PicastroUserAdmin)
 admin.site.register(Post)
 admin.site.register(StarCamp)
 #admin.site.register(UserProfile)

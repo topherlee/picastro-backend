@@ -106,35 +106,35 @@ class CreateUserAPIView(CreateAPIView):
         )
 
 
-class VerifyEmail(GenericAPIView):
-    permission_classes = [AllowAny]
+# class VerifyEmail(GenericAPIView):
+#     permission_classes = [AllowAny]
     
-    def get(self, request):
-        token = request.GET.get('token')
-        try:
-            payload = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
-            user = PicastroUser.objects.get(id=payload['user_id'])
-            print('user', user)
-            if not user.isEmailVerified:
-                user.isEmailVerified = True
-                # user.is_active = True
-                user.save()
+#     def get(self, request):
+#         token = request.GET.get('token')
+#         try:
+#             payload = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
+#             user = PicastroUser.objects.get(id=payload['user_id'])
+#             print('user', user)
+#             if not user.isEmailVerified:
+#                 user.isEmailVerified = True
+#                 # user.is_active = True
+#                 user.save()
 
-            # return Response(
-            #     {'email': 'Successfully activated'},
-            #     status=status.HTTP_200_OK
-            # )
-            return redirect(reverse('pay_subscription'))
-        except jwt.ExpiredSignatureError as identifier:
-            return Response(
-                {'error': 'Activation link expired'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        except jwt.exceptions.DecodeError as identifier:
-            return Response(
-                {'error': 'Invalid token'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+#             # return Response(
+#             #     {'email': 'Successfully activated'},
+#             #     status=status.HTTP_200_OK
+#             # )
+#             return redirect(reverse('pay_subscription'))
+#         except jwt.ExpiredSignatureError as identifier:
+#             return Response(
+#                 {'error': 'Activation link expired'},
+#                 status=status.HTTP_400_BAD_REQUEST
+#             )
+#         except jwt.exceptions.DecodeError as identifier:
+#             return Response(
+#                 {'error': 'Invalid token'},
+#                 status=status.HTTP_400_BAD_REQUEST
+#             )
 
 
 class LogoutUserAPIView(APIView):

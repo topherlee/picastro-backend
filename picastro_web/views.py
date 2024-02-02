@@ -1,45 +1,65 @@
 import jwt
 import stripe
 import time
+from datetime import datetime, timezone, timedelta
 from django.conf import settings
 from django.shortcuts import render
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, RedirectView
 from django.views.generic import ListView, CreateView
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.http.response import JsonResponse, HttpResponse
 from django.contrib.auth import authenticate, login
-from django.urls import reverse_lazy
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.shortcuts import redirect
+from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from picastro.models import Post, PicastroUser
 from .forms import LoginForm, PostForm, UserRegistrationForm
 
 
-class HomePageView(LoginRequiredMixin, ListView):
+class HomePageView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Post
     ordering_fields = ['id', 'imageCategory', 'pub_date', 'poster']
     ordering = '-pub_date'
     template_name = "picastro_web/home.html"
 
+    def test_func(self):
+        return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
 
-class DashboardView(LoginRequiredMixin, ListView):
+    def handle_no_permission(self):
+        return redirect(reverse('pay_subscription'))
+
+
+class DashboardView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Post
     ordering_fields = ['id', 'imageCategory', 'pub_date', 'poster']
     ordering = '-pub_date'
     template_name = "picastro_web/dashboard.html"
 
-    
     def get_queryset(self):
         print(self.request.user)
         return Post.objects.filter(poster__username__contains=self.request.user)
 
+    def test_func(self):
+        return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
 
-class CreatePostView(LoginRequiredMixin, CreateView):  # new
+    def handle_no_permission(self):
+        return redirect(reverse('pay_subscription'))
+
+
+class CreatePostView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Post
     form_class = PostForm
     template_name = "picastro_web/post.html"
     success_url = reverse_lazy("dashboard")
+
+    def test_func(self):
+        return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
+
+    def handle_no_permission(self):
+        return redirect(reverse('pay_subscription'))
 
 
 def register(request):
@@ -63,27 +83,6 @@ def register(request):
                   {'user_form': user_form})
 
 
-def user_login(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            user = authenticate(request,
-                                username=cd['username'],
-                                password=cd['password'])
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    return HttpResponse('Authenticated successfully')
-                else:
-                    return HttpResponse('Disabled account')
-            else:
-                return HttpResponse('Invalid login')
-    else:
-        form = LoginForm()
-    return render(request, 'picastro_web/login.html', {'form': form})
-
-
 class VerifyEmail(TemplateView):
     template_name = "picastro_web/verify_email"
     
@@ -97,11 +96,13 @@ class VerifyEmail(TemplateView):
                 user.isEmailVerified = True
                 user.is_active = True
                 user.save()
+            
+            context = {
+                'username': user.username,
+                'user_email': user.email
+            }
 
-            return Response(
-                {'email': 'Successfully activated'},
-                status=status.HTTP_200_OK
-            )
+            return render(request, "picastro_web/verify_email.html", context=context)
         except jwt.ExpiredSignatureError as identifier:
             return Response(
                 {'error': 'Activation link expired'},
@@ -114,19 +115,26 @@ class VerifyEmail(TemplateView):
             )
 
 
-class Payment(TemplateView):
+class Payment(LoginRequiredMixin, TemplateView):
     template_name = 'picastro_web/pay_subscription.html'
 
     def post(self, request):
+        user = request.user
         stripe.api_key = settings.STRIPE_SECRET_KEY
 
         checkout_session = stripe.checkout.Session.create(
-            line_items=[{"price": "prod_P7zVdlezaq2Gpf", "quantity": 1}],
+            line_items=[{"price": "price_1OKVKdKVqvas7Ujje2cYbnD5", "quantity": 1}],
             mode="payment",
             customer_creation = 'always',
-            success_url = reverse_lazy('payment_successful'),
-            cancel_url = reverse_lazy('payment_failed'),
+            success_url = settings.DOMAIN + reverse_lazy('payment_successful'),
+            cancel_url = settings.DOMAIN + reverse_lazy('payment_failed'),
+            customer_email = user.email
         )
+        return redirect(checkout_session.url, code=303)
+
+
+class PaymentPending(TemplateView):
+    template_name = 'picastro_web/payment_pending.html'
 
 
 class PaymentSuccessful(TemplateView):
@@ -168,9 +176,6 @@ def create_checkout_session(request):
                 mode='payment',
                 line_items=[
                     {
-                        # "price": "prod_P7zVdlezaq2Gpf",
-                        # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-                        # 'price': 'price_1OKUUoKVqvas7UjjIDZK5AHl', # only GBP 0,01, so not enough for Stripe
                         'price': 'price_1OKVKdKVqvas7Ujje2cYbnD5',
                         'quantity': 1,
                     }
@@ -203,7 +208,25 @@ def stripe_webhook(request):
 
     # Handle the checkout.session.completed event
     if event['type'] == 'checkout.session.completed':
-        print("Payment was successful.")
-        # TODO: run some custom code here
+        session = event['data']['object']
+        
+        # Fetch all the required data from session
+        client_reference_id = session.get('client_reference_id')
+        stripe_customer_id = session.get('customer')
+        stripe_subscription_id = session.get('subscription')
+        stripe_customer_email = session.get('customer_email')
 
+        # Get the user and create a new StripeCustomer
+        user = PicastroUser.objects.get(email=stripe_customer_email)
+        print(user.username + stripe_customer_email + ' just subscribed.')
+
+        print("stripe_webhook user", user.username)
+        user.subscriptionExpiry += timedelta(days=365)
+
+        session_id = session.get('id', None)
+        #time.sleep(15)
+        user.payment_checkout_id = session_id
+
+        user.save()
+        return render(request, "picastro_web/payment_successful.html")
     return HttpResponse(status=200)
