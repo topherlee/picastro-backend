@@ -208,7 +208,6 @@ def stripe_webhook(request):
 
     # Handle the checkout.session.completed event
     if event['type'] == 'checkout.session.completed':
-
         session = event['data']['object']
         
         # Fetch all the required data from session
