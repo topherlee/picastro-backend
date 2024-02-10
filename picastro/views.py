@@ -52,6 +52,7 @@ from picastro.serializers import (
     CommentSerializer,
     # ResetPasswordEmailRequestSerializer
 )
+from picastro.permissions import IsOwnerOrReadOnly, IsCommenterOrReadOnly, IsPosterOrReadOnly
 from .models import PicastroUser, Post, Comment, SavedImages
 from .utils import Util
 
@@ -60,6 +61,9 @@ class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer
     permission_classes = [AllowAny]
 
+    def perform_create(self, serializer):
+        return serializer.save(username=self.request.user)
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -67,8 +71,6 @@ class CreateUserAPIView(CreateAPIView):
         headers = self.get_success_headers(serializer.data)
         # We create a token than will be used for future auth
         print(serializer.data)
-        #domain = 'http://13.42.37.75:8000'
-        domain = 'http://127.0.0.1:8000'
         relative_link = reverse('email-verify')
         token = serializer.data['token']['access']
         print(token)
@@ -159,7 +161,7 @@ class CurrentUserView(APIView):
 
 class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = UserProfileSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
     queryset = PicastroUser.objects.all()
     lookup_field = 'id'
 
@@ -247,7 +249,7 @@ class PostAPIView(ListCreateAPIView):
 
 class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = PostSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsPosterOrReadOnly)
     queryset = Post.objects.all()
     lookup_field = 'id'
 
@@ -336,9 +338,9 @@ class CommentCreateAPIView(CreateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = CommentSerializer
 
-    # def perform_create(self, serializer):
-    #     print("serializer", serializer)
-    #     serializer.save(commenter=self.request.user)
+    def perform_create(self, serializer):
+        print("serializer", serializer)
+        serializer.save(commenter=self.request.user)
 
 
 class CommentListAPIView(ListAPIView):
@@ -353,6 +355,6 @@ class CommentListAPIView(ListAPIView):
 class CommentUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsCommenterOrReadOnly)
 
     lookup_field = 'id'
