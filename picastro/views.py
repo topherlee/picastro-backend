@@ -61,9 +61,6 @@ class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer
     permission_classes = [AllowAny]
 
-    def perform_create(self, serializer):
-        return serializer.save(username=self.request.user)
-
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
