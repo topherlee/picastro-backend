@@ -40,6 +40,9 @@ class IsCommenterOrReadOnly(permissions.BasePermission):
         # so we'll always allow GET, HEAD or OPTIONS requests.
         if request.method in permissions.SAFE_METHODS:
             return True
+        # PUT and PATCH permissions are false if not the owner of comment
+        elif (request.method == 'PUT' or request.method == 'PATCH') and obj.commenter != request.user and obj.post.poster == request.user:    
+            return False
         
         # Write permissions are only allowed to the owner of the snippet.
-        return obj.commenter == request.user
+        return obj.commenter == request.user or obj.post.poster == request.user
