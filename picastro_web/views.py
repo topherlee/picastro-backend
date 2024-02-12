@@ -137,8 +137,14 @@ class PaymentPending(TemplateView):
     template_name = 'picastro_web/payment_pending.html'
 
 
-class PaymentSuccessful(TemplateView):
+class PaymentSuccessful(UserPassesTestMixin, TemplateView):
     template_name = 'picastro_web/payment_successful.html'
+
+    def test_func(self):
+        return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
+
+    def handle_no_permission(self):
+        return redirect(reverse('pay_subscription'))
 
 
 class PaymentFailed(TemplateView):
