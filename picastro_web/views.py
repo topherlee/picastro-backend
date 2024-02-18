@@ -26,7 +26,10 @@ class HomePageView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     template_name = "picastro_web/home.html"
 
     def test_func(self):
-        return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
+        if not self.request.user.subscriptionExpiry and self.request.user.payment_checkout_id == "":
+            return False
+        else:
+            return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
 
     def handle_no_permission(self):
         return redirect(reverse('pay_subscription'))
@@ -43,7 +46,10 @@ class DashboardView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return Post.objects.filter(poster__username__contains=self.request.user)
 
     def test_func(self):
-        return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
+        if not self.request.user.subscriptionExpiry and self.request.user.payment_checkout_id == "":
+            return False
+        else:
+            return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
 
     def handle_no_permission(self):
         return redirect(reverse('pay_subscription'))
@@ -56,7 +62,10 @@ class CreatePostView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     success_url = reverse_lazy("dashboard")
 
     def test_func(self):
-        return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
+        if not self.request.user.subscriptionExpiry and self.request.user.payment_checkout_id == "":
+            return False
+        else:
+            return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
 
     def handle_no_permission(self):
         return redirect(reverse('pay_subscription'))
@@ -141,7 +150,10 @@ class PaymentSuccessful(UserPassesTestMixin, TemplateView):
     template_name = 'picastro_web/payment_successful.html'
 
     def test_func(self):
-        return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
+        if not self.request.user.subscriptionExpiry and self.request.user.payment_checkout_id == "":
+            return False
+        else:
+            return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
 
     def handle_no_permission(self):
         return redirect(reverse('pay_subscription'))
