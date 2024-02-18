@@ -235,4 +235,16 @@ def stripe_webhook(request):
 
         user.save()
         return render(request, "picastro_web/payment_successful.html")
+    elif event['type'] == 'payment_intent.succeeded':
+        paymentIntent = event['data']['object']
+        customer = stripe.Customer.retrieve(paymentIntent.get("customer"))
+        user = PicastroUser.objects.get(email=customer.get("email"))
+        print(user.username + customer.get("email") + ' just subscribed.')
+
+        print("stripe_webhook user", user.username)
+        user.subscriptionExpiry += timedelta(days=365)
+
+        user.payment_checkout_id = paymentIntent.get('id',None)
+
+        user.save()
     return HttpResponse(status=200)

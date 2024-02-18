@@ -1,5 +1,6 @@
 import os
 import jwt
+import stripe
 
 from rest_framework import filters
 from rest_framework.generics import (
@@ -355,3 +356,34 @@ class CommentUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, IsCommenterOrReadOnly)
 
     lookup_field = 'id'
+
+
+class PaymentAPIView(GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    def post(self, request):
+        # Use an existing Customer ID if this is a returning customer
+        # user = PicastroUser.objects.get(email=)
+        customer = stripe.Customer.create(
+            name=(request.user.first_name + " " + request.user.last_name),
+            email=request.user.email,
+            phone=request.user.phone_no,
+        )
+        ephemeralKey = stripe.EphemeralKey.create(
+            customer=customer['id'],
+            stripe_version='2023-10-16',
+        )
+        paymentIntent = stripe.PaymentIntent.create(
+            amount=2499,
+            currency='gbp',
+            customer=customer['id'],
+            # In the latest version of the API, specifying the `automatic_payment_methods` parameter
+            # is optional because Stripe enables its functionality by default.
+            automatic_payment_methods={
+            'enabled': True,
+            },
+        )
+        return Response({"paymentIntent": paymentIntent.client_secret,
+                        "ephemeralKey": ephemeralKey.secret,
+                        "customer": customer.id,
+                        "publishableKey": settings.STRIPE_PUBLISHABLE_KEY})
