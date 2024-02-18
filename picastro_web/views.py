@@ -239,11 +239,11 @@ def stripe_webhook(request):
         print(user.username + stripe_customer_email + ' just subscribed.')
 
         print("stripe_webhook user", user.username)
-        user.subscriptionExpiry += timedelta(days=365)
+        user.subscriptionExpiry = datetime.now() + timedelta(days=365)
 
         session_id = session.get('id', None)
         #time.sleep(15)
-        user.payment_checkout_id = session_id
+        user.payment_checkout_id = stripe_subscription_id
 
         user.save()
         return render(request, "picastro_web/payment_successful.html")
@@ -254,7 +254,7 @@ def stripe_webhook(request):
         print(user.username + customer.get("email") + ' just subscribed.')
 
         print("stripe_webhook user", user.username)
-        user.subscriptionExpiry += timedelta(days=365)
+        user.subscriptionExpiry = datetime.now() + timedelta(days=365)
 
         user.payment_checkout_id = paymentIntent.get('id',None)
 
