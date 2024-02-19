@@ -361,14 +361,22 @@ class CommentUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 class PaymentAPIView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
     stripe.api_key = settings.STRIPE_SECRET_KEY
+
     def post(self, request):
-        # Use an existing Customer ID if this is a returning customer
-        # user = PicastroUser.objects.get(email=)
-        customer = stripe.Customer.create(
-            name=(request.user.first_name + " " + request.user.last_name),
-            email=request.user.email,
-            phone=request.user.phone_no,
-        )
+        
+        #check if customer already existed in stripe
+        customer_list = stripe.Customer.list(email=request.user.email)
+
+        if len(customer_list) == 0:
+            customer = stripe.Customer.create(
+                name=(request.user.first_name + " " + request.user.last_name),
+                email=request.user.email,
+                phone=request.user.phone_no,
+                metadata={'username':request.user.username}
+            )
+        else:
+            filtered_customer = [item for item in customer_list if item["metadata"]["username"] == request.user.username]
+            customer = filtered_customer[0]
         ephemeralKey = stripe.EphemeralKey.create(
             customer=customer['id'],
             stripe_version='2023-10-16',
@@ -387,3 +395,4 @@ class PaymentAPIView(GenericAPIView):
                         "ephemeralKey": ephemeralKey.secret,
                         "customer": customer.id,
                         "publishableKey": settings.STRIPE_PUBLISHABLE_KEY})
+    

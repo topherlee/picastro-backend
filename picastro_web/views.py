@@ -26,7 +26,10 @@ class HomePageView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     template_name = "picastro_web/home.html"
 
     def test_func(self):
-        return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
+        if not self.request.user.subscriptionExpiry and self.request.user.payment_checkout_id == "":
+            return False
+        else:
+            return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
 
     def handle_no_permission(self):
         return redirect(reverse('pay_subscription'))
@@ -43,7 +46,10 @@ class DashboardView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return Post.objects.filter(poster__username__contains=self.request.user)
 
     def test_func(self):
-        return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
+        if not self.request.user.subscriptionExpiry and self.request.user.payment_checkout_id == "":
+            return False
+        else:
+            return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
 
     def handle_no_permission(self):
         return redirect(reverse('pay_subscription'))
@@ -56,7 +62,10 @@ class CreatePostView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     success_url = reverse_lazy("dashboard")
 
     def test_func(self):
-        return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
+        if not self.request.user.subscriptionExpiry and self.request.user.payment_checkout_id == "":
+            return False
+        else:
+            return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
 
     def handle_no_permission(self):
         return redirect(reverse('pay_subscription'))
@@ -122,13 +131,27 @@ class Payment(LoginRequiredMixin, TemplateView):
         user = request.user
         stripe.api_key = settings.STRIPE_SECRET_KEY
 
+        #check if customer already existed in stripe
+        customer_list = stripe.Customer.list(email=request.user.email)
+
+        if len(customer_list) == 0:
+            customer = stripe.Customer.create(
+                name=(request.user.first_name + " " + request.user.last_name),
+                email=request.user.email,
+                phone=request.user.phone_no,
+                metadata={'username':request.user.username}
+            )
+        else:
+            filtered_customer = [item for item in customer_list if item["metadata"]["username"] == request.user.username]
+            customer = filtered_customer[0]
+
         checkout_session = stripe.checkout.Session.create(
+            customer=customer,
             line_items=[{"price": "price_1OKVKdKVqvas7Ujje2cYbnD5", "quantity": 1}],
             mode="payment",
-            customer_creation = 'always',
             success_url = settings.DOMAIN + reverse_lazy('payment_successful'),
             cancel_url = settings.DOMAIN + reverse_lazy('payment_failed'),
-            customer_email = user.email
+            metadata={"username": user.username}
         )
         return redirect(checkout_session.url, code=303)
 
@@ -141,7 +164,10 @@ class PaymentSuccessful(UserPassesTestMixin, TemplateView):
     template_name = 'picastro_web/payment_successful.html'
 
     def test_func(self):
-        return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
+        if not self.request.user.subscriptionExpiry and self.request.user.payment_checkout_id == "":
+            return False
+        else:
+            return self.request.user.subscriptionExpiry > datetime.now(timezone.utc)
 
     def handle_no_permission(self):
         return redirect(reverse('pay_subscription'))
@@ -217,34 +243,25 @@ def stripe_webhook(request):
         session = event['data']['object']
         
         # Fetch all the required data from session
-        client_reference_id = session.get('client_reference_id')
         stripe_customer_id = session.get('customer')
-        stripe_subscription_id = session.get('subscription')
-        stripe_customer_email = session.get('customer_email')
+        stripe_subscription_id = session.get('payment_intent')
+        stripe_customer_email = session.get('customer_details').get('email')
 
-        # Get the user and create a new StripeCustomer
         user = PicastroUser.objects.get(email=stripe_customer_email)
-        print(user.username + stripe_customer_email + ' just subscribed.')
-
-        print("stripe_webhook user", user.username)
-        user.subscriptionExpiry += timedelta(days=365)
-
-        session_id = session.get('id', None)
-        #time.sleep(15)
-        user.payment_checkout_id = session_id
-
+        user.subscriptionExpiry = datetime.now() + timedelta(days=365)
+        user.payment_checkout_id = stripe_subscription_id
         user.save()
+
         return render(request, "picastro_web/payment_successful.html")
+    
+    # Payment from mobile only sends payment_intent
     elif event['type'] == 'payment_intent.succeeded':
         paymentIntent = event['data']['object']
         customer = stripe.Customer.retrieve(paymentIntent.get("customer"))
+
         user = PicastroUser.objects.get(email=customer.get("email"))
-        print(user.username + customer.get("email") + ' just subscribed.')
-
-        print("stripe_webhook user", user.username)
-        user.subscriptionExpiry += timedelta(days=365)
-
+        user.subscriptionExpiry = datetime.now() + timedelta(days=365)
         user.payment_checkout_id = paymentIntent.get('id',None)
-
         user.save()
+
     return HttpResponse(status=200)
