@@ -17,7 +17,8 @@ from .views import (
     ImageDislikeAPIView,
     CommentCreateAPIView,
     CommentListAPIView,
-    CommentUpdateDestroyAPIView
+    CommentUpdateDestroyAPIView,
+    PaymentAPIView
 )
 from django.urls import path, include
 
@@ -43,4 +44,5 @@ urlpatterns = [
     path('comments/',CommentCreateAPIView.as_view(),name='comment_create'),
     path('comments/<int:post_id>',CommentListAPIView.as_view(),name='comment_list'),
     path('comment/<int:id>',CommentUpdateDestroyAPIView.as_view(),name='comment_ud'),
+    path('payment-sheet/', PaymentAPIView.as_view(), name='payment_sheet'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

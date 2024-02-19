@@ -35,7 +35,7 @@ requests==2.31.0
 s3transfer==0.10.0
 six==1.16.0
 sqlparse==0.4.4
-stripe==8.1.0
+stripe==8.2.0
 tomli==2.0.1
 typing_extensions==4.9.0
 tzdata==2023.4

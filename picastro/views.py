@@ -1,5 +1,6 @@
 import os
 import jwt
+import stripe
 
 from rest_framework import filters
 from rest_framework.generics import (
@@ -52,6 +53,7 @@ from picastro.serializers import (
     CommentSerializer,
     # ResetPasswordEmailRequestSerializer
 )
+from picastro.permissions import IsOwnerOrReadOnly, IsCommenterOrReadOnly, IsPosterOrReadOnly
 from .models import PicastroUser, Post, Comment, SavedImages
 from .utils import Util
 
@@ -67,8 +69,6 @@ class CreateUserAPIView(CreateAPIView):
         headers = self.get_success_headers(serializer.data)
         # We create a token than will be used for future auth
         print(serializer.data)
-        #domain = 'http://13.42.37.75:8000'
-        domain = 'http://127.0.0.1:8000'
         relative_link = reverse('email-verify')
         token = serializer.data['token']['access']
         print(token)
@@ -159,7 +159,7 @@ class CurrentUserView(APIView):
 
 class UserProfileAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = UserProfileSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
     queryset = PicastroUser.objects.all()
     lookup_field = 'id'
 
@@ -247,7 +247,7 @@ class PostAPIView(ListCreateAPIView):
 
 class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = PostSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsPosterOrReadOnly)
     queryset = Post.objects.all()
     lookup_field = 'id'
 
@@ -336,9 +336,9 @@ class CommentCreateAPIView(CreateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = CommentSerializer
 
-    # def perform_create(self, serializer):
-    #     print("serializer", serializer)
-    #     serializer.save(commenter=self.request.user)
+    def perform_create(self, serializer):
+        print("serializer", serializer)
+        serializer.save(commenter=self.request.user)
 
 
 class CommentListAPIView(ListAPIView):
@@ -353,6 +353,46 @@ class CommentListAPIView(ListAPIView):
 class CommentUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsCommenterOrReadOnly)
 
     lookup_field = 'id'
+
+
+class PaymentAPIView(GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+
+    def post(self, request):
+        
+        #check if customer already existed in stripe
+        customer_list = stripe.Customer.list(email=request.user.email)
+
+        if len(customer_list) == 0:
+            customer = stripe.Customer.create(
+                name=(request.user.first_name + " " + request.user.last_name),
+                email=request.user.email,
+                phone=request.user.phone_no,
+                metadata={'username':request.user.username}
+            )
+        else:
+            filtered_customer = [item for item in customer_list if item["metadata"]["username"] == request.user.username]
+            customer = filtered_customer[0]
+        ephemeralKey = stripe.EphemeralKey.create(
+            customer=customer['id'],
+            stripe_version='2023-10-16',
+        )
+        paymentIntent = stripe.PaymentIntent.create(
+            amount=2499,
+            currency='gbp',
+            customer=customer['id'],
+            # In the latest version of the API, specifying the `automatic_payment_methods` parameter
+            # is optional because Stripe enables its functionality by default.
+            automatic_payment_methods={
+            'enabled': True,
+            },
+        )
+        return Response({"paymentIntent": paymentIntent.client_secret,
+                        "ephemeralKey": ephemeralKey.secret,
+                        "customer": customer.id,
+                        "publishableKey": settings.STRIPE_PUBLISHABLE_KEY})
+    

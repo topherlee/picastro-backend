@@ -104,6 +104,7 @@ class PosterSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+    poster = serializers.ReadOnlyField(source='poster.username')
     class Meta:
         model = Post
         fields = ['id', 'image', 'astroNameShort', 'astroName', 'award',
@@ -126,7 +127,7 @@ class LikeImageSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-
+    commenter = serializers.ReadOnlyField(source='commenter.username')
     class Meta:
         model = Comment 
         fields = ['id', 'post', 'commenter', 'comment_body', 'date_added']
