@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone
-from datetime import datetime, timedelta, tzinfo
+from datetime import datetime, timedelta, timezone
 
 from .models import Post, PicastroUser, SavedImages, Comment
 
@@ -71,10 +71,10 @@ class UserSerializer(serializers.ModelSerializer):
     def get_valid_subscription(self, obj):
         subscription_expiry = PicastroUser.objects.get(id=obj.id).subscriptionExpiry
         # Uncomment one of the following two lines to test the frontend behavior for true or false
-        #return True
+        # return True
         #return False
         
-        if subscription_expiry > timezone.now():
+        if subscription_expiry > datetime.now(timezone.utc):
             print("subscription_expiry true")
             return True
         else:
