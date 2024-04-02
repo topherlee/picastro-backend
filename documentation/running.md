@@ -16,7 +16,6 @@
 - Add the environment variables for AWS, E-mail and Stripe to the .env file (ask your fellow developers, in case you do not have them).
 - Run `source .env` in your terminal (Linux/Mac) or un-comment the Windows-specific lines for setting the secret key in `settings.py`.
 - Run `python manage.py migrate` to make database migrations.
-- Run `python manage.py data_parser` to populate your database with data from a json file.
 - Run `python manage.py createsuperuser` to create a superuser (administrator) for your local backend installation. Set user name and password to whatever you like.
 
 
