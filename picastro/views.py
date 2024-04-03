@@ -366,9 +366,7 @@ class PaymentAPIView(GenericAPIView):
         
         #check if customer already existed in stripe
         customer_list = stripe.Customer.list(email=request.user.email)
-        print("customer_list: ", customer_list)
-        print("customer_list2: ", len(customer_list))
-
+        
         if len(customer_list) == 0:
             customer = stripe.Customer.create(
                 name=(request.user.first_name + " " + request.user.last_name),
@@ -378,7 +376,6 @@ class PaymentAPIView(GenericAPIView):
             )
         else:
             filtered_customer = [item for item in customer_list if item["email"] == request.user.email]
-            print("filtered_customer: ", filtered_customer, ". request.user.username", request.user.username)
             customer = filtered_customer[0]
         ephemeralKey = stripe.EphemeralKey.create(
             customer=customer['id'],
