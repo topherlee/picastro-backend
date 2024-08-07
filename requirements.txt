@@ -6,7 +6,7 @@ certifi==2024.2.2
 charset-normalizer==3.3.2
 colorama==0.4.6
 coverage==7.4.4
-Django==5.0.4
+Django==5.0.8
 django-browser-reload==1.12.1
 django-cleanup==8.1.0
 django-cors-headers==4.3.1
